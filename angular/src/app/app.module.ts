@@ -6,8 +6,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import '@angular/material/prebuilt-themes/deeppurple-amber.css';
-import {MatCardModule} from '@angular/material/card';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 const modules = [
   BrowserModule,
@@ -15,20 +15,14 @@ const modules = [
   BrowserAnimationsModule,
   MatSliderModule,
   MatCardModule,
+  MatIconModule,
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    modules,
-    BrowserAnimationsModule
-  ],
-  exports: [
-    modules
-  ],
+  declarations: [AppComponent],
+  imports: [modules, BrowserAnimationsModule],
+  exports: [modules],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
