@@ -1,16 +1,23 @@
-<div class="container">
-  <div class="d-flex justify-content-center">
-    <mat-card>
-      <mat-card-title class="d-flex justify-content-center">
-        Yann HURRY
-      </mat-card-title>
-      <mat-card-subtitle class="d-flex justify-content-center">
-        Développeur .Net FullStack
-      </mat-card-subtitle>
-      <mat-card-content> Master MIAGE - Grenoble - 2019</mat-card-content>
-      <mat-card-content>.Net</mat-card-content>
-      <mat-card-footer> </mat-card-footer>
-    </mat-card>
+<div class="header">
+  <div class="container text-white p-5">
+    <div class="row">
+      <div class="col-sm-6">
+        <h1>Yann HURRY</h1>
+      </div>
+      <div class="col-sm-6 text-sm-right">
+        <h2>Développeur .Net FullStack</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-body">
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between">
+      <app-card-template [content]="master"> </app-card-template>
+      <app-card-template [content]="licence"> </app-card-template>
+      <app-card-template [content]="dut"> </app-card-template>
+    </div>
   </div>
 </div>
 
