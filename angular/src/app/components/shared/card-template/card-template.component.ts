@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CardTemplate } from 'src/app/shared/entities/card-template';
-
+import { IconPrefix, IconName } from '@fortawesome/fontawesome-svg-core';
 @Component({
   selector: 'app-card-template',
   templateUrl: './card-template.component.html',

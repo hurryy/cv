@@ -9,6 +9,11 @@ import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CardTemplateComponent } from './components/shared/card-template/card-template.component';
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from '@fortawesome/angular-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 const modules = [
   BrowserModule,
@@ -17,6 +22,7 @@ const modules = [
   MatSliderModule,
   MatCardModule,
   MatIconModule,
+  FontAwesomeModule,
 ];
 
 @NgModule({
@@ -27,4 +33,8 @@ const modules = [
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIconPacks(fas);
+  }
+}

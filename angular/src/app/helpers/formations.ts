@@ -1,18 +1,18 @@
-import { CardTemplate } from '../shared/entities/card-template';
+import { StudyCardTemplate } from '../shared/entities/study-card-template';
 
-export const master: CardTemplate = {
-  Title: 'Master MIAGE',
-  SubTitle: 'Grenoble, France',
-  Text: 'Université Grenoble Alpes',
-};
-export const licence: CardTemplate = {
-  Title: 'Licence MIAGE',
-  SubTitle: 'Grenoble, France',
-  Text: 'Université Grenoble Alpes',
-};
+export const master: StudyCardTemplate = new StudyCardTemplate(
+  'Master MIAGE',
+  'Université Grenoble Alpes France<br/>Grenoble, France',
+  'Méthodes de l`\'informatique appliquée à le gestion des entreprises'
+);
+export const licence: StudyCardTemplate = new StudyCardTemplate(
+  'Licence MIAGE',
+  'Université Grenoble Alpes France<br/>Grenoble, France',
+  'Méthodes de l\'informatique appliquée à le gestion des entreprises'
+);
 
-export const dut: CardTemplate = {
-  Title: 'DUT Informatique',
-  SubTitle: 'Annecy, France',
-  Text: 'Université Savoie Mont-Blanc',
-};
+export const dut: StudyCardTemplate = new StudyCardTemplate(
+  'DUT Informatique',
+  'Université Savoie Mont-Blanc<br/>Annecy, France',
+  'Université Savoie Mont-Blanc'
+);
