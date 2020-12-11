@@ -14,6 +14,7 @@ import {
   FontAwesomeModule,
 } from '@fortawesome/angular-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { LogoUrlComponent } from './components/shared/logo-url/logo-url.component';
 
 const modules = [
   BrowserModule,
@@ -26,7 +27,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, CardTemplateComponent],
+  declarations: [AppComponent, CardTemplateComponent, LogoUrlComponent],
   imports: [modules, BrowserAnimationsModule],
   exports: [modules],
   providers: [],
