@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/angular-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { LogoUrlComponent } from './components/shared/logo-url/logo-url.component';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 
 const modules = [
   BrowserModule,
@@ -36,6 +37,6 @@ const modules = [
 })
 export class AppModule {
   constructor(library: FaIconLibrary) {
-    library.addIconPacks(fas);
+    library.addIconPacks(fas, fab);
   }
 }

@@ -1,12 +1,12 @@
-// import { LogoUrlTemplate } from '../shared/entities/logo-url-template-template';
+import { LogoUrlTemplate } from '../shared/entities/logo-url-template'
 
-// export const master: LogoUrlTemplate = new LogoUrlTemplate(
-//   'Master MIAGE',
-//   'Université Grenoble Alpes France<br/>Grenoble, France',
-//   '2016 - 2019'
-// );
-// export const licence: LogoUrlTemplate = new LogoUrlTemplate(
-//   'Licence MIAGE',
-//   'Université Grenoble Alpes France<br/>Grenoble, France',
-//   '2015 - 2016'
-// );
+export const linkedin: LogoUrlTemplate = new LogoUrlTemplate(
+  'https://www.linkedin.com/in/yann-hurry',
+  'linkedin',
+  'fab'
+);
+export const github: LogoUrlTemplate = new LogoUrlTemplate(
+  'Licence MIAGE',
+  'github',
+  'fab'
+);

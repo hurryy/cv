@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { master, licence, dut } from './helpers/formations';
-
+import { linkedin, github } from './helpers/logo-links'
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,4 +11,6 @@ export class AppComponent {
   master = master;
   licence = licence;
   dut = dut;
+  linkedin = linkedin;
+  github = github;
 }
