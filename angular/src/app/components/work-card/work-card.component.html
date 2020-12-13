@@ -1,0 +1,7 @@
+<mat-card class="study-card m-2">
+  <app-card-template [content]="content"></app-card-template>
+  <mat-card-content>
+    .Net
+    <fa-icon *ngFor="let icon of content.Technologies" [icon]="icon"></fa-icon>
+  </mat-card-content>
+</mat-card>

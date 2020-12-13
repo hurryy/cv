@@ -1,5 +1,7 @@
+$back-color: steelblue;
+
 .header {
-  background-color: steelblue;
+  background-color: $back-color;
   h1 {
     font-size: 48px;
     line-height: 48px;
@@ -14,4 +16,8 @@
 .fas,
 .far {
   width: 18px;
+}
+
+.colored-div {
+  background-color: $back-color;
 }

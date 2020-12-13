@@ -14,17 +14,24 @@
   <div class="container mt-4">
     <div class="d-flex logo-link flex-wrap justify-content-center">
       <app-logo-url class="m-4" [content]="linkedin"></app-logo-url>
-      <!-- <app-logo-url class="m-4" [content]="github"></app-logo-url> -->
+    </div>
+  </div>
+</div>
+<div class="colored-div p-4">
+  <div class="container mt-4">
+    <div class="d-flex studies flex-wrap justify-content-center">
+      <app-work-card [content]="nerim"> </app-work-card>
+      <app-work-card [content]="apollossc"> </app-work-card>
+      <app-work-card [content]="cognizant"> </app-work-card>
     </div>
   </div>
 </div>
 <div class="">
   <div class="container mt-4">
     <div class="d-flex studies flex-wrap justify-content-center">
-      <app-card-template [content]="master"> </app-card-template>
-      <app-card-template [content]="licence"> </app-card-template>
-      <app-card-template [content]="dut"> </app-card-template>
-
+      <app-study-card [content]="master"> </app-study-card>
+      <app-study-card [content]="licence"> </app-study-card>
+      <app-study-card [content]="dut"> </app-study-card>
     </div>
   </div>
 </div>

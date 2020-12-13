@@ -16,6 +16,8 @@ import {
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { LogoUrlComponent } from './components/shared/logo-url/logo-url.component';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import { WorkCardComponent } from './components/work-card/work-card.component';
+import { StudyCardComponent } from './components/study-card/study-card.component';
 
 const modules = [
   BrowserModule,
@@ -28,7 +30,7 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, CardTemplateComponent, LogoUrlComponent],
+  declarations: [AppComponent, CardTemplateComponent, LogoUrlComponent, WorkCardComponent, StudyCardComponent],
   imports: [modules, BrowserAnimationsModule],
   exports: [modules],
   providers: [],
