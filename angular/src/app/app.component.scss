@@ -1,5 +1,4 @@
-$back-color: steelblue;
-
+@import "variables.scss";
 .header {
   background-color: $back-color;
   h1 {
@@ -12,12 +11,10 @@ $back-color: steelblue;
   }
 }
 
-.fa,
-.fas,
-.far {
-  width: 18px;
-}
-
 .colored-div {
   background-color: $back-color;
+}
+
+.categoryIcon {
+  font-size: 45px;
 }

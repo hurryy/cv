@@ -6,7 +6,8 @@ export class WorkCardTemplate extends CardTemplate {
     title: string,
     subTitle: string,
     text: string,
-    technologies: IconDefinition[]
+    technologies: IconDefinition[],
+    maintTech: string
   ) {
     super();
     this.Title = title;
@@ -15,6 +16,8 @@ export class WorkCardTemplate extends CardTemplate {
     this.IconName = 'code';
     this.IconPrefix = 'fas';
     this.Technologies = technologies;
+    this.MainTech = maintTech;
   }
   Technologies!: IconDefinition[];
+  MainTech!: string;
 }
