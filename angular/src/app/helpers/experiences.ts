@@ -9,7 +9,7 @@ export const Nerim: WorkCardTemplate = new WorkCardTemplate(
   '.Net Core MVC'
 );
 export const Apollo: WorkCardTemplate = new WorkCardTemplate(
-  'Développeur .Net Full Stack',
+  'Développeur .Net FullStack',
   'Apollo SSC<br/>Grenoble, France',
   '01/2020 - 10/2020',
   [faAngular],
