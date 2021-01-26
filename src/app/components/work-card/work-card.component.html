@@ -1,0 +1,14 @@
+<mat-card class="work-card m-2">
+  <app-card-template [content]="content"></app-card-template>
+  <mat-card-content>
+    <div
+      class="d-flex flex-wrap justify-content-center technologies align-items-center"
+    >
+      <div class="net">{{ content.MainTech }}</div>
+      <fa-icon
+        *ngFor="let icon of content.Technologies"
+        [icon]="icon"
+      ></fa-icon>
+    </div>
+  </mat-card-content>
+</mat-card>

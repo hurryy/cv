@@ -1,0 +1,20 @@
+@import "variables.scss";
+.header {
+  background-color: $back-color;
+  h1 {
+    font-size: 48px;
+    line-height: 48px;
+  }
+  h2 {
+    font-size: 32px;
+    line-height: 32px;
+  }
+}
+
+.colored-div {
+  background-color: $back-color;
+}
+
+.categoryIcon {
+  font-size: 45px;
+}

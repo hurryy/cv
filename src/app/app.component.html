@@ -1,0 +1,45 @@
+<div class="header">
+  <div class="container text-white p-5">
+    <div class="row">
+      <div class="col-sm-6">
+        <h1>Yann HURRY</h1>
+      </div>
+      <div class="col-sm-6 text-sm-right">
+        <h2>Développeur .Net FullStack</h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="">
+  <div class="container mt-4">
+    <div class="d-flex logo-link flex-wrap justify-content-center">
+      <app-logo-url class="m-4" [content]="linkedin"></app-logo-url>
+    </div>
+  </div>
+</div>
+<div class="p-4">
+  <div class="container">
+    <div class="d-flex categoryIcon justify-content-center mb-2">
+      <fa-icon [icon]="['fas', 'code']"></fa-icon>
+    </div>
+    <div class="d-flex studies flex-wrap justify-content-center">
+      <app-work-card [content]="nerim"> </app-work-card>
+      <app-work-card [content]="apollossc"> </app-work-card>
+      <app-work-card [content]="cognizant"> </app-work-card>
+    </div>
+  </div>
+</div>
+<div class="">
+  <div class="container mt-4">
+    <div class="d-flex categoryIcon justify-content-center mb-2">
+      <fa-icon [icon]="['fas', 'graduation-cap']"></fa-icon>
+    </div>
+    <div class="d-flex studies flex-wrap justify-content-center">
+      <app-study-card [content]="master"> </app-study-card>
+      <app-study-card [content]="licence"> </app-study-card>
+      <app-study-card [content]="dut"> </app-study-card>
+    </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

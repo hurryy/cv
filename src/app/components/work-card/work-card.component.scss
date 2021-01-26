@@ -1,0 +1,27 @@
+@import "../../variables.scss";
+
+mat-card {
+  width: 350px;
+
+  .technologies > * {
+    margin: 0 10px 0 10px;
+  }
+
+  .technologies {
+    color: $back-color;
+
+    fa-icon {
+      font-size: 25px;
+    }
+
+    .net {
+      color: purple;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  mat-card {
+    width: 250px;
+  }
+}
