@@ -2,6 +2,7 @@
   "name": "website",
   "version": "0.0.0",
   "scripts": {
+    "start:prod": "ng build --prod --output-path dist ; node server.js",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod",
