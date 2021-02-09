@@ -1,6 +1,5 @@
 @import "variables.scss";
 .header {
-  background-color: $back-color;
   h1 {
     font-size: 48px;
     line-height: 48px;
@@ -9,6 +8,7 @@
     font-size: 32px;
     line-height: 32px;
   }
+  border-bottom: solid black 2px;
 }
 
 .colored-div {
