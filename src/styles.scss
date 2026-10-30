@@ -1,7 +1,13 @@
 :root {
   --text: #1f2328;
   --muted: #59636e;
-  --background: #ffffff;
+  --background: #f2f1ef;
+  --surface: #ffffff;
+  --accent: #36648b;
+  --on-accent: #ffffff;
+  --chip: #e8eef4;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 8%);
 }
 
 html {
@@ -13,4 +19,20 @@ html {
 
 body {
   margin: 0;
+}
+
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  :root {
+    --background: #ffffff;
+    --shadow: none;
+  }
+
+  html {
+    font-size: 10.5pt;
+  }
 }
