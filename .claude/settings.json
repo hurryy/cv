@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.prod)",
+      "Read(**/.env.docker)",
+      "Read(**/.env.production)",
+      "Read(**/.env.development)",
+      "Read(**/.env.dev)",
+      "Read(**/.env.test)",
+      "Read(**/.env.staging)",
+      "Read(**/.env.e2e)",
+      "Read(**/.env.bak)",
+      "Read(**/.env~)",
+      "Read(**/.git-credentials)",
+      "Read(**/secrets.json)",
+      "Read(**/*.pem)",
+      "Read(**/id_rsa*)",
+      "Read(**/id_ed25519*)",
+      "Read(**/deploy_cv*)",
+      "Read(**/.npmrc)",
+      "Read(~/.ssh/**)",
+      "Edit(**/.env)",
+      "Edit(**/.env.local)",
+      "Edit(**/.env.*.local)",
+      "Edit(**/.env.prod)",
+      "Edit(**/.env.docker)",
+      "Edit(**/.env.production)",
+      "Edit(**/.env.development)",
+      "Edit(**/.env.dev)",
+      "Edit(**/.env.test)",
+      "Edit(**/.env.staging)",
+      "Edit(**/*.pem)",
+      "Edit(**/deploy_cv*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/nvm4w/nodejs/node.exe\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/bloquer-secrets.cjs\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -7,11 +7,13 @@ Angular 21.2 / TS 5.9 / Vitest · Node >= 22.12.
 
 ## Vérification obligatoire avant de conclure
 
-```bash
-npm run build && npm run lint && npm test -- --watch=false
+```powershell
+powershell -NoProfile -File .claude/check.ps1        # -SansBuild, -SansTests
 ```
 
-`npm run lint` doit sortir « All files pass linting ». Une modification du Dockerfile, du
+Build, lint (« All files pass linting », 0 warning : le script échoue sinon) et tests ; il rend
+un tableau des codes de sortie et renvoie 1 au moindre échec. Détail dans un journal de
+`%TEMP%`. Une modification du Dockerfile, du
 Caddyfile ou d'un compose se vérifie en construisant et lançant l'image (`docker` est installé) :
 
 ```bash
@@ -63,7 +65,8 @@ des gestes manuels, tous deux conditionnés à la variable de dépôt `DEPLOY_EN
 
 - Standalone, signals, control flow natif, `ChangeDetectionStrategy.OnPush`, `inject()`.
 - Aucune librairie d'UI : SCSS et variables CSS dans `src/styles.scss`. En ajouter une se
-  justifie par le design, pas par habitude.
+  justifie par le design, pas par habitude. Angular Material a été écarté le 2026-10-30 : poids,
+  rendu M3 éloigné du CV de 2021, et mauvaise tenue à l'impression.
 - Le contenu ne s'écrit jamais dans un template : il vient de `cv.data.ts`.
 - Pas de `innerHTML` : une donnée composite devient deux champs.
 
@@ -84,11 +87,33 @@ des gestes manuels, tous deux conditionnés à la variable de dépôt `DEPLOY_EN
 - Sous Windows, le port 80 local est souvent pris par WAMP : tester Caddy en HTTPS ou sur un
   autre port.
 
+## Secrets
+
+Aucun agent ni l'orchestrateur ne lit, ne cherche ni n'affiche : `.env` et `.env.*` (sauf les
+gabarits `*.example`), `*.pem`, les clés SSH (`id_*`, `deploy_cv*`, `~/.ssh/`), `.npmrc`,
+`.git-credentials`, `secrets.json`, les réglages VS Code, ni les variables d'environnement
+(`env`, `printenv`, `Get-ChildItem Env:`, `docker compose config`, `docker inspect` sans
+`--format`). Une valeur manque → s'arrêter et la demander à l'utilisateur.
+
+Deux verrous, versionnés dans `.claude/` : `settings.json` refuse Read et Edit sur ces
+fichiers, et le hook `hooks/bloquer-secrets.cjs` refuse une commande Bash ou PowerShell qui
+les cite. C'est un garde-fou contre la fuite accidentelle, **pas une barrière** (globs,
+recherche récursive, concaténation passent). Le hook échoue fermé sur une entrée illisible ;
+il est appelé par `C:/nvm4w/nodejs/node.exe` en chemin absolu, le `node` du `PATH` étant
+cassé. Il est copié d'`app-shop/.claude/hooks/` : une correction se reporte dans les deux.
+Canari après une montée de version de Claude Code : `cat .env` doit être refusé.
+
 ## Agents
 
 Un nouvel agent par tâche (décision de l'utilisateur, 2026-10-30) : ne pas relancer un agent
 déjà utilisé, pour ne pas charger son contexte. Tout le contexte utile va dans le prompt. Tout
 changement se relit par `code-reviewer` avant commit.
+
+Déroulé d'un lot (`/feature`) : contrôle de référence (`tester`, `check.ps1`) → `developer` →
+`tester` et `code-reviewer` **en parallèle** → au besoin un nouveau `developer`, trois passages
+au plus → `check.ps1` relancé par l'orchestrateur → commit. Le relecteur n'a pas de shell : il
+lit `.claude/review.diff`. Modèle du `developer` et du relecteur : Sonnet par défaut, Opus au
+2e passage ou d'emblée sur un sujet sensible (en-têtes de sécurité, workflows, `edge/`).
 
 ## Notifications
 

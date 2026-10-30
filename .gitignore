@@ -50,3 +50,4 @@ Thumbs.db
 
 # Claude Code — réglages propres à la machine
 .claude/settings.local.json
+.claude/review.diff

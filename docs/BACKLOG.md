@@ -85,28 +85,20 @@ retirés.
 
 ## En cours
 
-**Point de reprise au 2026-10-30, fin de session.** Dernier commit poussé : `29200e4`, CI et
-build d'image verts sur GitHub. Arbre de travail propre.
+<!--
+Tenue de cette section, relue avant chaque modification : état présent seulement (l'historique
+est dans git et dans « Terminé ») ; « Reprise » 15 lignes au plus avec une « Prochaine action »
+exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres dans « Contrôle »).
+-->
 
-Livré dans la session :
-- CV-01 — migration Angular 21, image Caddy, workflows, `edge/` (revue approuvée, 5 findings
-  corrigés, dont `setcap -r` sans lequel `cap_drop: ALL` empêche Caddy de démarrer).
-- Style provisoire en SCSS pur (pas de Material : refusé pour le poids, le rendu M3 différent
-  de 2021 et l'impression), accent `#36648b` pour le contraste AA, feuille A4. Le vrai design
-  reste CV-05.
-- CV-03 préparé : `edge/bootstrap-vps.sh`, jamais exécuté.
-- Dossiers `.claude` réorganisés : direction commune dans `yannhurry.fr/CLAUDE.md`, copie
-  autonome dans `cv/` et `app-shop/`.
-- Règle : un push par lot. Notifications push réglées côté utilisateur (non encore reçues :
-  ignorées tant que l'utilisateur est actif dans la session).
+### Reprise
 
-Rien n'est déployé, rien n'est mergé.
-
-2026-10-30, plus tard : icônes de l'ancien CV (LinkedIn, sections Expérience et Formation)
-rétablies en SVG inline sans dépendance, à la demande de l'utilisateur (`e704a8d`, poussé).
-
-Bloqué côté utilisateur, dans l'ordre :
-1. Merger `claude` → `dev` → `master` après relecture.
-2. CV-02 (réglages GitHub, secrets, clé de déploiement).
-3. VPS réinstallé en Ubuntu 24.04, puis CV-03 ensemble.
-4. CV-04 (contenu) — peut commencer tout de suite, indépendant du reste.
+| Champ | Valeur |
+|---|---|
+| Mis à jour | 2026-10-30 |
+| Dernière tâche terminée | kit agents : secrets (settings + hook), `check.ps1`, relecteur sans shell, `/feature` réécrit |
+| Tâche en cours | aucune |
+| Prochaine action | CV-04 peut commencer tout de suite, indépendant de CV-02/03 : relire le contenu quand l'utilisateur a rempli `cv.data.ts` |
+| Contrôle | `check.ps1` 2026-10-30 : build, lint, test à 0 ; Vitest 2 fichiers / 6 tests |
+| Livré, non déployé | CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
+| Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
