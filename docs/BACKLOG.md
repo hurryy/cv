@@ -24,11 +24,17 @@ Statut : à faire — **utilisateur** (`gh` absent de la machine)
 
 ## [CV-03] VPS OVH neuf
 
-Statut : à faire — préparation par Claude, exécution avec l'utilisateur
+Statut : script prêt (`edge/bootstrap-vps.sh`, shellcheck propre, jamais exécuté) —
+exécution avec l'utilisateur
 
-- [ ] Ubuntu LTS, utilisateur `deploy` par clé, root SSH coupé, `ufw` 22/80/443,
-      `unattended-upgrades`, fail2ban
-- [ ] Docker Engine + Compose ≥ 2.23
+Prérequis utilisateur : VPS commandé ou réinstallé en **Ubuntu 24.04 LTS** avec sa clé SSH
+personnelle ; une **paire de clés dédiée au déploiement** (`ssh-keygen -t ed25519 -f
+deploy_cv -C deploy@github`) dont la publique est passée au script et la privée va dans le
+secret `SSH_KEY`.
+
+- [ ] `edge/bootstrap-vps.sh` : utilisateur `deploy` par clé, root SSH coupé (seulement si un
+      membre de sudo a une clé), `ufw` 22/80/443, `unattended-upgrades`, fail2ban, Docker
+      Engine + Compose, rotation des logs, `/srv/edge` et `/srv/cv`
 - [ ] DNS OVH : A/AAAA `yannhurry.fr` et `www` → IP du VPS, **avant** le premier démarrage
       de Caddy
 - [ ] `/srv/edge` : `edge/docker-compose.yml`, `edge/conf/Caddyfile`, `.env` d'après
@@ -79,7 +85,13 @@ retirés.
 
 ## En cours
 
-**Point de reprise au 2026-10-30.** CV-01 livré sur `claude`. Rien n'est déployé, rien n'est
-mergé. Prochaine étape côté Claude : préparer CV-03 (script de durcissement du VPS) et la
-réorganisation des dossiers `.claude` (racine commune + copie autonome par projet). Côté
-utilisateur : CV-02, puis CV-04.
+**Point de reprise au 2026-10-30.** CV-01 livré et poussé sur `claude`, CI GitHub verte.
+CV-03 préparé (script VPS). Dossiers `.claude` réorganisés : direction commune dans
+`yannhurry.fr/CLAUDE.md`, copie autonome dans `cv/` et `app-shop/`. Rien n'est déployé, rien
+n'est mergé.
+
+Bloqué côté utilisateur, dans l'ordre :
+1. Merger `claude` → `dev` → `master` après relecture.
+2. CV-02 (réglages GitHub, secrets, clé de déploiement).
+3. VPS réinstallé en Ubuntu 24.04, puis CV-03 ensemble.
+4. CV-04 (contenu) — peut commencer tout de suite, indépendant du reste.
