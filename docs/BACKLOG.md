@@ -85,10 +85,22 @@ retirés.
 
 ## En cours
 
-**Point de reprise au 2026-10-30.** CV-01 livré et poussé sur `claude`, CI GitHub verte.
-CV-03 préparé (script VPS). Dossiers `.claude` réorganisés : direction commune dans
-`yannhurry.fr/CLAUDE.md`, copie autonome dans `cv/` et `app-shop/`. Rien n'est déployé, rien
-n'est mergé.
+**Point de reprise au 2026-10-30, fin de session.** Dernier commit poussé : `29200e4`, CI et
+build d'image verts sur GitHub. Arbre de travail propre.
+
+Livré dans la session :
+- CV-01 — migration Angular 21, image Caddy, workflows, `edge/` (revue approuvée, 5 findings
+  corrigés, dont `setcap -r` sans lequel `cap_drop: ALL` empêche Caddy de démarrer).
+- Style provisoire en SCSS pur (pas de Material : refusé pour le poids, le rendu M3 différent
+  de 2021 et l'impression), accent `#36648b` pour le contraste AA, feuille A4. Le vrai design
+  reste CV-05.
+- CV-03 préparé : `edge/bootstrap-vps.sh`, jamais exécuté.
+- Dossiers `.claude` réorganisés : direction commune dans `yannhurry.fr/CLAUDE.md`, copie
+  autonome dans `cv/` et `app-shop/`.
+- Règle : un push par lot. Notifications push réglées côté utilisateur (non encore reçues :
+  ignorées tant que l'utilisateur est actif dans la session).
+
+Rien n'est déployé, rien n'est mergé.
 
 Bloqué côté utilisateur, dans l'ordre :
 1. Merger `claude` → `dev` → `master` après relecture.

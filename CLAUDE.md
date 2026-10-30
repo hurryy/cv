@@ -84,6 +84,12 @@ des gestes manuels, tous deux conditionnés à la variable de dépôt `DEPLOY_EN
 - Sous Windows, le port 80 local est souvent pris par WAMP : tester Caddy en HTTPS ou sur un
   autre port.
 
+## Agents
+
+Un nouvel agent par tâche (décision de l'utilisateur, 2026-10-30) : ne pas relancer un agent
+déjà utilisé, pour ne pas charger son contexte. Tout le contexte utile va dans le prompt. Tout
+changement se relit par `code-reviewer` avant commit.
+
 ## Notifications
 
 L'utilisateur ne surveille pas toujours la session. Une décision qui bloque le travail se
