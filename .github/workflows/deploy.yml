@@ -1,0 +1,104 @@
+name: Deploy
+
+# Déclenchement manuel uniquement. Ne pas ajouter d'autre déclencheur sans
+# décision explicite.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag d'image GHCR à déployer (sha-xxxxxxx pour un rollback)"
+        required: false
+        default: latest
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # `DEPLOY_ENABLED` doit valoir exactement `true` et le lancement venir de
+    # `master`, dont le docker-compose.prod.yml est celui qui part sur le VPS.
+    if: vars.DEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Resolve image tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          tag="${INPUT_TAG:-latest}"
+          if ! printf '%s' "$tag" | grep -Eq '^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$'; then
+            echo "Tag invalide : $tag" >&2
+            exit 1
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "Déploiement du tag ${tag}" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Upload compose file
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+        run: |
+          scp -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "${SSH_PORT:-22}" docker-compose.prod.yml \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/docker-compose.prod.yml"
+
+      # `set -e` : si le pull échoue, rien n'est redémarré et CV_TAG n'est pas
+      # modifié dans le .env.
+      - name: Deploy
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat > remote.sh <<'REMOTE'
+          set -euo pipefail
+          deploy_path="$1"; tag="$2"; ghcr_user="$3"
+          cd "$deploy_path"
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$ghcr_user" --password-stdin
+          compose="docker compose -f docker-compose.prod.yml"
+          export CV_TAG="$tag"
+          $compose pull < /dev/null
+          if grep -q '^CV_TAG=' .env; then
+            sed -i "s/^CV_TAG=.*/CV_TAG=${tag}/" .env
+          else
+            echo "CV_TAG=${tag}" >> .env
+          fi
+          $compose up -d --wait --wait-timeout 120 < /dev/null
+          $compose ps < /dev/null
+          REMOTE
+          # Le jeton voyage dans stdin, pas en argument : il n'apparaît pas dans
+          # la liste des processus du VPS.
+          { printf 'export GHCR_TOKEN=%q\n' "$GHCR_TOKEN"; cat remote.sh; } | \
+            ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes -p "${SSH_PORT:-22}" "${SSH_USER}@${SSH_HOST}" \
+              bash -s -- "$DEPLOY_PATH" "$TAG" "$GHCR_USER"
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

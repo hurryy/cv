@@ -1,27 +1,44 @@
-# Website
+# cv
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.3.
+CV en ligne de Yann HURRY — Angular 21, prérendu en HTML statique, servi par Caddy.
 
-## Development server
+## Développement
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```bash
+npm ci
+npm start          # http://localhost:4200
+npm run build      # dist/cv/browser
+npm run lint
+npm test -- --watch=false
+```
 
-## Code scaffolding
+Le contenu se modifie dans `src/app/cv/cv.data.ts`, et nulle part ailleurs.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Image
 
-## Build
+```bash
+docker build -t cv:local .
+docker run --rm -p 8089:8080 cv:local   # http://localhost:8089
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Production
 
-## Running unit tests
+```
+Internet ──▶ edge (Caddy, TLS, 80/443) ──réseau docker `edge`──▶ cv (Caddy statique, 8080)
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Sur le VPS :
 
-## Running end-to-end tests
+1. `/srv/edge` — `edge/docker-compose.yml`, `edge/conf/Caddyfile`, `.env` d'après
+   `edge/.env.example`, puis `docker compose up -d`. Une seule fois par VPS.
+2. `/srv/cv` — `.env` d'après `.env.prod.example`. Le compose y est copié par le déploiement.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+GitHub Actions :
 
-## Further help
+- **CI** — build, lint, tests à chaque push et PR.
+- **Docker Build & Push** — construit l'image à chaque push ; la publie sur
+  `ghcr.io/hurryy/cv` seulement en lancement manuel.
+- **Deploy** — manuel, depuis `master` : pull de l'image et redémarrage sur le VPS. Entrée
+  `tag` pour revenir à un `sha-…` antérieur.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Publication et déploiement exigent la variable de dépôt `DEPLOY_ENABLED=true`.

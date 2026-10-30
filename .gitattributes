@@ -1,0 +1,8 @@
+# Fichiers consommés par un outil Linux : toujours en LF. Un Dockerfile en CRLF
+# casse les continuations `RUN ... \`, un script copié dans une image sort en
+# « bad interpreter ».
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+Caddyfile text eol=lf
+docker-compose*.yml text eol=lf
+*.sh text eol=lf

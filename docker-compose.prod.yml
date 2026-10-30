@@ -1,0 +1,27 @@
+# Production du CV — aucune construction d'image.
+#
+# Prérequis sur le VPS : le Caddy de bordure (edge/) tourne déjà et a créé le
+# réseau Docker `edge`. Ce service n'ouvre aucun port : seul Caddy le joint.
+#
+#   docker compose -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.prod.yml up -d
+
+name: cv
+
+services:
+  cv:
+    image: ghcr.io/hurryy/cv:${CV_TAG:?tag d'image à définir dans .env}
+    networks:
+      - edge
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+
+networks:
+  edge:
+    external: true

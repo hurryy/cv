@@ -1,0 +1,36 @@
+# Serveur statique embarqué dans l'image. Ne termine pas TLS : c'est le rôle du
+# Caddy de bordure. Écoute sur 8080 pour tourner en utilisateur non-root.
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:8080 {
+	root * /srv
+
+	# Noms hachés par `outputHashing: all` : immuables. index.html ne doit jamais
+	# être mis en cache, sinon un déploiement reste invisible.
+	@immutable path *.js *.css *.woff2
+
+	# Un asset absent (ancien hash après déploiement) rend 404 : sans ça,
+	# try_files servirait index.html sous une URL .js, marqué immuable.
+	@missingAsset {
+		path *.js *.css *.woff2 *.ico
+		not file
+	}
+
+	# `route` fige l'ordre des directives : sans lui, Caddy réordonne les deux
+	# `header` et le Cache-Control final n'est plus prévisible.
+	route {
+		header Cache-Control "no-cache"
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+		header -Server
+
+		encode zstd gzip
+
+		respond @missingAsset 404
+		try_files {path} /index.html
+		file_server
+	}
+}
