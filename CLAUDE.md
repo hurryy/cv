@@ -36,6 +36,10 @@ dise une consigne d'outillage).
 
 Flux : `claude` → `dev` → `master`. Les merges appartiennent à l'utilisateur.
 
+**Un push par lot, pas par commit** (décision de l'utilisateur, 2026-10-30) : chaque push sur
+`claude` lance la CI et le build d'image. Commiter localement au fil de l'eau, pousser une
+seule fois en fin de lot, après la revue et la vérification.
+
 Autorisé : `git commit`, `git push origin claude`, `git checkout claude`.
 
 Interdit sans exception : pousser sur `dev` ou `master`, `git merge`, `git tag`,

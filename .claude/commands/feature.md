@@ -1,5 +1,5 @@
 ---
-description: Pipeline complet pour une modification du CV, du ticket jusqu'au code relu, testé et poussé sur `claude`.
+description: Pipeline complet pour une modification du CV, du ticket jusqu'au code relu, testé et commité sur `claude` (poussé en fin de lot).
 ---
 
 Demande de l'utilisateur : $ARGUMENTS
@@ -13,7 +13,8 @@ Demande de l'utilisateur : $ARGUMENTS
    Trois boucles sans approbation : arrête-toi et explique le blocage.
 6. `APPROUVÉ` : relance toi-même `npm run build && npm run lint && npm test -- --watch=false`,
    et rapporte les chiffres bruts.
-7. Commit sur `claude` (conventional commit en anglais, sans co-auteur), push sur
-   `origin claude`. Rien d'autre.
+7. Commit sur `claude` (conventional commit en anglais, sans co-auteur). Push sur
+   `origin claude` **seulement en fin de lot** : si d'autres tickets du même lot suivent, ne
+   pas pousser — chaque push lance la CI. Rien d'autre.
 8. Mets à jour la section « En cours » de `docs/BACKLOG.md`, et redonne à l'utilisateur ce
    qu'il doit regarder pour valider.
