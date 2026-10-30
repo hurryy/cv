@@ -102,6 +102,9 @@ Livré dans la session :
 
 Rien n'est déployé, rien n'est mergé.
 
+2026-10-30, plus tard : icônes de l'ancien CV (LinkedIn, sections Expérience et Formation)
+rétablies en SVG inline sans dépendance, à la demande de l'utilisateur (`e704a8d`, poussé).
+
 Bloqué côté utilisateur, dans l'ordre :
 1. Merger `claude` → `dev` → `master` après relecture.
 2. CV-02 (réglages GitHub, secrets, clé de déploiement).
