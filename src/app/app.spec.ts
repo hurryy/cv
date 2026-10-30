@@ -22,6 +22,13 @@ describe('App', () => {
     expect(sections[1].querySelectorAll('.entry').length).toBe(CV.education.length);
   });
 
+  it('keeps icons out of the accessible name of links and headings', () => {
+    const icons = compiled.querySelectorAll('app-icon svg');
+    expect(icons.length).toBe(CV.links.length + 2);
+    icons.forEach((svg) => expect(svg.getAttribute('aria-hidden')).toBe('true'));
+    expect(compiled.querySelector('.links a')?.textContent?.trim()).toBe(CV.links[0].label);
+  });
+
   it('opens external links in a new tab without leaking the opener', () => {
     const link = compiled.querySelector<HTMLAnchorElement>('.links a');
     expect(link?.target).toBe('_blank');

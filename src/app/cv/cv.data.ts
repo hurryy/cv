@@ -7,7 +7,7 @@ import { Cv } from './cv.model';
 export const CV: Cv = {
   name: 'Yann HURRY',
   headline: 'Développeur .NET Full Stack',
-  links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/in/yann-hurry' }],
+  links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/in/yann-hurry', icon: 'linkedin' }],
   experiences: [
     {
       role: 'Développeur .NET Full Stack',

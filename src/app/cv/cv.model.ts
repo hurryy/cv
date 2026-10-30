@@ -1,3 +1,5 @@
+import { IconName } from './icon';
+
 /** Mois au format `AAAA-MM`. */
 export type YearMonth = `${number}-${number}`;
 
@@ -26,6 +28,7 @@ export interface Education {
 export interface ProfileLink {
   label: string;
   url: string;
+  icon: IconName;
 }
 
 export interface Cv {
