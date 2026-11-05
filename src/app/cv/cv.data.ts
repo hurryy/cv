@@ -7,6 +7,9 @@ import { Cv } from './cv.model';
  *
  * PDF : déposer `yann-hurry-cv-fr.pdf` / `yann-hurry-cv-en.pdf` dans `public/pdf/`, puis
  * déclarer `pdf: { fr: '/pdf/yann-hurry-cv-fr.pdf', en: '/pdf/yann-hurry-cv-en.pdf' }`.
+ *
+ * Format suisse : `personal` (photo, date de naissance, nationalité, permis, disponibilité,
+ * taux d'activité, références) n'apparaît que sous `/ch`, champ par champ, une fois renseigné.
  */
 export const CV: Cv = {
   name: 'Yann HURRY',
@@ -45,6 +48,10 @@ export const CV: Cv = {
       stack: ['ASP.NET'],
     },
   ],
+  skills: [
+    { name: { fr: 'Back', en: 'Back end' }, items: ['C#', '.NET Core', 'ASP.NET'] },
+    { name: { fr: 'Front', en: 'Front end' }, items: ['TypeScript', 'Angular', 'Vue.js'] },
+  ],
   education: [
     {
       degree: { fr: 'Master MIAGE', en: "Master's degree in MIAGE (IT for business)" },
@@ -68,6 +75,7 @@ export const CV: Cv = {
       period: { start: '2013-09', end: '2015-06' },
     },
   ],
+  languages: [{ name: { fr: 'Français', en: 'French' }, level: 'native' }],
 };
 
 /** Contenu injecté dans la page ; les tests le remplacent pour couvrir les cas sans données. */

@@ -1,10 +1,24 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 import { CvPage } from './cv/cv-page';
-import { Lang } from './cv/cv.model';
+import { CvFormat, Lang } from './cv/cv.model';
 
-/** Chemins repris par `LANG_PATH` (`cv/ui-text.ts`) ; `lang` est lié à l'input de `CvPage`. */
+/** `format` et `lang` sont liés aux inputs de `CvPage`. */
+const page = (path: string, format: CvFormat, lang: Lang): Route => ({
+  path,
+  component: CvPage,
+  data: { format, lang },
+});
+
+/**
+ * Chemins repris par `cvPath` (`cv/ui-text.ts`). En production, `/` et `/en` sont redirigés
+ * (301) par le `Caddyfile` avant d'atteindre l'application ; les redirections ci-dessous
+ * servent la navigation interne et `ng serve`.
+ */
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', component: CvPage, data: { lang: 'fr' satisfies Lang } },
-  { path: 'en', component: CvPage, data: { lang: 'en' satisfies Lang } },
-  { path: '**', redirectTo: '' },
+  page('ch', 'ch', 'fr'),
+  page('ch/en', 'ch', 'en'),
+  page('fr', 'fr', 'fr'),
+  page('fr/en', 'fr', 'en'),
+  { path: 'en', redirectTo: 'ch/en' },
+  { path: '**', redirectTo: 'ch' },
 ];

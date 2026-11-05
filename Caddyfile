@@ -20,6 +20,9 @@
 		not file
 	}
 
+	# Page inconnue : ni fichier, ni dossier prérendu.
+	@unknownPage not file {path} {path}/index.html
+
 	# `route` fige l'ordre des directives : sans lui, Caddy réordonne les deux
 	# `header` et le Cache-Control final n'est plus prévisible.
 	route {
@@ -27,11 +30,19 @@
 		header @immutable Cache-Control "public, max-age=31536000, immutable"
 		header -Server
 
+		# Le CV vit sous /ch et /fr (format suisse ou français) ; les adresses déjà
+		# données (/ et /en) restent valables. Le prérendu ne produit aucune page à
+		# ces deux chemins.
+		redir / /ch{?query} 301
+		redir /en /ch/en{?query} 301
+		redir /en/ /ch/en{?query} 301
+
 		encode zstd gzip
 
 		respond @missingAsset 404
-		# `{path}/index.html` : chaque langue prérendue a son dossier (`/en` → en/index.html).
-		try_files {path} {path}/index.html /index.html
+		redir @unknownPage /ch 302
+		# `{path}/index.html` : chaque page prérendue a son dossier (`/ch/en` → ch/en/index.html).
+		try_files {path} {path}/index.html
 		file_server
 	}
 }

@@ -1,14 +1,16 @@
 import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { routes } from './app.routes';
+import { DEFAULT_STYLE } from './cv/cv.config';
 import { CV, CV_DATA } from './cv/cv.data';
-import { Cv } from './cv/cv.model';
+import { Cv, CvFormat, Lang } from './cv/cv.model';
+import { STYLE_STORAGE_KEY } from './cv/cv-style';
 import { UI_TEXT } from './cv/ui-text';
 
-const render = async (url: string, cv: Cv = CV): Promise<HTMLElement> => {
+const setup = async (url: string, cv: Cv = CV): Promise<RouterTestingHarness> => {
   TestBed.configureTestingModule({
     providers: [
       provideRouter(routes, withComponentInputBinding()),
@@ -18,134 +20,285 @@ const render = async (url: string, cv: Cv = CV): Promise<HTMLElement> => {
   const harness = await RouterTestingHarness.create(url);
   harness.detectChanges();
   await harness.fixture.whenStable();
-  return harness.routeNativeElement as HTMLElement;
+  return harness;
 };
 
-const headings = (page: HTMLElement) =>
-  Array.from(page.querySelectorAll('h2'), (h2) => h2.textContent?.trim());
+const render = async (url: string, cv: Cv = CV): Promise<HTMLElement> =>
+  (await setup(url, cv)).routeNativeElement as HTMLElement;
+
+const html = () => document.documentElement;
+const sobre = (page: HTMLElement) => page.querySelector('app-layout-sobre') as HTMLElement;
+const commentaires = (page: HTMLElement) =>
+  page.querySelector('app-layout-commentaires') as HTMLElement;
+const editeur = (page: HTMLElement) => page.querySelector('app-layout-editeur') as HTMLElement;
+const styleSelect = (page: HTMLElement) =>
+  page.querySelector<HTMLSelectElement>('select') as HTMLSelectElement;
+
+const personalCv: Cv = {
+  ...CV,
+  personal: {
+    photo: '/img/photo.jpg',
+    birthDate: '1990-03-15',
+    nationality: { fr: 'Française', en: 'French' },
+    permit: { fr: 'Permis G', en: 'G permit' },
+    availability: { fr: 'Immédiate', en: 'Immediately' },
+    workload: { fr: '80–100 %', en: '80–100%' },
+    referencesOnRequest: true,
+  },
+};
 
 describe('App', () => {
   afterEach(() => {
     const document = TestBed.inject(DOCUMENT);
-    document.head.querySelectorAll('link[rel="alternate"]').forEach((link) => link.remove());
+    document.head
+      .querySelectorAll('link[rel="alternate"], link[rel="canonical"]')
+      .forEach((link) => link.remove());
     document.documentElement.removeAttribute('data-theme');
+    document.documentElement.removeAttribute('data-style');
+    document.defaultView?.localStorage.clear();
+    vi.restoreAllMocks();
   });
 
-  describe('in French, at /', () => {
-    let page: HTMLElement;
+  const pages: { url: string; format: CvFormat; lang: Lang; other: string }[] = [
+    { url: '/ch', format: 'ch', lang: 'fr', other: '/ch/en' },
+    { url: '/ch/en', format: 'ch', lang: 'en', other: '/ch' },
+    { url: '/fr', format: 'fr', lang: 'fr', other: '/fr/en' },
+    { url: '/fr/en', format: 'fr', lang: 'en', other: '/fr' },
+  ];
 
-    beforeEach(async () => {
-      page = await render('/');
+  for (const { url, lang, other } of pages) {
+    describe(`at ${url}`, () => {
+      let page: HTMLElement;
+
+      beforeEach(async () => {
+        page = await render(url);
+      });
+
+      it(`sets <html lang="${lang}">, the title and the description`, () => {
+        const document = TestBed.inject(DOCUMENT);
+        expect(html().getAttribute('lang')).toBe(lang);
+        expect(TestBed.inject(Title).getTitle()).toBe(`${CV.name} — ${CV.headline[lang]}`);
+        expect(
+          document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
+        ).toBe(CV.description[lang]);
+      });
+
+      it('declares its canonical URL and the four alternates', () => {
+        const head = TestBed.inject(DOCUMENT).head;
+        expect(head.querySelectorAll('link[rel="canonical"]').length).toBe(1);
+        expect(head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+          `https://yannhurry.fr${url}`,
+        );
+        const alternates = Array.from(head.querySelectorAll('link[rel="alternate"]'), (link) => [
+          link.getAttribute('hreflang'),
+          link.getAttribute('href'),
+        ]);
+        expect(alternates).toEqual([
+          ['fr-CH', 'https://yannhurry.fr/ch'],
+          ['en-CH', 'https://yannhurry.fr/ch/en'],
+          ['fr-FR', 'https://yannhurry.fr/fr'],
+          ['en-FR', 'https://yannhurry.fr/fr/en'],
+          ['x-default', 'https://yannhurry.fr/ch'],
+        ]);
+      });
+
+      it('renders the content and labels in its language, in every layout', () => {
+        for (const layout of [sobre(page), commentaires(page)]) {
+          expect(layout.querySelector('h1')?.textContent).toContain(CV.name);
+          expect(layout.textContent).toContain(CV.headline[lang]);
+          expect(layout.textContent).toContain(UI_TEXT[lang].experiencesTitle);
+          expect(layout.querySelector('.entry h3')?.textContent).toBe(CV.experiences[0].role[lang]);
+          expect(layout.querySelectorAll('section .entry').length).toBe(
+            CV.experiences.length + CV.education.length,
+          );
+        }
+        expect(editeur(page).textContent).toContain(`'${CV.experiences[0].role[lang]}'`);
+        expect(page.textContent).toContain(UI_TEXT[lang].present);
+      });
+
+      it('switches language and keeps the format', () => {
+        const link = page.querySelector<HTMLAnchorElement>('a[hreflang]');
+        expect(link?.getAttribute('href')).toBe(other);
+        expect(link?.textContent?.trim()).toBe(UI_TEXT[lang].otherLanguage);
+        expect(link?.getAttribute('aria-label')).toBe(UI_TEXT[lang].otherLanguageLabel);
+      });
+    });
+  }
+
+  describe('redirections', () => {
+    it.each([
+      ['/', '/ch'],
+      ['/en', '/ch/en'],
+      ['/nope', '/ch'],
+    ])('sends %s to %s', async (from, to) => {
+      await setup(from);
+      expect(TestBed.inject(Router).url).toBe(to);
+    });
+  });
+
+  describe('personal data', () => {
+    it('is shown in the Swiss format when filled in, except by the editor layout', async () => {
+      const page = await render('/ch', personalCv);
+      for (const layout of [sobre(page), commentaires(page)]) {
+        expect(layout.querySelector('img')?.getAttribute('src')).toBe('/img/photo.jpg');
+        expect(layout.querySelector('img')?.getAttribute('alt')).toBe(CV.name);
+        const facts = Array.from(layout.querySelectorAll('.personal dt'), (dt) => dt.textContent);
+        expect(facts).toEqual([
+          UI_TEXT.fr.birthDate,
+          UI_TEXT.fr.nationality,
+          UI_TEXT.fr.permit,
+          UI_TEXT.fr.availability,
+          UI_TEXT.fr.workload,
+        ]);
+        expect(layout.textContent).toContain('15.03.1990');
+        expect(layout.textContent).toContain('Permis G');
+        expect(layout.textContent).toContain(UI_TEXT.fr.referencesOnRequest);
+      }
+      expect(editeur(page).textContent).not.toContain('Permis G');
+      expect(editeur(page).querySelector('img')).toBeNull();
     });
 
-    it('renders the name as the page heading', () => {
-      expect(page.querySelector('h1')?.textContent).toContain(CV.name);
+    it('is translated in English', async () => {
+      const page = await render('/ch/en', personalCv);
+      expect(sobre(page).textContent).toContain('G permit');
+      expect(sobre(page).textContent).toContain(UI_TEXT.en.referencesOnRequest);
     });
 
-    it('renders French content and labels', () => {
-      expect(page.querySelector('.headline')?.textContent).toBe(CV.headline.fr);
-      expect(headings(page)).toEqual([UI_TEXT.fr.experiencesTitle, UI_TEXT.fr.educationTitle]);
-      expect(page.querySelector('.entry h3')?.textContent).toBe(CV.experiences[0].role.fr);
-      expect(page.querySelector('.period')?.textContent).toContain("aujourd'hui");
+    it('is hidden in the French format', async () => {
+      const page = await render('/fr', personalCv);
+      for (const layout of [sobre(page), commentaires(page), editeur(page)]) {
+        expect(layout.querySelector('img')).toBeNull();
+        expect(layout.querySelector('.personal dt')?.textContent).not.toBe(UI_TEXT.fr.birthDate);
+        expect(layout.textContent).not.toContain('Permis G');
+        expect(layout.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
+      }
     });
 
-    it('renders one entry per experience and per education item', () => {
-      const sections = page.querySelectorAll('section');
-      expect(sections[0].querySelectorAll('.entry').length).toBe(CV.experiences.length);
-      expect(sections[1].querySelectorAll('.entry').length).toBe(CV.education.length);
-    });
-
-    it('keeps icons out of the accessible name of links and headings', () => {
-      const icons = page.querySelectorAll('app-icon svg');
-      expect(icons.length).toBeGreaterThan(0);
-      icons.forEach((svg) => expect(svg.getAttribute('aria-hidden')).toBe('true'));
-      expect(page.querySelector('.links a')?.textContent?.trim()).toBe(CV.links[0].label);
-    });
-
-    it('opens external links in a new tab without leaking the opener', () => {
-      const link = page.querySelector<HTMLAnchorElement>('.links a');
-      expect(link?.target).toBe('_blank');
-      expect(link?.rel).toContain('noopener');
-    });
-
-    it('links to the English version with a label in French', () => {
-      const link = page.querySelector<HTMLAnchorElement>('a[hreflang]');
-      expect(link?.getAttribute('href')).toBe('/en');
-      expect(link?.getAttribute('hreflang')).toBe('en');
-      expect(link?.textContent?.trim()).toBe('EN');
-      expect(link?.getAttribute('aria-label')).toBe(UI_TEXT.fr.otherLanguageLabel);
-    });
-
-    it('sets the document language, title, description and hreflang alternates', () => {
-      const document = TestBed.inject(DOCUMENT);
-      expect(document.documentElement.getAttribute('lang')).toBe('fr');
-      expect(TestBed.inject(Title).getTitle()).toBe(`${CV.name} — ${CV.headline.fr}`);
-      expect(
-        document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
-      ).toBe(CV.description.fr);
-      const alternates = Array.from(
-        document.head.querySelectorAll('link[rel="alternate"]'),
-        (link) => [link.getAttribute('hreflang'), link.getAttribute('href')],
+    it('shows only the fields filled in', async () => {
+      const page = await render('/ch', {
+        ...CV,
+        personal: { permit: { fr: 'Permis G', en: 'G permit' }, nationality: { fr: '', en: '' } },
+      });
+      const facts = Array.from(
+        sobre(page).querySelectorAll('.personal dt'),
+        (dt) => dt.textContent,
       );
-      expect(alternates).toEqual([
-        ['fr', 'https://yannhurry.fr/'],
-        ['en', 'https://yannhurry.fr/en'],
-        ['x-default', 'https://yannhurry.fr/'],
+      expect(facts).toContain(UI_TEXT.fr.permit);
+      expect(facts).not.toContain(UI_TEXT.fr.nationality);
+      expect(sobre(page).querySelector('img')).toBeNull();
+      expect(sobre(page).textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
+    });
+
+    it('is absent from the published data', async () => {
+      const page = await render('/ch');
+      expect(page.querySelector('img')).toBeNull();
+      expect(commentaires(page).querySelector('.personal')).toBeNull();
+    });
+  });
+
+  it('shows languages with their level', async () => {
+    const page = await render('/ch/en', {
+      ...CV,
+      languages: [...CV.languages, { name: { fr: 'Anglais', en: 'English' }, level: 'B2' }],
+    });
+    const items = Array.from(sobre(page).querySelectorAll('.languages li'), (li) =>
+      li.textContent?.trim(),
+    );
+    expect(items).toEqual([`French — ${UI_TEXT.en.nativeLanguage}`, 'English — B2']);
+  });
+
+  describe('style picker', () => {
+    it('lists the styles with labels in the page language, the default first selected', async () => {
+      const page = await render('/ch/en');
+      const select = styleSelect(page);
+      expect(select.closest('label')?.textContent).toContain(UI_TEXT.en.styleLabel);
+      expect(Array.from(select.options, (option) => option.textContent?.trim())).toEqual([
+        UI_TEXT.en.styleNames.sobre,
+        UI_TEXT.en.styleNames.commentaires,
+        UI_TEXT.en.styleNames.editeur,
       ]);
+      expect(select.value).toBe(DEFAULT_STYLE);
+      expect(html().getAttribute('data-style')).toBe(DEFAULT_STYLE);
     });
 
-    it('shows no PDF link when none is declared', () => {
-      expect(page.querySelector('a[download]')).toBeNull();
-    });
-  });
+    it('switches style and remembers the choice', async () => {
+      const page = await render('/ch');
+      const select = styleSelect(page);
+      select.value = 'editeur';
+      select.dispatchEvent(new Event('change'));
+      TestBed.tick();
 
-  describe('in English, at /en', () => {
-    let page: HTMLElement;
-
-    beforeEach(async () => {
-      page = await render('/en');
-    });
-
-    it('renders English content and labels', () => {
-      expect(page.querySelector('.headline')?.textContent).toBe(CV.headline.en);
-      expect(headings(page)).toEqual([UI_TEXT.en.experiencesTitle, UI_TEXT.en.educationTitle]);
-      expect(page.querySelector('.entry h3')?.textContent).toBe(CV.experiences[0].role.en);
-      expect(page.querySelector('.period')?.textContent).toContain('present');
-      const degrees = Array.from(page.querySelectorAll('section')[1].querySelectorAll('h3'));
-      expect(degrees.map((h3) => h3.textContent)).toEqual(CV.education.map((e) => e.degree.en));
+      expect(html().getAttribute('data-style')).toBe('editeur');
+      expect(localStorage.getItem(STYLE_STORAGE_KEY)).toBe('editeur');
+      expect(select.value).toBe('editeur');
     });
 
-    it('links back to the French version with a label in English', () => {
-      const link = page.querySelector<HTMLAnchorElement>('a[hreflang]');
-      expect(link?.getAttribute('href')).toBe('/');
-      expect(link?.textContent?.trim()).toBe('FR');
-      expect(link?.getAttribute('aria-label')).toBe(UI_TEXT.en.otherLanguageLabel);
+    it('keeps the style when the language changes', async () => {
+      const harness = await setup('/ch');
+      const page = harness.routeNativeElement as HTMLElement;
+      const select = styleSelect(page);
+      select.value = 'commentaires';
+      select.dispatchEvent(new Event('change'));
+      await harness.navigateByUrl('/ch/en');
+      await harness.fixture.whenStable();
+
+      expect(html().getAttribute('data-style')).toBe('commentaires');
+      expect(styleSelect(harness.routeNativeElement as HTMLElement).value).toBe('commentaires');
     });
 
-    it('sets the document language and title in English', () => {
-      expect(TestBed.inject(DOCUMENT).documentElement.getAttribute('lang')).toBe('en');
-      expect(TestBed.inject(Title).getTitle()).toBe(`${CV.name} — ${CV.headline.en}`);
+    it('still switches when storage throws', async () => {
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new DOMException('quota', 'QuotaExceededError');
+      });
+      const page = await render('/ch');
+      const select = styleSelect(page);
+      select.value = 'commentaires';
+      expect(() => select.dispatchEvent(new Event('change'))).not.toThrow();
+      expect(html().getAttribute('data-style')).toBe('commentaires');
     });
-  });
 
-  it('falls back to the French CV on an unknown URL', async () => {
-    const page = await render('/nope');
-    expect(page.querySelector('.headline')?.textContent).toBe(CV.headline.fr);
+    it('applies a known ?style= and drops it from the URL once the visitor picks a style', async () => {
+      const page = await render('/fr?style=editeur');
+      const select = styleSelect(page);
+      expect(select.value).toBe('editeur');
+      expect(html().getAttribute('data-style')).toBe('editeur');
+
+      select.value = 'commentaires';
+      select.dispatchEvent(new Event('change'));
+      await TestBed.inject(Router).navigated;
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(TestBed.inject(Router).url).toBe('/fr');
+      expect(html().getAttribute('data-style')).toBe('commentaires');
+    });
+
+    it('falls back to the default on an unknown ?style=, even over the style already applied', async () => {
+      html().setAttribute('data-style', 'editeur');
+      const page = await render('/ch?style=bogus');
+      expect(styleSelect(page).value).toBe(DEFAULT_STYLE);
+      expect(html().getAttribute('data-style')).toBe(DEFAULT_STYLE);
+    });
+
+    it('keeps the style set by the inline script', async () => {
+      html().setAttribute('data-style', 'commentaires');
+      const page = await render('/ch');
+      expect(styleSelect(page).value).toBe('commentaires');
+    });
+
+    it('carries ?style= over to the other language', async () => {
+      const page = await render('/ch?style=editeur');
+      expect(page.querySelector('a[hreflang]')?.getAttribute('href')).toBe('/ch/en?style=editeur');
+    });
   });
 
   describe('language switch', () => {
     it('leaves the focus alone on first load', async () => {
-      const page = await render('/');
-      const document = TestBed.inject(DOCUMENT);
-      expect(document.activeElement).not.toBe(page.querySelector('a[hreflang]'));
+      const page = await render('/ch');
+      expect(TestBed.inject(DOCUMENT).activeElement).not.toBe(page.querySelector('a[hreflang]'));
     });
 
     it('moves the focus back to the language link of the new page', async () => {
-      TestBed.configureTestingModule({
-        providers: [provideRouter(routes, withComponentInputBinding())],
-      });
-      const harness = await RouterTestingHarness.create('/');
-      await harness.navigateByUrl('/en');
+      const harness = await setup('/ch');
+      await harness.navigateByUrl('/ch/en');
       await harness.fixture.whenStable();
 
       const page = harness.routeNativeElement as HTMLElement;
@@ -159,21 +312,21 @@ describe('App', () => {
     const withFrenchPdf: Cv = { ...CV, pdf: { fr: '/pdf/yann-hurry-cv-fr.pdf' } };
 
     it('is shown, as a download, for the language that declares one', async () => {
-      const page = await render('/', withFrenchPdf);
+      const page = await render('/fr', withFrenchPdf);
       const link = page.querySelector<HTMLAnchorElement>('a[download]');
       expect(link?.getAttribute('href')).toBe('/pdf/yann-hurry-cv-fr.pdf');
       expect(link?.getAttribute('aria-label')).toBe(UI_TEXT.fr.downloadPdfLabel);
     });
 
     it('is hidden for a language without one', async () => {
-      const page = await render('/en', withFrenchPdf);
+      const page = await render('/ch/en', withFrenchPdf);
       expect(page.querySelector('a[download]')).toBeNull();
     });
   });
 
   describe('theme button', () => {
     it('toggles dark mode and reports its state', async () => {
-      const page = await render('/');
+      const page = await render('/ch');
       const button = page.querySelector<HTMLButtonElement>('button.tool');
       expect(button?.getAttribute('aria-label')).toBe(UI_TEXT.fr.darkThemeLabel);
       expect(button?.getAttribute('aria-pressed')).toBe('false');
@@ -182,7 +335,15 @@ describe('App', () => {
       TestBed.tick();
 
       expect(button?.getAttribute('aria-pressed')).toBe('true');
-      expect(TestBed.inject(DOCUMENT).documentElement.getAttribute('data-theme')).toBe('dark');
+      expect(html().getAttribute('data-theme')).toBe('dark');
     });
+  });
+
+  it('opens external links in a new tab without leaking the opener', async () => {
+    const page = await render('/ch');
+    const link = sobre(page).querySelector<HTMLAnchorElement>(`a[href="${CV.links[0].url}"]`);
+    expect(link?.target).toBe('_blank');
+    expect(link?.rel).toContain('noopener');
+    expect(link?.textContent?.trim()).toBe(CV.links[0].label);
   });
 });

@@ -8,8 +8,17 @@ export interface Localized {
 
 export type Lang = keyof Localized;
 
+/**
+ * Format du CV, porté par la route : `ch` (suisse) affiche les données personnelles, `fr`
+ * (France) les tait.
+ */
+export type CvFormat = 'ch' | 'fr';
+
 /** Mois au format `AAAA-MM`. */
 export type YearMonth = `${number}-${number}`;
+
+/** Jour au format `AAAA-MM-JJ`. */
+export type IsoDate = `${number}-${number}-${number}`;
 
 export interface Period {
   start: YearMonth;
@@ -39,6 +48,37 @@ export interface ProfileLink {
   icon: IconName;
 }
 
+export interface SkillGroup {
+  name: Localized;
+  items: string[];
+}
+
+export type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
+export interface SpokenLanguage {
+  name: Localized;
+  /** Niveau CECR pour une langue étrangère. */
+  level: CefrLevel | 'native';
+}
+
+/**
+ * Mentions d'usage sur un CV suisse, absentes d'un CV français : affichées en format `ch`
+ * seulement, et chacune seulement si elle est renseignée.
+ */
+export interface Personal {
+  /** Chemin public de la photo (`/img/…`), fichier déposé dans `public/`. */
+  photo?: string;
+  birthDate?: IsoDate;
+  nationality?: Localized;
+  /** Permis de séjour ou de travail (ex. permis G). */
+  permit?: Localized;
+  availability?: Localized;
+  /** Taux d'activité recherché (ex. 80–100 %). */
+  workload?: Localized;
+  /** Affiche « Références sur demande ». */
+  referencesOnRequest?: boolean;
+}
+
 export interface Cv {
   name: string;
   headline: Localized;
@@ -49,7 +89,10 @@ export interface Cv {
    * sans PDF déclaré n'affiche pas de lien.
    */
   pdf?: Partial<Localized>;
+  personal?: Personal;
   links: ProfileLink[];
   experiences: Experience[];
+  skills: SkillGroup[];
   education: Education[];
+  languages: SpokenLanguage[];
 }
