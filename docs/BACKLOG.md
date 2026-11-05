@@ -11,7 +11,7 @@ Format d'un ticket : `## [ID] Titre`, `Statut`, critères d'acceptation en cases
 
 ## [CV-02] Réglages GitHub et premier passage de la CI
 
-Statut : à faire — **utilisateur** (`gh` absent de la machine)
+Statut : à faire — **utilisateur** (jeton `gh` en lecture seule)
 
 - [ ] Dépôt `hurryy/cv` : protection de `master` et `dev` (PR obligatoire, check `cv` requis,
       pas de force-push), « Allow auto-merge » décoché
@@ -83,6 +83,54 @@ d'activité), langues au niveau CECR, références, 2 pages A4 max.
 - [ ] PDF téléchargeable, généré depuis la même source
 - [ ] Ouverture publique : retirer `import preview` du bloc CV dans `edge/conf/Caddyfile`
 
+## [CV-07] Français / anglais, thème clair / sombre, PDF téléchargeables
+
+Statut : fait le 2026-11-05, non déployé (routes `/` et `/en`, remplacées par CV-08)
+
+Choix faits en autonomie (2026-11-05), à confirmer par l'utilisateur :
+- Traduction à l'exécution, pas `@angular/localize` : une seule build, un seul jeu de données.
+  Chaque texte traduisible de `cv.data.ts` est un `{ fr, en }` ; dates, URL, noms propres et
+  stack restent uniques, donc rien ne diverge entre les deux langues.
+- Deux routes prérendues : `/` (français) et `/en` (anglais) — un lien direct vers le CV
+  anglais à donner à un recruteur. Le bouton FR/EN navigue entre les deux.
+- Thème : `prefers-color-scheme` par défaut, bouton qui force clair ou sombre, mémorisé en
+  `localStorage` (lecture et écriture protégées). Script inline dans `index.html` pour éviter
+  le flash du mauvais thème. L'impression reste toujours claire.
+- PDF : fichiers fournis par l'utilisateur dans `public/pdf/` ; le lien de la langue affichée
+  n'apparaît que si `cv.data.ts` déclare le fichier. La génération depuis la source (CV-05)
+  reste possible plus tard.
+
+- [x] Modèle : type `Localized = { fr: string; en: string }` pour les textes traduisibles
+- [x] Libellés d'interface (titres de section, boutons, « aujourd'hui » de la période) dans
+      les deux langues, hors template
+- [x] `/` et `/en` prérendus, `<html lang>`, `<title>` et meta description par langue,
+      `hreflang` alternés
+- [x] Caddyfile de l'image : `/en` sert `en/index.html`, pas l'index français
+- [x] Bouton FR/EN et bouton de thème accessibles (libellé, `aria-pressed` ou équivalent)
+- [x] Thème sombre par variables CSS, contraste AA ; impression claire
+- [x] Lien PDF par langue, `download`, masqué si non déclaré
+- [x] Tests : rendu des deux langues, bascule de thème, lien PDF absent / présent
+
+## [CV-08] Styles au choix (liste déroulante)
+
+Statut : à faire — après CV-07 (mêmes fichiers). Maquettes : https://claude.ai/artifact/VSC8wvwUfgEphZ9GTcVhuU
+
+Demande de l'utilisateur (2026-11-05) : styles A, C et D (B abandonné). Format suisse par
+défaut ; routes (choix de l'utilisateur, 2026-11-05) : `/ch` et `/fr` en français, `/ch/en` et `/fr/en` en anglais ; `/` et l'actuel `/en` redirigent (301) vers `/ch` et `/ch/en`. Format sur A et D seulement.
+
+- [ ] Format porté par la route (`data.format`), prérendu, hreflang et canonical cohérents. Suisse : photo, nationalité /
+      permis, date de naissance ou âge, disponibilité, taux d'activité, langues CECR,
+      « références sur demande ». France : sans ces mentions personnelles. A et D seulement,
+      C ignore le réglage. Champs fournis par l'utilisateur, masqués tant qu'ils sont vides
+- [ ] Liste déroulante « Style » : Commentaires (A, défaut), Sobre (D), Éditeur (C) ;
+      libellés FR/EN ; `<select>` natif avec `<label>`
+- [ ] Choix mémorisé en `localStorage` (protégé), et `?style=` pour un lien direct
+- [ ] Un composant de mise en page par style, tous lisant `cv.data.ts` ; aucun texte en dur
+- [ ] Chaque style fonctionne en clair et en sombre (CV-07)
+- [ ] Impression : toujours le style Sobre, clair, A4, quel que soit le style affiché
+- [ ] Prérendu : style par défaut, sans flash au changement côté navigateur
+- [ ] Tests : changement de style, valeur `?style=` inconnue → défaut
+
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
 Statut : à faire — avant le branchement d'app-shop
@@ -119,8 +167,8 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 |---|---|
 | Mis à jour | 2026-11-05 |
 | Dernière tâche terminée | kit agents : secrets (settings + hook), `check.ps1`, relecteur sans shell, `/feature` réécrit |
-| Tâche en cours | aucune — CV-03 attend l'exécution du script par l'utilisateur |
+| Tâche en cours | CV-08 (styles A/C/D, routes `/ch` `/fr` `/ch/en` `/fr/en`) ; CV-03 attend l'exécution du script par l'utilisateur |
 | Prochaine action | Utilisateur : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03). Claude : CV-04 dès que `cv.data.ts` est rempli |
-| Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 2 fichiers / 6 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 |
-| Livré, non déployé | CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
+| Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 3 fichiers / 27 tests ; image : `/`, `/en` 200, asset et PDF absents 404 ; shellcheck `edge/bootstrap-vps.sh` à 0 |
+| Livré, non déployé | CV-07 (FR/EN, thème, lien PDF), CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
 | Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
