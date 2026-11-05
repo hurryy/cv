@@ -13,10 +13,10 @@
 	# être mis en cache, sinon un déploiement reste invisible.
 	@immutable path *.js *.css *.woff2
 
-	# Un asset absent (ancien hash après déploiement) rend 404 : sans ça,
-	# try_files servirait index.html sous une URL .js, marqué immuable.
+	# Un asset absent (ancien hash après déploiement, PDF non fourni) rend 404 :
+	# sans ça, try_files servirait index.html sous une URL .js, marqué immuable.
 	@missingAsset {
-		path *.js *.css *.woff2 *.ico
+		path *.js *.css *.woff2 *.ico *.pdf
 		not file
 	}
 
@@ -30,7 +30,8 @@
 		encode zstd gzip
 
 		respond @missingAsset 404
-		try_files {path} /index.html
+		# `{path}/index.html` : chaque langue prérendue a son dossier (`/en` → en/index.html).
+		try_files {path} {path}/index.html /index.html
 		file_server
 	}
 }

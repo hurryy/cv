@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="CV de Yann HURRY, développeur .NET et Angular, Annecy – Genève.">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Pose le thème mémorisé avant le premier rendu, sans quoi la page clignote. Clé : THEME_STORAGE_KEY (src/app/cv/theme.ts). -->
+  <script>try{var t=localStorage.getItem('cv-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
   <app-root></app-root>

@@ -1,15 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CV } from './cv/cv.data';
-import { Icon } from './cv/icon';
-import { PeriodPipe } from './cv/period.pipe';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [Icon, PeriodPipe],
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  imports: [RouterOutlet],
+  template: '<router-outlet />',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {
-  protected readonly cv = CV;
-}
+export class App {}
