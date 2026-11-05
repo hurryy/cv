@@ -24,13 +24,35 @@ Statut : à faire — **utilisateur** (`gh` absent de la machine)
 
 ## [CV-03] VPS OVH neuf
 
-Statut : script prêt (`edge/bootstrap-vps.sh`, shellcheck propre, jamais exécuté) —
-exécution avec l'utilisateur
+Statut : script corrigé et relu le 2026-11-05 (`edge/bootstrap-vps.sh`, shellcheck propre,
+durcissement SSH vérifié sur un vrai sshd en conteneur, jamais exécuté sur le VPS) —
+exécution par l'utilisateur
 
 Prérequis utilisateur : VPS commandé ou réinstallé en **Ubuntu 24.04 LTS** avec sa clé SSH
 personnelle ; une **paire de clés dédiée au déploiement** (`ssh-keygen -t ed25519 -f
 deploy_cv -C deploy@github`) dont la publique est passée au script et la privée va dans le
 secret `SSH_KEY`.
+
+VPS retenu (2026-11-05) : OVH VPS 2020 Value 1-2-40 (1 vCore, 2 Go, 40 Go), réinstallé en
+Ubuntu 24.04 par l'utilisateur avec sa clé personnelle. **Toute action sur le VPS est faite
+par l'utilisateur**, jamais par Claude. `ACME_EMAIL` : l'adresse du compte de l'utilisateur.
+
+Défauts du script relevés le 2026-11-05, corrigés le jour même (non exécutés sur le VPS) :
+- [x] Les clés reprises de `/root/.ssh/authorized_keys` portent sur les images OVH une option
+      `command="…Please login as the user ubuntu…"` : recopiées telles quelles, elles
+      bloquent `deploy`. Reprendre les clés de l'administrateur qui lance le script
+      (`$SUDO_USER`), options de ligne retirées
+- [x] L'en-tête documente `ssh root@<ip>`, fermé sur les images OVH : `ssh -t ubuntu@<ip>`,
+      `tmux`, puis `sudo bash` dans la session
+- [x] Swap de 2 Go (fichier, rejouable, `vm.swappiness=10`) : 2 Go de RAM ne suffisent pas
+      à MySQL + Nest d'app-shop sans marge
+- [x] Le message final renvoie à un `edge/README` absent
+- [x] Durcissement SSH sans effet : `50-cloud-init.conf` (`PasswordAuthentication yes`) passe
+      avant `90-hardening.conf`, sshd gardant la première valeur ; fichier renommé
+      `00-hardening.conf` et effet relu par `sshd -T`
+
+À voir plus tard : fail2ban peut bannir l'IP de l'utilisateur pendant ses essais de connexion,
+session ouverte comprise (10 min) ; `ignoreip` éventuel.
 
 - [ ] `edge/bootstrap-vps.sh` : utilisateur `deploy` par clé, root SSH coupé (seulement si un
       membre de sudo a une clé), `ufw` 22/80/443, `unattended-upgrades`, fail2ban, Docker
@@ -95,10 +117,10 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 
 | Champ | Valeur |
 |---|---|
-| Mis à jour | 2026-10-30 |
+| Mis à jour | 2026-11-05 |
 | Dernière tâche terminée | kit agents : secrets (settings + hook), `check.ps1`, relecteur sans shell, `/feature` réécrit |
-| Tâche en cours | aucune |
-| Prochaine action | CV-04 peut commencer tout de suite, indépendant de CV-02/03 : relire le contenu quand l'utilisateur a rempli `cv.data.ts` |
-| Contrôle | `check.ps1` 2026-10-30 : build, lint, test à 0 ; Vitest 2 fichiers / 6 tests |
+| Tâche en cours | aucune — CV-03 attend l'exécution du script par l'utilisateur |
+| Prochaine action | Utilisateur : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03). Claude : CV-04 dès que `cv.data.ts` est rempli |
+| Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 2 fichiers / 6 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 |
 | Livré, non déployé | CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
 | Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
