@@ -71,6 +71,10 @@ Statut : à faire — **utilisateur**, relecture par Claude
 
 - [ ] `src/app/cv/cv.data.ts` : expériences post-2020, compétences, langues, formations
 - [ ] Lien GitHub : l'ancien CV pointait vers une URL invalide, il a été retiré
+- [ ] Données suisses (`personal` : photo, naissance, nationalité, permis, dispo, taux), niveau
+      d'anglais (CECR), références sur demande. Une fois renseignées, elles partent dans le
+      bundle JS servi aussi sous `/fr` : masquées à l'écran, pas absentes
+- [ ] Compétences : CV-08 n'a mis que celles des expériences, plus C# et TypeScript
 
 ## [CV-05] Design et format franco-suisse
 
@@ -113,23 +117,24 @@ Choix faits en autonomie (2026-11-05), à confirmer par l'utilisateur :
 
 ## [CV-08] Styles au choix (liste déroulante)
 
-Statut : à faire — après CV-07 (mêmes fichiers). Maquettes : https://claude.ai/artifact/VSC8wvwUfgEphZ9GTcVhuU
+Statut : fait le 2026-11-05, non déployé ; rendu mobile 360px et impression à vérifier par l'utilisateur dans un navigateur. Maquettes : https://claude.ai/artifact/VSC8wvwUfgEphZ9GTcVhuU
 
 Demande de l'utilisateur (2026-11-05) : styles A, C et D (B abandonné). Format suisse par
 défaut ; routes (choix de l'utilisateur, 2026-11-05) : `/ch` et `/fr` en français, `/ch/en` et `/fr/en` en anglais ; `/` et l'actuel `/en` redirigent (301) vers `/ch` et `/ch/en`. Format sur A et D seulement.
 
-- [ ] Format porté par la route (`data.format`), prérendu, hreflang et canonical cohérents. Suisse : photo, nationalité /
+- [x] Format porté par la route (`data.format`), prérendu, hreflang et canonical cohérents. Suisse : photo, nationalité /
       permis, date de naissance ou âge, disponibilité, taux d'activité, langues CECR,
       « références sur demande ». France : sans ces mentions personnelles. A et D seulement,
       C ignore le réglage. Champs fournis par l'utilisateur, masqués tant qu'ils sont vides
-- [ ] Liste déroulante « Style » : Commentaires (A, défaut), Sobre (D), Éditeur (C) ;
+- [x] Liste déroulante « Style » : Sobre (D, défaut, choix du 2026-11-05), Commentaires (A), Éditeur (C) ;
       libellés FR/EN ; `<select>` natif avec `<label>`
-- [ ] Choix mémorisé en `localStorage` (protégé), et `?style=` pour un lien direct
-- [ ] Un composant de mise en page par style, tous lisant `cv.data.ts` ; aucun texte en dur
-- [ ] Chaque style fonctionne en clair et en sombre (CV-07)
-- [ ] Impression : toujours le style Sobre, clair, A4, quel que soit le style affiché
-- [ ] Prérendu : style par défaut, sans flash au changement côté navigateur
-- [ ] Tests : changement de style, valeur `?style=` inconnue → défaut
+- [x] Style par défaut : une seule constante de configuration, changée par simple redéploiement
+- [x] Choix mémorisé en `localStorage` (protégé), et `?style=` pour un lien direct
+- [x] Un composant de mise en page par style, tous lisant `cv.data.ts` ; aucun texte en dur
+- [x] Chaque style fonctionne en clair et en sombre (CV-07)
+- [x] Impression : toujours le style Sobre, clair, A4, quel que soit le style affiché
+- [x] Prérendu : style par défaut, sans flash au changement côté navigateur
+- [x] Tests : changement de style, valeur `?style=` inconnue → défaut
 
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
@@ -166,9 +171,9 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Champ | Valeur |
 |---|---|
 | Mis à jour | 2026-11-05 |
-| Dernière tâche terminée | kit agents : secrets (settings + hook), `check.ps1`, relecteur sans shell, `/feature` réécrit |
-| Tâche en cours | CV-08 (styles A/C/D, routes `/ch` `/fr` `/ch/en` `/fr/en`) ; CV-03 attend l'exécution du script par l'utilisateur |
-| Prochaine action | Utilisateur : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03). Claude : CV-04 dès que `cv.data.ts` est rempli |
-| Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 3 fichiers / 27 tests ; image : `/`, `/en` 200, asset et PDF absents 404 ; shellcheck `edge/bootstrap-vps.sh` à 0 |
-| Livré, non déployé | CV-07 (FR/EN, thème, lien PDF), CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
+| Dernière tâche terminée | CV-08 : styles Sobre (défaut, `DEFAULT_STYLE` de `cv.config.ts`), Commentaires, Éditeur ; routes `/ch` `/fr` `/ch/en` `/fr/en` |
+| Tâche en cours | aucune ; CV-03 attend l'exécution du script par l'utilisateur |
+| Prochaine action | Utilisateur : regarder `/ch` et `/fr/en` (3 styles, clair/sombre, mobile, impression) ; fournir CV-04 et les PDF. Puis exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03). Claude : CV-04 dès que `cv.data.ts` est rempli |
+| Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 5 fichiers / 62 tests ; image : `/` et `/en` 301, 4 routes 200, inconnu 302, asset absent 404 ; shellcheck `edge/bootstrap-vps.sh` à 0 |
+| Livré, non déployé | CV-08 (styles, routes pays), CV-07 (FR/EN, thème, lien PDF), CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
 | Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
