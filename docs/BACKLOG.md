@@ -157,6 +157,9 @@ public) ; adresse, téléphone, etc. seulement sur accord explicite.
 À arbitrer avec l'utilisateur : comment présenter une expérience en SSII, en régie chez un
 client (employeur et client, une ou plusieurs missions sous un même employeur, nom du client
 publiable ou non) — impacte le modèle (`Experience`), les deux styles et l'éditeur.
+Lié : secteurs métier par expérience (ex. RH, Congés, Énergie), champ `domains: Localized[]` ;
+en régie, secteur du client, donc par mission. Affichage à maquetter sans ajouter un 3e type
+de tag identique aux compétences et à la stack (texte sur la ligne entreprise, ou tag contour).
 
 - [ ] Style Commentaires, ordre : profil (ce que Yann cherche, sans répéter l'expérience
       actuelle), compétences en tags groupés, expériences, formations, langues
