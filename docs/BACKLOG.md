@@ -136,6 +136,38 @@ défaut ; routes (choix de l'utilisateur, 2026-11-05) : `/ch` et `/fr` en franç
 - [x] Prérendu : style par défaut, sans flash au changement côté navigateur
 - [x] Tests : changement de style, valeur `?style=` inconnue → défaut
 
+## [CV-09] Deux styles, Commentaires + Éditeur, bascule `</>`
+
+Statut : à faire — maquettes validées le 2026-11-06, contenu à extraire des PDF d'abord.
+Maquettes v2 : https://claude.ai/artifact/VSC8wvwUfgEphZ9GTcVhuU (Commentaires France,
+Commentaires Suisse longue, accordéons — écarté —, Éditeur).
+
+Décisions de l'utilisateur (2026-11-06) : on garde Commentaires (`/** */`) et Éditeur ; Sobre
+(trop générique) et Terminal sont abandonnés. Pas d'accordéon : description longue directe en
+format suisse (un accordéon fermé est vide dans le PDF). Une seule source, `cv.data.ts`, pour
+les deux langues, les deux formats et les deux styles : pas de fichier par CV ni par thème.
+
+Étape 1 — contenu (avant le code) : l'utilisateur dépose ses CV PDF perso et pro hors dépôt
+(ex. `C:\Development\yannhurry.fr\backups\`) et donne les chemins. Claude en extrait
+descriptions, réalisations, compétences et langues, puis remplit les maquettes. Données
+personnelles : ne reprendre que ce que l'utilisateur autorise à publier (`cv.data.ts` est
+public) ; adresse, téléphone, etc. seulement sur accord explicite.
+
+- [ ] Style Commentaires, ordre : profil (ce que Yann cherche, sans répéter l'expérience
+      actuelle), compétences en tags groupés, expériences, formations, langues
+- [ ] Expériences : années seules (`2020 → aujourd'hui`, `2020`), stack en tags comme les
+      compétences, `description` (2 lignes, partout)
+- [ ] Format suisse : `achievements` (3 à 5 réalisations par poste, `/ch` seulement), situation
+      (`personal`), « Références sur demande » ; 2 pages A4 au plus
+- [ ] Formations : ville affichée
+- [ ] Éditeur : un `export const` par section, une chaîne par entrée ; description et stack
+      dans un `/** … @stack … */` au-dessus ; toujours généré depuis `cv.data.ts`
+- [ ] Liste déroulante remplacée par un bouton `</>` (bascule Commentaires ↔ Éditeur,
+      `aria-pressed`), mémorisé comme le style actuel ; `?style=` conservé
+- [ ] Style par défaut et impression : Commentaires (clair, A4) ; layout Sobre supprimé
+- [ ] Modèle : `description: Localized`, `achievements?: Localized[]` ; tests mis à jour
+- [ ] PDF téléchargeables : les anciens ne correspondent plus, à refaire ou générer (CV-05)
+
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
 Statut : à faire — avant le branchement d'app-shop
@@ -170,10 +202,10 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 
 | Champ | Valeur |
 |---|---|
-| Mis à jour | 2026-11-05 |
+| Mis à jour | 2026-11-06 |
 | Dernière tâche terminée | CV-08 : styles Sobre (défaut, `DEFAULT_STYLE` de `cv.config.ts`), Commentaires, Éditeur ; routes `/ch` `/fr` `/ch/en` `/fr/en` |
-| Tâche en cours | aucune ; CV-03 attend l'exécution du script par l'utilisateur |
-| Prochaine action | Utilisateur : regarder `/ch` et `/fr/en` (3 styles, clair/sombre, mobile, impression) ; fournir CV-04 et les PDF. Puis exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03). Claude : CV-04 dès que `cv.data.ts` est rempli |
+| Tâche en cours | CV-09 (maquettes v2 validées) ; CV-03 attend l'exécution du script par l'utilisateur |
+| Prochaine action | Utilisateur : déposer ses CV PDF perso et pro hors dépôt et donner les chemins, dire quelles données personnelles peuvent être publiées. Claude : en extraire le contenu (CV-04), remplir les maquettes, puis coder CV-09. Utilisateur, en parallèle : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03) |
 | Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 5 fichiers / 62 tests ; image : `/` et `/en` 301, 4 routes 200, inconnu 302, asset absent 404 ; shellcheck `edge/bootstrap-vps.sh` à 0 |
 | Livré, non déployé | CV-08 (styles, routes pays), CV-07 (FR/EN, thème, lien PDF), CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
 | Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
