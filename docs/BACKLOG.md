@@ -138,7 +138,8 @@ défaut ; routes (choix de l'utilisateur, 2026-11-05) : `/ch` et `/fr` en franç
 
 ## [CV-09] Deux styles, Commentaires + Éditeur, bascule `</>`
 
-Statut : à faire — maquettes validées le 2026-11-06, contenu à extraire des PDF d'abord.
+Statut : à faire — maquettes v2 **non validées**, encore à retravailler avec l'utilisateur
+(avec le vrai contenu des PDF) ; aucun code avant validation.
 Maquettes v2 : https://claude.ai/artifact/VSC8wvwUfgEphZ9GTcVhuU (Commentaires France,
 Commentaires Suisse longue, accordéons — écarté —, Éditeur).
 
@@ -204,8 +205,8 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 |---|---|
 | Mis à jour | 2026-11-06 |
 | Dernière tâche terminée | CV-08 : styles Sobre (défaut, `DEFAULT_STYLE` de `cv.config.ts`), Commentaires, Éditeur ; routes `/ch` `/fr` `/ch/en` `/fr/en` |
-| Tâche en cours | CV-09 (maquettes v2 validées) ; CV-03 attend l'exécution du script par l'utilisateur |
-| Prochaine action | Utilisateur : déposer ses CV PDF perso et pro hors dépôt et donner les chemins, dire quelles données personnelles peuvent être publiées. Claude : en extraire le contenu (CV-04), remplir les maquettes, puis coder CV-09. Utilisateur, en parallèle : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03) |
+| Tâche en cours | CV-09 (maquettes v2 à retravailler, non validées) ; CV-03 attend l'exécution du script par l'utilisateur |
+| Prochaine action | Utilisateur : déposer ses CV PDF perso et pro hors dépôt et donner les chemins, dire quelles données personnelles peuvent être publiées. Claude : en extraire le contenu (CV-04), remplir les maquettes et les retravailler ensemble jusqu'à validation ; coder CV-09 seulement ensuite. Utilisateur, en parallèle : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03) |
 | Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 5 fichiers / 62 tests ; image : `/` et `/en` 301, 4 routes 200, inconnu 302, asset absent 404 ; shellcheck `edge/bootstrap-vps.sh` à 0 |
 | Livré, non déployé | CV-08 (styles, routes pays), CV-07 (FR/EN, thème, lien PDF), CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
 | Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
