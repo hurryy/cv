@@ -154,6 +154,10 @@ descriptions, réalisations, compétences et langues, puis remplit les maquettes
 personnelles : ne reprendre que ce que l'utilisateur autorise à publier (`cv.data.ts` est
 public) ; adresse, téléphone, etc. seulement sur accord explicite.
 
+À arbitrer avec l'utilisateur : comment présenter une expérience en SSII, en régie chez un
+client (employeur et client, une ou plusieurs missions sous un même employeur, nom du client
+publiable ou non) — impacte le modèle (`Experience`), les deux styles et l'éditeur.
+
 - [ ] Style Commentaires, ordre : profil (ce que Yann cherche, sans répéter l'expérience
       actuelle), compétences en tags groupés, expériences, formations, langues
 - [ ] Expériences : années seules (`2020 → aujourd'hui`, `2020`), stack en tags comme les
