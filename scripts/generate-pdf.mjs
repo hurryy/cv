@@ -9,7 +9,7 @@
 // Variables : CHROMIUM_BIN (binaire, `/usr/bin/chromium` par défaut, celui du paquet Debian),
 // PDF_NO_SANDBOX=1 (voir `chromiumArgs`).
 //
-// Code de sortie ≠ 0 si un PDF manque ou est vide ; un PDF de plus de 2 pages avertit seulement.
+// Code de sortie ≠ 0 si un PDF manque, est vide ou dépasse sa limite de pages (`MAX_PAGES`).
 
 import { execFile } from 'node:child_process';
 import { mkdir, readFile, rm, stat } from 'node:fs/promises';
@@ -21,9 +21,13 @@ import { promisify } from 'node:util';
 const run = promisify(execFile);
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)), 'dist/cv/browser');
-/** Pages prérendues ; doivent rester alignées sur `app.routes.ts`. */
+/** Pages prérendues ; alignées sur `app.routes.ts`, chaque format ayant sa limite `MAX_PAGES`. */
 const PAGES = ['/ch', '/ch/en', '/fr', '/fr/en'];
-const MAX_PAGES = 2;
+/**
+ * Pages au plus, par format (premier segment de la route) : un CV français tient sur une page,
+ * un CV suisse, plus détaillé, sur deux. Un dépassement fait échouer le build de l'image.
+ */
+const MAX_PAGES = { ch: 2, fr: 1 };
 const CHROMIUM = process.env.CHROMIUM_BIN || '/usr/bin/chromium';
 
 const TYPES = {
@@ -136,8 +140,13 @@ const main = async () => {
       }
       const pages = countPages(pdf);
       console.log(`${page} → ${pdfPath} : ${pages} page(s), ${pdf.length} octets`);
-      if (pages > MAX_PAGES) {
-        console.warn(`AVERTISSEMENT ${pdfPath} : ${pages} pages, ${MAX_PAGES} au plus visées`);
+      const max = MAX_PAGES[page.split('/')[1]];
+      if (max === undefined) {
+        console.error(`ERREUR ${page} : format sans limite de pages dans MAX_PAGES`);
+        failed = true;
+      } else if (pages > max) {
+        console.error(`ERREUR ${pdfPath} : ${pages} pages, ${max} au plus`);
+        failed = true;
       }
     }
   } finally {
