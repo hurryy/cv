@@ -104,7 +104,7 @@ Décisions de l'utilisateur (2026-11-07), qui remplacent celles du 2026-11-06 (C
 Éditeur, bascule `</>`) : une seule mise en page affichée, issue de Sobre. Commentaires et
 Éditeur restent dans le code mais ne sont plus accessibles (ni liste déroulante, ni `?style=`).
 Burger refusé : quatre entrées tiennent sur une ligne, un menu caché ajoute un tap et de la
-gestion de focus pour rien.
+gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rendu hétérogène).
 
 - [ ] Bandeau : photo (`/ch`), nom, titre, profil, ligne d'infos (lieu, année de naissance,
       nationalité et permis en `/ch`, langues), LinkedIn. Profil (choix de l'utilisateur, 2026-11-07 ; pas
@@ -123,12 +123,16 @@ gestion de focus pour rien.
 - [ ] Colonne droite sur bureau : compétences en pastilles groupées, formation ; « Références
       sur demande » en `/ch`
 - [ ] Mobile : barre de raccourcis collante (Expériences · Compétences · Formation, 44 px,
-      section en cours soulignée), réalisations repliées (`<details>`, « Réalisations (n) »)
-- [ ] Réalisations toujours dépliées sur bureau et à l'impression (un `<details>` fermé ne
-      s'imprime pas)
+      section en cours soulignée)
+- [ ] Bouton « Détails » sur chaque expérience, bureau et mobile, qui déplie en ligne
+      (`<details>`, pas de popin : décision du 2026-11-07) le contexte du poste et les
+      réalisations ; résumé et stack restent visibles. Contenu de détail tiré des PDF suisses,
+      complété par l'utilisateur
+- [ ] Impression et PDF : tout déplié (un `<details>` fermé ne s'imprime pas) ; la page en
+      ligne est la version courte, le PDF la version longue suisse, même source
 - [ ] Format suisse : `achievements` (3 à 5 par poste, `/ch` seulement) ; format France sans
       photo, infos personnelles ni réalisations
-- [ ] Modèle : `achievements?: Localized[]`, `domains?: Localized[]` (secteur du client en
+- [ ] Modèle : `achievements?: Localized[]`, `context?: Localized`, `domains?: Localized[]` (secteur du client en
       régie), `profile: Localized`, `highlight` sur les compétences ; contenu FR et EN depuis
       les PDF suisses, relu par l'utilisateur
 - [ ] Sélecteur de style retiré ; Commentaires et Éditeur conservés, non routés ; impression
