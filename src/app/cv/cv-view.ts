@@ -1,10 +1,15 @@
-import { Lang, Personal, SpokenLanguage } from './cv.model';
+import { Lang, Personal, SpokenLanguage, YearMonth } from './cv.model';
 import { UiText } from './ui-text';
 
 /** Une ligne « libellé : valeur » des données personnelles. */
 export interface PersonalFact {
   label: string;
   value: string;
+  /**
+   * La valeur se comprend seule (« Française », « Permis G ») : le libellé n'est lu que par les
+   * lecteurs d'écran.
+   */
+  selfDescribing?: boolean;
 }
 
 /** Données personnelles renseignées, dans l'ordre d'affichage ; la photo est à part. */
@@ -18,8 +23,12 @@ export const personalFacts = (
   }
   const facts: (PersonalFact | null)[] = [
     personal.birthYear ? { label: text.birthYear, value: String(personal.birthYear) } : null,
-    personal.nationality ? { label: text.nationality, value: personal.nationality[lang] } : null,
-    personal.permit ? { label: text.permit, value: personal.permit[lang] } : null,
+    personal.nationality
+      ? { label: text.nationality, value: personal.nationality[lang], selfDescribing: true }
+      : null,
+    personal.permit
+      ? { label: text.permit, value: personal.permit[lang], selfDescribing: true }
+      : null,
     personal.availability ? { label: text.availability, value: personal.availability[lang] } : null,
     personal.workload ? { label: text.workload, value: personal.workload[lang] } : null,
   ];
@@ -28,3 +37,9 @@ export const personalFacts = (
 
 export const languageLevel = (language: SpokenLanguage, text: UiText): string =>
   language.level === 'native' ? text.nativeLanguage : language.level;
+
+/** `2026-11` → « Mis à jour en novembre 2026 » / « Updated November 2026 ». */
+export const updatedLabel = (updated: YearMonth, text: UiText): string => {
+  const [year, month] = updated.split('-');
+  return `${text.updated} ${text.months[Number(month) - 1]} ${year}`;
+};

@@ -1,14 +1,4 @@
 <div class="toolbar">
-  <label class="style-picker">
-    <span>{{ text().styleLabel }}</span>
-    <select #styleSelect class="tool" (change)="selectStyle(styleSelect.value)">
-      @for (style of styleOptions; track style) {
-        <option [value]="style" [selected]="style === styles.style()">
-          {{ text().styleNames[style] }}
-        </option>
-      }
-    </select>
-  </label>
   <a
     #langLink
     class="tool"
@@ -18,12 +8,6 @@
     [attr.aria-label]="text().otherLanguageLabel"
     >{{ text().otherLanguage }}</a
   >
-  @if (pdf(); as pdf) {
-    <a class="tool" [href]="pdf" download [attr.aria-label]="text().downloadPdfLabel">
-      <app-icon name="download" />
-      {{ text().downloadPdf }}
-    </a>
-  }
   <button
     type="button"
     class="tool"
@@ -33,10 +17,14 @@
   >
     <app-icon name="dark_mode" />
   </button>
+  @if (pdf(); as pdf) {
+    <a class="tool primary" [href]="pdf" download [attr.aria-label]="text().downloadPdfLabel">
+      <app-icon name="download" />
+      {{ text().downloadPdf }}
+    </a>
+  }
 </div>
 
 <main>
   <app-layout-sobre [lang]="lang()" [format]="format()" />
-  <app-layout-commentaires [lang]="lang()" [format]="format()" />
-  <app-layout-editeur [lang]="lang()" />
 </main>

@@ -1,0 +1,14 @@
+// Points de rupture de la page et de sa mise en page. Une colonne sous `$two-columns`, sous une
+// barre de raccourcis collante ; effet page (feuille centrée, ombre) à partir de `$sheet`.
+$two-columns: 48rem;
+$sheet: 68.75rem;
+
+// Écran à une colonne. `screen` : une page A4 est plus étroite que `$two-columns`, et
+// l'impression suit pourtant la mise en page à deux colonnes.
+$narrow: 'screen and (width < #{$two-columns})';
+// Règles communes à l'écran à deux colonnes et à l'impression.
+$wide-or-print: 'print, (min-width: #{$two-columns})';
+
+// Sur écran étroit : hauteur de la barre de raccourcis collante (`cv/layouts/sobre.scss`) plus
+// une marge. Une ancre atteinte ou un élément focalisé s'arrête sous la barre.
+$shortcuts-clearance: 3.5rem;

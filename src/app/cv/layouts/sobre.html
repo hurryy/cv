@@ -1,111 +1,151 @@
-<div class="cv">
-  <div class="side">
+<div class="sheet">
+  <header class="banner">
+    @if (photo(); as photo) {
+      <img class="photo" [src]="photo" [alt]="cv.name" width="136" height="136" />
+    }
     <div class="identity">
-      @if (photo(); as photo) {
-        <img class="photo" [src]="photo" [alt]="cv.name" width="96" height="96" />
-      }
-      <h1>{{ cv.name }}</h1>
-      <p class="headline">{{ cv.headline[lang()] }}</p>
-    </div>
+      <div class="title">
+        <h1>{{ cv.name }}</h1>
+        <p class="headline">{{ cv.headline[lang()] }}</p>
+      </div>
+      <p class="profile">{{ cv.profile[lang()] }}</p>
 
-    <section aria-labelledby="sobre-contact">
-      <h2 id="sobre-contact" class="label">
-        <span aria-hidden="true">// </span>{{ text().contactTitle }}
-      </h2>
-      <ul class="plain">
-        @for (link of cv.links; track link.url) {
-          <li>
-            <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
-          </li>
-        }
-      </ul>
-      @if (facts().length) {
-        <dl class="facts personal">
-          @for (fact of facts(); track fact.label) {
-            <div>
-              <dt>{{ fact.label }}</dt>
-              <dd>{{ fact.value }}</dd>
-            </div>
-          }
-        </dl>
-      }
-    </section>
-
-    @if (cv.skills.length) {
-      <section aria-labelledby="sobre-skills">
-        <h2 id="sobre-skills" class="label">
-          <span aria-hidden="true">// </span>{{ text().skillsTitle }}
-        </h2>
-        <dl class="facts">
-          @for (group of cv.skills; track $index) {
-            <div>
-              <dt>{{ group.name[lang()] }}</dt>
-              <dd>
-                <ul class="inline">
-                  @for (item of group.items; track item) {
-                    <li>{{ item }}</li>
-                  }
-                </ul>
-              </dd>
-            </div>
-          }
-        </dl>
-      </section>
-    }
-
-    @if (languages().length) {
-      <section aria-labelledby="sobre-languages">
-        <h2 id="sobre-languages" class="label">
-          <span aria-hidden="true">// </span>{{ text().languagesTitle }}
-        </h2>
-        <ul class="plain languages">
-          @for (language of languages(); track language.name) {
-            <li>{{ language.name }} — {{ language.level }}</li>
-          }
-        </ul>
-      </section>
-    }
-  </div>
-
-  <div class="content">
-    <section aria-labelledby="sobre-experiences">
-      <h2 id="sobre-experiences" class="label rule">
-        <span aria-hidden="true">// </span>{{ text().experiencesTitle }}
-      </h2>
-      @for (experience of cv.experiences; track $index) {
-        <article class="entry">
-          <div class="title-row">
-            <h3>{{ experience.role[lang()] }}</h3>
-            <span class="period">{{ experience.period | period: lang() }}</span>
-          </div>
-          <p class="muted">{{ experience.company }} · {{ experience.location[lang()] }}</p>
-          <p>{{ experience.summary[lang()] }}</p>
-          <ul class="inline stack">
-            @for (tech of experience.stack; track tech) {
-              <li>{{ tech }}</li>
+      @if (cv.highlights?.length) {
+        <section class="highlights" aria-labelledby="highlights-title">
+          <h2 id="highlights-title" class="overline">{{ text().highlightsTitle }}</h2>
+          <ul class="pills">
+            @for (item of cv.highlights; track item) {
+              <li>{{ item }}</li>
             }
           </ul>
-        </article>
+        </section>
       }
-    </section>
 
-    <section aria-labelledby="sobre-education">
-      <h2 id="sobre-education" class="label rule">
-        <span aria-hidden="true">// </span>{{ text().educationTitle }}
-      </h2>
-      @for (education of cv.education; track $index) {
-        <article class="entry">
-          <div class="title-row">
-            <h3>{{ education.degree[lang()] }}</h3>
-            <span class="period">{{ education.period | period: lang() }}</span>
-          </div>
-          <p class="muted">{{ education.school }} · {{ education.location[lang()] }}</p>
-        </article>
-      }
-    </section>
+      <div class="infos">
+        @if (cv.location; as location) {
+          <span>{{ location[lang()] }}</span>
+        }
+        @if (facts().length) {
+          <dl class="personal">
+            @for (fact of facts(); track fact.label) {
+              <div>
+                <dt [class.visually-hidden]="fact.selfDescribing">{{ fact.label }}</dt>
+                <dd>{{ fact.value }}</dd>
+              </div>
+            }
+          </dl>
+        }
+        @if (languages().length) {
+          <ul class="languages" [attr.aria-label]="text().languagesTitle">
+            @for (language of languages(); track language.name) {
+              <li>{{ language.name }} — {{ language.level }}</li>
+            }
+          </ul>
+        }
+        @for (link of cv.links; track link.url) {
+          <a class="link" [href]="link.url" target="_blank" rel="noopener noreferrer">
+            <app-icon [name]="link.icon" />{{ link.label }}</a
+          >
+        }
+      </div>
+    </div>
+  </header>
 
-    @if (referencesOnRequest()) {
-      <p class="references">{{ text().referencesOnRequest }}</p>
+  <nav class="shortcuts" [attr.aria-label]="text().shortcutsLabel">
+    @for (id of shortcuts; track id) {
+      <a
+        [routerLink]="path()"
+        [fragment]="id"
+        queryParamsHandling="preserve"
+        [attr.aria-current]="activeSection() === id ? 'true' : null"
+        >{{ text().shortcuts[id] }}</a
+      >
     }
+  </nav>
+
+  <div class="grid">
+    <section id="experiences" class="experiences" tabindex="-1" aria-labelledby="experiences-title">
+      <h2 id="experiences-title" class="overline">{{ text().experiencesTitle }}</h2>
+      @for (experience of experiences(); track $index) {
+        <article class="entry">
+          <p class="period">{{ experience.period | period: lang() }}</p>
+          <div class="body">
+            <h3>{{ experience.role }}</h3>
+            <p class="meta">
+              <span class="company">{{ experience.company }}</span>
+              <span class="sep" aria-hidden="true"> · </span>
+              <span>{{ experience.location }}</span>
+              @if (experience.domains) {
+                <span class="sep domains-sep" aria-hidden="true"> · </span>
+                <span class="domains">{{ experience.domains }}</span>
+              }
+            </p>
+            <p>{{ experience.summary }}</p>
+            @if (experience.stack.length) {
+              <ul class="tags">
+                @for (tech of experience.stack; track tech) {
+                  <li>{{ tech }}</li>
+                }
+              </ul>
+            }
+            @if (showDetails() && (experience.context || experience.achievements.length)) {
+              <details>
+                <summary
+                  >{{ text().details
+                  }}<span class="visually-hidden"
+                    >, {{ experience.role }}, {{ experience.company }}</span
+                  ></summary
+                >
+                <div class="details-box">
+                  @if (experience.context) {
+                    <p class="context">{{ experience.context }}</p>
+                  }
+                  @if (experience.achievements.length) {
+                    <ul class="achievements">
+                      @for (achievement of experience.achievements; track $index) {
+                        <li>{{ achievement }}</li>
+                      }
+                    </ul>
+                  }
+                </div>
+              </details>
+            }
+          </div>
+        </article>
+      }
+    </section>
+
+    <aside class="side">
+      <section id="skills" tabindex="-1" aria-labelledby="skills-title">
+        <h2 id="skills-title" class="overline">{{ text().skillsTitle }}</h2>
+        @for (group of cv.skills; track $index) {
+          <div class="skill-group">
+            <h3>{{ group.name[lang()] }}</h3>
+            <ul class="pills">
+              @for (item of group.items; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          </div>
+        }
+      </section>
+
+      <section id="education" tabindex="-1" aria-labelledby="education-title">
+        <h2 id="education-title" class="overline">{{ text().educationTitle }}</h2>
+        @for (education of cv.education; track $index) {
+          <div class="degree">
+            <h3>{{ education.degree[lang()] }}</h3>
+            <p>{{ education.school }}, {{ education.location[lang()] }}</p>
+            <p>{{ education.period | period: lang() }}</p>
+          </div>
+        }
+      </section>
+
+      @if (referencesOnRequest()) {
+        <p class="references">{{ text().referencesOnRequest }}</p>
+      }
+    </aside>
   </div>
 </div>
+
+<p class="updated">{{ updated() }}</p>

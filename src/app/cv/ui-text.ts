@@ -1,12 +1,24 @@
 import { CvFormat, Lang } from './cv.model';
-import { CvStyle } from './cv-style';
+
+/** Cible d'un lien de la barre de raccourcis, sur mobile. */
+export type ShortcutSection = 'experiences' | 'skills' | 'education';
 
 export interface UiText {
   experiencesTitle: string;
   educationTitle: string;
   skillsTitle: string;
   languagesTitle: string;
-  contactTitle: string;
+  /** Titre du bloc des technologies clés, sur mobile. */
+  highlightsTitle: string;
+  /** `aria-label` de la barre de raccourcis. */
+  shortcutsLabel: string;
+  shortcuts: Record<ShortcutSection, string>;
+  /** Bouton qui déplie le contexte et les réalisations d'une expérience. */
+  details: string;
+  /** Précède le mois et l'année de mise à jour du contenu. */
+  updated: string;
+  /** De janvier à décembre, tels qu'écrits après `updated`. */
+  months: readonly string[];
   /** Fin d'une période en cours. */
   present: string;
   /** Niveau d'une langue maternelle. */
@@ -24,8 +36,6 @@ export interface UiText {
   darkThemeLabel: string;
   downloadPdf: string;
   downloadPdfLabel: string;
-  styleLabel: string;
-  styleNames: Record<CvStyle, string>;
   /** Nom du fichier affiché dans l'onglet du style Éditeur. */
   editorFile: string;
 }
@@ -37,7 +47,25 @@ export const UI_TEXT: Record<Lang, UiText> = {
     educationTitle: 'Formation',
     skillsTitle: 'Compétences',
     languagesTitle: 'Langues',
-    contactTitle: 'Contact',
+    highlightsTitle: 'En bref',
+    shortcutsLabel: 'Sections du CV',
+    shortcuts: { experiences: 'Expériences', skills: 'Compétences', education: 'Formation' },
+    details: 'Détails',
+    updated: 'Mis à jour en',
+    months: [
+      'janvier',
+      'février',
+      'mars',
+      'avril',
+      'mai',
+      'juin',
+      'juillet',
+      'août',
+      'septembre',
+      'octobre',
+      'novembre',
+      'décembre',
+    ],
     present: "aujourd'hui",
     nativeLanguage: 'langue maternelle',
     birthYear: 'Année de naissance',
@@ -51,8 +79,6 @@ export const UI_TEXT: Record<Lang, UiText> = {
     darkThemeLabel: 'Thème sombre',
     downloadPdf: 'PDF',
     downloadPdfLabel: 'PDF, télécharger le CV',
-    styleLabel: 'Style',
-    styleNames: { sobre: 'Sobre', commentaires: 'Commentaires', editeur: 'Éditeur' },
     editorFile: 'cv.ts',
   },
   en: {
@@ -60,7 +86,25 @@ export const UI_TEXT: Record<Lang, UiText> = {
     educationTitle: 'Education',
     skillsTitle: 'Skills',
     languagesTitle: 'Languages',
-    contactTitle: 'Contact',
+    highlightsTitle: 'At a glance',
+    shortcutsLabel: 'CV sections',
+    shortcuts: { experiences: 'Experience', skills: 'Skills', education: 'Education' },
+    details: 'Details',
+    updated: 'Updated',
+    months: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ],
     present: 'present',
     nativeLanguage: 'native',
     birthYear: 'Year of birth',
@@ -74,8 +118,6 @@ export const UI_TEXT: Record<Lang, UiText> = {
     darkThemeLabel: 'Dark theme',
     downloadPdf: 'PDF',
     downloadPdfLabel: 'PDF, download the CV',
-    styleLabel: 'Style',
-    styleNames: { sobre: 'Plain', commentaires: 'Comments', editeur: 'Editor' },
     editorFile: 'cv.en.ts',
   },
 };

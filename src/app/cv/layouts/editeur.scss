@@ -1,5 +1,59 @@
+// Cette mise en page porte sa propre palette, que le thème choisit comme pour la page.
+// Contrastes mesurés le 2026-11-05 :
+//   clair  : type/bg 4.59, gutter/bg 4.59, on-accent/accent 6.31
+//   sombre : on-accent/accent 4.51, gutter/bg 4.52 ; accent/bg 3.70 ne porte pas de texte
+//            (bordure d'onglet, contour de focus : 3:1 suffit)
+@mixin light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f3f3f3;
+  --fg: #1f1f1f;
+  --muted: #616161;
+  --accent: #005fb8;
+  --on-accent: #ffffff;
+  --comment: #1a7f37;
+  --line: #e5e5e5;
+  --code-keyword: #0000ff;
+  --code-variable: #001080;
+  --code-type: #267f99;
+  --code-string: #a31515;
+  --code-gutter: #6e7681;
+}
+
+@mixin dark {
+  color-scheme: dark;
+  --bg: #1e1e1e;
+  --surface: #252526;
+  --fg: #d4d4d4;
+  --muted: #9d9d9d;
+  --accent: #007acc;
+  --on-accent: #ffffff;
+  --comment: #6fbf5a;
+  --line: #333333;
+  --code-keyword: #569cd6;
+  --code-variable: #9cdcfe;
+  --code-type: #4ec9b0;
+  --code-string: #ce9178;
+  --code-gutter: #858585;
+}
+
 :host {
+  @include light;
   display: block;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :host-context(html:not([data-theme='light'])) {
+    @include dark;
+  }
+}
+
+@media screen {
+  :host-context(html[data-theme='dark']) {
+    @include dark;
+  }
 }
 
 .editor {

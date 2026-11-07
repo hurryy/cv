@@ -1,146 +1,70 @@
-// Couleurs des maquettes, une palette par style et par thème. Contrastes (AA, texte ≥ 4.5:1),
-// mesurés le 2026-11-05 ; le pire cas de chaque palette :
-//   sobre        clair : comment/surface 4.96   sombre : muted/surface 6.51
-//   commentaires clair : muted/surface 5.85     sombre : muted/surface 7.09
-//   editeur      clair : type/bg 4.59, gutter/bg 4.59, on-accent/accent 6.31
-//                sombre : on-accent/accent 4.51, gutter/bg 4.52 ; accent/bg 3.70 ne porte
-//                pas de texte (bordure d'onglet, contour de focus : 3:1 suffit)
+// Couleurs de la maquette « Bandeau et frise », une palette par thème. Contrastes (AA, texte
+// ≥ 4.5:1), mesurés le 2026-11-07 :
+//   clair  : muted/page 5.04 (pire cas), accent/surface 5.88, tag-fg/tag-bg 7.12,
+//            pill-fg/surface 7.69, page-fg/page 6.75, on-accent/accent 6.26 ;
+//            accent/page 4.53 ne porte que le contour de focus (3:1 suffit)
+//   sombre : accent/surface 7.04 (pire cas), muted/surface 7.19, tag-fg/tag-bg 8.80,
+//            pill-fg/surface 9.22, page-fg/page 10.46, on-accent/accent 8.71
+// `pill-line` borde des pastilles non interactives : décor, sans seuil.
+// Les mises en page Commentaires et Éditeur portent leur propre palette.
 
-@mixin sobre-light {
+@use 'breakpoints' as *;
+
+@mixin light {
   color-scheme: light;
+  --page: #d5dce3;
+  --page-fg: #33495c;
   --bg: #ffffff;
-  --surface: #f4f6f8;
+  --surface: #f6f8fa;
   --fg: #1f2933;
-  --muted: #52606d;
+  --muted: #4d5b68;
   --accent: #36648b;
   --on-accent: #ffffff;
-  --comment: #1f7a3d;
-  --line: #d9dee3;
+  --line: #d9e0e6;
+  --pill-line: #a9bccd;
+  --pill-fg: #2c5274;
+  --tag-bg: #eaf0f5;
+  --tag-fg: #2c5274;
+  --shadow: 0 1px 2px rgb(31 41 51 / 10%), 0 16px 48px rgb(31 41 51 / 16%);
 }
 
-@mixin sobre-dark {
+@mixin dark {
   color-scheme: dark;
-  --bg: #14171c;
-  --surface: #1b1f26;
+  --page: #0b0e12;
+  --page-fg: #b4c0cc;
+  --bg: #161a20;
+  --surface: #1e242c;
   --fg: #e5e7eb;
-  --muted: #9ca3af;
+  --muted: #a7b1bc;
   --accent: #7cb4e0;
-  --on-accent: #14171c;
-  --comment: #6fcf8a;
+  --on-accent: #0b0e12;
   --line: #2d333b;
-}
-
-@mixin commentaires-light {
-  color-scheme: light;
-  --bg: #ffffff;
-  --surface: #f3f5f7;
-  --fg: #1f2328;
-  --muted: #57606a;
-  --accent: #0550ae;
-  --on-accent: #ffffff;
-  --comment: #116329;
-  --line: #d0d7de;
-}
-
-@mixin commentaires-dark {
-  color-scheme: dark;
-  --bg: #0d1117;
-  --surface: #161b22;
-  --fg: #e6edf3;
-  --muted: #9da7b3;
-  --accent: #79c0ff;
-  --on-accent: #0d1117;
-  --comment: #7ee787;
-  --line: #30363d;
-}
-
-@mixin editeur-light {
-  color-scheme: light;
-  --bg: #ffffff;
-  --surface: #f3f3f3;
-  --fg: #1f1f1f;
-  --muted: #616161;
-  --accent: #005fb8;
-  --on-accent: #ffffff;
-  --comment: #1a7f37;
-  --line: #e5e5e5;
-  --code-keyword: #0000ff;
-  --code-variable: #001080;
-  --code-type: #267f99;
-  --code-string: #a31515;
-  --code-gutter: #6e7681;
-}
-
-@mixin editeur-dark {
-  color-scheme: dark;
-  --bg: #1e1e1e;
-  --surface: #252526;
-  --fg: #d4d4d4;
-  --muted: #9d9d9d;
-  --accent: #007acc;
-  --on-accent: #ffffff;
-  --comment: #6fbf5a;
-  --line: #333333;
-  --code-keyword: #569cd6;
-  --code-variable: #9cdcfe;
-  --code-type: #4ec9b0;
-  --code-string: #ce9178;
-  --code-gutter: #858585;
+  --pill-line: #4f6378;
+  --pill-fg: #a9cbe8;
+  --tag-bg: #223042;
+  --tag-fg: #b9d5ee;
+  --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 16px 48px rgb(0 0 0 / 50%);
 }
 
 :root {
   --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
   --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  @include sobre-light;
-}
-
-// `data-style` est toujours posé : écrit au prérendu (`DEFAULT_STYLE`, `cv.config.ts`), puis
-// remplacé par le script inline ou par `StyleService`. Le CSS ne connaît donc aucun défaut.
-:root[data-style='commentaires'] {
-  @include commentaires-light;
-}
-
-:root[data-style='editeur'] {
-  @include editeur-light;
-}
-
-@mixin dark-palettes {
-  &[data-style='sobre'] {
-    @include sobre-dark;
-  }
-
-  &[data-style='commentaires'] {
-    @include commentaires-dark;
-  }
-
-  &[data-style='editeur'] {
-    @include editeur-dark;
-  }
+  // Largeur de la feuille, que la barre d'outils et la date de mise à jour suivent.
+  --sheet-width: 65rem;
+  @include light;
 }
 
 // `screen` seulement : l'impression reste claire quel que soit le thème.
 @media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    @include dark-palettes;
+    @include dark;
   }
 }
 
 @media screen {
   :root[data-theme='dark'] {
-    @include dark-palettes;
+    @include dark;
   }
-}
-
-app-layout-sobre,
-app-layout-commentaires,
-app-layout-editeur {
-  display: none !important;
-}
-
-:root[data-style='sobre'] app-layout-sobre,
-:root[data-style='commentaires'] app-layout-commentaires,
-:root[data-style='editeur'] app-layout-editeur {
-  display: block !important;
 }
 
 html {
@@ -148,6 +72,15 @@ html {
   line-height: 1.5;
   color: var(--fg);
   background: var(--bg);
+
+  @media #{$narrow} {
+    scroll-padding-top: $shortcuts-clearance;
+  }
+
+  // Effet page : la feuille ne se détache du fond qu'à partir de cette largeur.
+  @media screen and (min-width: $sheet) {
+    background: var(--page);
+  }
 }
 
 body {
@@ -159,28 +92,30 @@ body {
   outline-offset: 2px;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 @page {
   size: A4;
   margin: 12mm;
 }
 
-// L'impression montre toujours le style sobre, en clair, quel que soit le style affiché.
 @media print {
-  :root,
-  :root[data-style] {
-    @include sobre-light;
-  }
-
-  :root[data-style] app-layout-commentaires,
-  :root[data-style] app-layout-editeur {
-    display: none !important;
-  }
-
-  :root[data-style] app-layout-sobre {
-    display: block !important;
+  :root {
+    @include light;
   }
 
   html {
-    font-size: 10.5pt;
+    font-size: 10pt;
+    background: none;
   }
 }

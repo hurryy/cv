@@ -30,6 +30,12 @@ export interface Experience {
   period: Period;
   summary: Localized;
   stack: string[];
+  /** Cadre du poste, en tête des détails ; format `ch` seulement. */
+  context?: Localized;
+  /** Réalisations, sous le contexte ; format `ch` seulement. */
+  achievements?: Localized[];
+  /** Secteurs d'activité ; en régie, ceux du client final. */
+  domains?: Localized[];
 }
 
 export interface Education {
@@ -83,6 +89,10 @@ export interface Personal {
 export interface Cv {
   name: string;
   headline: Localized;
+  /** Quelques phrases de présentation, sous le titre. */
+  profile: Localized;
+  /** Zone de travail, sur la ligne d'infos du bandeau. */
+  location?: Localized;
   /** Meta description de la page. */
   description: Localized;
   /**
@@ -94,6 +104,13 @@ export interface Cv {
   links: ProfileLink[];
   experiences: Experience[];
   skills: SkillGroup[];
+  /** Technologies clés du bloc « En bref » ; chacune figure dans `skills`. */
+  highlights?: string[];
   education: Education[];
   languages: SpokenLanguage[];
+  /**
+   * Mois de la dernière mise à jour du contenu, affiché sous le CV. Écrit à la main : une date
+   * de build pourrait différer entre le prérendu et l'hydratation.
+   */
+  updated: YearMonth;
 }
