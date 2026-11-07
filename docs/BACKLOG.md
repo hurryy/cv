@@ -95,7 +95,9 @@ défaut ; routes (choix de l'utilisateur, 2026-11-05) : `/ch` et `/fr` en franç
 
 ## [CV-09] Mise en page unique « Bandeau et frise », bureau et mobile
 
-Statut : à faire — maquette validée le 2026-11-07, code pas commencé.
+Statut : fait le 2026-11-07 sur `claude`, non déployé — vu dans un navigateur (bureau clair et
+sombre, mobile : barre collante, raccourcis, focus, Détails) ; aperçu d'impression et tenue
+sur 2 pages A4 non vérifiés, à regarder par l'utilisateur (`/ch`, `/ch/en`).
 Maquettes : https://claude.ai/artifact/5HzcUU8x9BBcQXgeSkep7p — retenues : « B · Bandeau et
 frise — bureau » et « B mobile · En bref + barre collante ». Écartées : A (colonne latérale,
 qui se vide à mi-page), B mobile avec burger.
@@ -106,7 +108,14 @@ Décisions de l'utilisateur (2026-11-07), qui remplacent celles du 2026-11-06 (C
 Burger refusé : quatre entrées tiennent sur une ligne, un menu caché ajoute un tap et de la
 gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rendu hétérogène).
 
-- [ ] Bandeau : photo (`/ch`), nom, titre, profil, ligne d'infos (lieu, année de naissance,
+Écarts assumés avec les maquettes : « Mis à jour en » vient de `Cv.updated` (date du contenu,
+à avancer à chaque modification), pas du build, pour éviter un écart prérendu / hydratation ;
+« En bref » est une liste `Cv.highlights`, chaque entrée vérifiée présente dans les compétences
+par un test ; libellé « PDF » gardé dans la barre d'outils ; périodes en `04/2024`. Budget
+`anyComponentStyle` relevé à 7 / 10 kB (`sobre.scss` ≈ 6,75 kB compilé). `rootMargin` de la
+barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un peu décalé).
+
+- [x] Bandeau : photo (`/ch`), nom, titre, profil, ligne d'infos (lieu, année de naissance,
       nationalité et permis en `/ch`, langues), LinkedIn. Profil (choix de l'utilisateur, 2026-11-07 ; pas
       en recherche, donc aucun poste visé) :
       FR « J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris
@@ -115,35 +124,35 @@ gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rend
       EN « I started on the back end, where the business rules live. I then took up Angular to
       follow a feature from the database all the way to the screen. Today, I enjoy owning a
       product end to end. »
-- [ ] « En bref » sur mobile : 6 technologies clés, dérivées des compétences (`highlight` dans
-      `cv.data.ts`), pas une liste écrite une seconde fois
-- [ ] Expériences en frise (période à gauche sur bureau, au-dessus sur mobile) ; ligne
+- [x] « En bref » sur mobile : 6 technologies clés (`highlights`, incluses dans les compétences)
+- [x] Expériences en frise (période à gauche sur bureau, au-dessus sur mobile) ; ligne
       entreprise · lieu · secteur en italique ; résumé ; réalisations ; stack en étiquettes
       carrées, distinctes des pastilles de compétences
-- [ ] Colonne droite sur bureau : compétences en pastilles groupées, formation ; « Références
+- [x] Colonne droite sur bureau : compétences en pastilles groupées, formation ; « Références
       sur demande » en `/ch`
-- [ ] Effet page (validé le 2026-11-07, maquette « B · grand écran, effet page + Détails ») :
+- [x] Effet page (validé le 2026-11-07, maquette « B · grand écran, effet page + Détails ») :
       fond gris-bleu, feuille blanche de 1040 px avec ombre et liseré d'accent en haut ; barre
       d'outils hors feuille au-dessus (FR/EN, thème, « Télécharger le PDF ») ; « Mis à jour en
-      <mois année> » sous la feuille, date du build. Sous 1100 px : feuille pleine largeur,
-      sans ombre ni marge
-- [ ] Mobile : barre de raccourcis collante (Expériences · Compétences · Formation, 44 px,
-      section en cours soulignée)
-- [ ] Bouton « Détails » sur chaque expérience, bureau et mobile, qui déplie en ligne
+      <mois année> » sous la feuille (date du contenu, voir plus haut). Sous 1100 px : feuille
+      pleine largeur, sans ombre ni marge
+- [x] Mobile : barre de raccourcis collante (Expériences · Compétences · Formation, 44 px,
+      section en cours soulignée, focus posé sur la section atteinte)
+- [x] Bouton « Détails » sur chaque expérience, bureau et mobile, qui déplie en ligne
       (`<details>`, pas de popin : décision du 2026-11-07) le contexte du poste et les
       réalisations ; résumé et stack restent visibles. Contenu de détail tiré des PDF suisses,
       complété par l'utilisateur
-- [ ] Impression et PDF : tout déplié (un `<details>` fermé ne s'imprime pas) ; la page en
-      ligne est la version courte, le PDF la version longue suisse, même source
-- [ ] Format suisse : `achievements` (3 à 5 par poste, `/ch` seulement) ; format France sans
-      photo, infos personnelles ni réalisations
-- [ ] Modèle : `achievements?: Localized[]`, `context?: Localized`, `domains?: Localized[]` (secteur du client en
-      régie), `profile: Localized`, `highlight` sur les compétences ; contenu FR et EN depuis
-      les PDF suisses, relu par l'utilisateur
-- [ ] Sélecteur de style retiré ; Commentaires et Éditeur conservés, non routés ; impression
-      A4 claire de la nouvelle mise en page, 2 pages au plus ; clair et sombre (CV-07)
-- [ ] Tests mis à jour (ch / fr, sections, raccourcis, réalisations)
-- [ ] **Rappel à l'utilisateur, à la livraison** : il relit et corrige lui-même dans
+- [x] Impression et PDF : tout déplié (`beforeprint` / `afterprint`, et `::details-content` en
+      secours pour un Chrome headless) ; la page en ligne est la version courte, le PDF la
+      version longue suisse, même source
+- [x] Format suisse : `achievements` (`/ch` seulement) ; format France sans photo, infos
+      personnelles, Détails ni références
+- [x] Modèle : `profile`, `location`, `highlights`, `updated` ; par expérience `context`,
+      `achievements`, `domains` ; contenu FR et EN tiré des PDF suisses
+- [x] Sélecteur de style, `StyleService`, `?style=` retirés ; Commentaires et Éditeur restent
+      dans `layouts/`, non rendus ; clair et sombre (CV-07)
+- [ ] Impression A4 claire sur 2 pages au plus : à vérifier dans l'aperçu d'impression
+- [x] Tests mis à jour : 6 fichiers / 88 tests
+- [x] **Rappel à l'utilisateur, à la livraison** (fait le 2026-11-07, relecture en attente) : il relit et corrige lui-même dans
       `cv.data.ts` les réalisations (dont « envoi de courriels sur Amazon » chez N2JSoft et
       « coding game pour Deezer » chez Apollo) et les secteurs, déduits par Claude
 - [ ] PDF téléchargeables : les anciens ne correspondent plus, à refaire ou générer (CV-05)
@@ -230,9 +239,9 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Champ | Valeur |
 |---|---|
 | Mis à jour | 2026-11-07 |
-| Dernière tâche terminée | CV-10 : `docs/VPS.md`, `edge/install-vps.ps1` ; avant, CV-04 (contenu réel, photo) et correctifs `edge/` |
+| Dernière tâche terminée | CV-09 : mise en page unique « Bandeau et frise » (bureau, mobile, effet page, Détails) ; avant, CV-10 |
 | Tâche en cours | aucune |
-| Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Ensuite : CV-09 (maquette validée, profil fixé) |
-| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 65 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 ; Caddy local : 401 avec HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy` |
-| Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 (doc et script, sur `claude`) |
-| Attend l'utilisateur | points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 ; après livraison de CV-09 : relecture des réalisations et secteurs (à lui rappeler) |
+| Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
+| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 6 fichiers / 88 tests ; rendu CV-09 vu dans un navigateur sauf l'impression |
+| Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 et CV-09 (sur `claude`) |
+| Attend l'utilisateur | relire dans `cv.data.ts` contextes, réalisations et secteurs de CV-09 (déduits par Claude) ; aperçu d'impression `/ch` ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
