@@ -1,24 +1,162 @@
-:root {
-  --text: #1f2328;
-  --muted: #59636e;
-  --background: #f2f1ef;
-  --surface: #ffffff;
+// Couleurs des maquettes, une palette par style et par thème. Contrastes (AA, texte ≥ 4.5:1),
+// mesurés le 2026-11-05 ; le pire cas de chaque palette :
+//   sobre        clair : comment/surface 4.96   sombre : muted/surface 6.51
+//   commentaires clair : muted/surface 5.85     sombre : muted/surface 7.09
+//   editeur      clair : type/bg 4.59, gutter/bg 4.59, on-accent/accent 6.31
+//                sombre : on-accent/accent 4.51, gutter/bg 4.52 ; accent/bg 3.70 ne porte
+//                pas de texte (bordure d'onglet, contour de focus : 3:1 suffit)
+
+@mixin sobre-light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f4f6f8;
+  --fg: #1f2933;
+  --muted: #52606d;
   --accent: #36648b;
   --on-accent: #ffffff;
-  --chip: #e8eef4;
-  --radius: 8px;
-  --shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 8%);
+  --comment: #1f7a3d;
+  --line: #d9dee3;
+}
+
+@mixin sobre-dark {
+  color-scheme: dark;
+  --bg: #14171c;
+  --surface: #1b1f26;
+  --fg: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #7cb4e0;
+  --on-accent: #14171c;
+  --comment: #6fcf8a;
+  --line: #2d333b;
+}
+
+@mixin commentaires-light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f3f5f7;
+  --fg: #1f2328;
+  --muted: #57606a;
+  --accent: #0550ae;
+  --on-accent: #ffffff;
+  --comment: #116329;
+  --line: #d0d7de;
+}
+
+@mixin commentaires-dark {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --surface: #161b22;
+  --fg: #e6edf3;
+  --muted: #9da7b3;
+  --accent: #79c0ff;
+  --on-accent: #0d1117;
+  --comment: #7ee787;
+  --line: #30363d;
+}
+
+@mixin editeur-light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f3f3f3;
+  --fg: #1f1f1f;
+  --muted: #616161;
+  --accent: #005fb8;
+  --on-accent: #ffffff;
+  --comment: #1a7f37;
+  --line: #e5e5e5;
+  --code-keyword: #0000ff;
+  --code-variable: #001080;
+  --code-type: #267f99;
+  --code-string: #a31515;
+  --code-gutter: #6e7681;
+}
+
+@mixin editeur-dark {
+  color-scheme: dark;
+  --bg: #1e1e1e;
+  --surface: #252526;
+  --fg: #d4d4d4;
+  --muted: #9d9d9d;
+  --accent: #007acc;
+  --on-accent: #ffffff;
+  --comment: #6fbf5a;
+  --line: #333333;
+  --code-keyword: #569cd6;
+  --code-variable: #9cdcfe;
+  --code-type: #4ec9b0;
+  --code-string: #ce9178;
+  --code-gutter: #858585;
+}
+
+:root {
+  --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  @include sobre-light;
+}
+
+// `data-style` est toujours posé : écrit au prérendu (`DEFAULT_STYLE`, `cv.config.ts`), puis
+// remplacé par le script inline ou par `StyleService`. Le CSS ne connaît donc aucun défaut.
+:root[data-style='commentaires'] {
+  @include commentaires-light;
+}
+
+:root[data-style='editeur'] {
+  @include editeur-light;
+}
+
+@mixin dark-palettes {
+  &[data-style='sobre'] {
+    @include sobre-dark;
+  }
+
+  &[data-style='commentaires'] {
+    @include commentaires-dark;
+  }
+
+  &[data-style='editeur'] {
+    @include editeur-dark;
+  }
+}
+
+// `screen` seulement : l'impression reste claire quel que soit le thème.
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-palettes;
+  }
+}
+
+@media screen {
+  :root[data-theme='dark'] {
+    @include dark-palettes;
+  }
+}
+
+app-layout-sobre,
+app-layout-commentaires,
+app-layout-editeur {
+  display: none !important;
+}
+
+:root[data-style='sobre'] app-layout-sobre,
+:root[data-style='commentaires'] app-layout-commentaires,
+:root[data-style='editeur'] app-layout-editeur {
+  display: block !important;
 }
 
 html {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--sans);
   line-height: 1.5;
-  color: var(--text);
-  background: var(--background);
+  color: var(--fg);
+  background: var(--bg);
 }
 
 body {
   margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 @page {
@@ -26,10 +164,20 @@ body {
   margin: 12mm;
 }
 
+// L'impression montre toujours le style sobre, en clair, quel que soit le style affiché.
 @media print {
-  :root {
-    --background: #ffffff;
-    --shadow: none;
+  :root,
+  :root[data-style] {
+    @include sobre-light;
+  }
+
+  :root[data-style] app-layout-commentaires,
+  :root[data-style] app-layout-editeur {
+    display: none !important;
+  }
+
+  :root[data-style] app-layout-sobre {
+    display: block !important;
   }
 
   html {

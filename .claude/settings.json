@@ -16,6 +16,7 @@
       "Read(**/.env~)",
       "Read(**/.git-credentials)",
       "Read(**/secrets.json)",
+      "Read(**/.claude/settings.local.json)",
       "Read(**/*.pem)",
       "Read(**/id_rsa*)",
       "Read(**/id_ed25519*)",
@@ -33,7 +34,8 @@
       "Edit(**/.env.test)",
       "Edit(**/.env.staging)",
       "Edit(**/*.pem)",
-      "Edit(**/deploy_cv*)"
+      "Edit(**/deploy_cv*)",
+      "Edit(**/.claude/settings.local.json)"
     ]
   },
   "hooks": {
