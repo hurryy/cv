@@ -122,6 +122,11 @@ gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rend
       carrées, distinctes des pastilles de compétences
 - [ ] Colonne droite sur bureau : compétences en pastilles groupées, formation ; « Références
       sur demande » en `/ch`
+- [ ] Effet page (validé le 2026-11-07, maquette « B · grand écran, effet page + Détails ») :
+      fond gris-bleu, feuille blanche de 1040 px avec ombre et liseré d'accent en haut ; barre
+      d'outils hors feuille au-dessus (FR/EN, thème, « Télécharger le PDF ») ; « Mis à jour en
+      <mois année> » sous la feuille, date du build. Sous 1100 px : feuille pleine largeur,
+      sans ombre ni marge
 - [ ] Mobile : barre de raccourcis collante (Expériences · Compétences · Formation, 44 px,
       section en cours soulignée)
 - [ ] Bouton « Détails » sur chaque expérience, bureau et mobile, qui déplie en ligne
