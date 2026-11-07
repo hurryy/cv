@@ -106,9 +106,16 @@ Décisions de l'utilisateur (2026-11-07), qui remplacent celles du 2026-11-06 (C
 Burger refusé : quatre entrées tiennent sur une ligne, un menu caché ajoute un tap et de la
 gestion de focus pour rien.
 
-- [ ] Bandeau : photo (`/ch`), nom, titre, profil (ce que Yann cherche ; texte à fournir par
-      l'utilisateur, le brouillon des maquettes est à réécrire), ligne d'infos (lieu, année de
-      naissance, nationalité et permis en `/ch`, langues), LinkedIn
+- [ ] Bandeau : photo (`/ch`), nom, titre, profil, ligne d'infos (lieu, année de naissance,
+      nationalité et permis en `/ch`, langues), LinkedIn. Profil = « À propos de moi » des PDF
+      suisses (choix de l'utilisateur, 2026-11-07), tel quel :
+      FR « Précédemment développeur back-end, j'ai étendu mes compétences afin de pouvoir
+      travailler sur l'ensemble des aspects d'un projet (fullstack). Demandeur de nouveaux défis
+      qui apportent de la valeur à la société, je suis également en quête de développement
+      professionnel et personnel. »
+      EN « Previously a back-end developer, I have expanded my skills to be able to work on all
+      aspects of a project (full-stack). Eager for new challenges that bring value to society, I
+      am also seeking professional and personal development. »
 - [ ] « En bref » sur mobile : 6 technologies clés, dérivées des compétences (`highlight` dans
       `cv.data.ts`), pas une liste écrite une seconde fois
 - [ ] Expériences en frise (période à gauche sur bureau, au-dessus sur mobile) ; ligne
@@ -128,6 +135,9 @@ gestion de focus pour rien.
 - [ ] Sélecteur de style retiré ; Commentaires et Éditeur conservés, non routés ; impression
       A4 claire de la nouvelle mise en page, 2 pages au plus ; clair et sombre (CV-07)
 - [ ] Tests mis à jour (ch / fr, sections, raccourcis, réalisations)
+- [ ] **Rappel à l'utilisateur, à la livraison** : il relit et corrige lui-même dans
+      `cv.data.ts` les réalisations (dont « envoi de courriels sur Amazon » chez N2JSoft et
+      « coding game pour Deezer » chez Apollo) et les secteurs, déduits par Claude
 - [ ] PDF téléchargeables : les anciens ne correspondent plus, à refaire ou générer (CV-05)
 
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
@@ -214,7 +224,7 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Mis à jour | 2026-11-07 |
 | Dernière tâche terminée | CV-10 : `docs/VPS.md`, `edge/install-vps.ps1` ; avant, CV-04 (contenu réel, photo) et correctifs `edge/` |
 | Tâche en cours | aucune |
-| Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Ensuite : CV-09 (maquette validée), après le texte de profil et la relecture des réalisations par l'utilisateur |
+| Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Ensuite : CV-09 (maquette validée, profil fixé) |
 | Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 65 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 ; Caddy local : 401 avec HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy` |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 (doc et script, sur `claude`) |
-| Attend l'utilisateur | points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 ; CV-09 : texte de profil, relecture des réalisations et secteurs |
+| Attend l'utilisateur | points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 ; après livraison de CV-09 : relecture des réalisations et secteurs (à lui rappeler) |
