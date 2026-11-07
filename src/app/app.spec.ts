@@ -505,7 +505,7 @@ describe('App', () => {
         cv.querySelectorAll('.personal dt.visually-hidden'),
         (dt) => dt.textContent,
       );
-      expect(hidden).toEqual([UI_TEXT.fr.nationality, UI_TEXT.fr.permit]);
+      expect(hidden).toEqual([UI_TEXT.fr.permit]);
     });
 
     it('is translated in English', async () => {

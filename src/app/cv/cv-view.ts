@@ -6,8 +6,8 @@ export interface PersonalFact {
   label: string;
   value: string;
   /**
-   * La valeur se comprend seule (« Française », « Permis G ») : le libellé n'est lu que par les
-   * lecteurs d'écran.
+   * La valeur se comprend seule (« Permis G ») : le libellé n'est lu que par les lecteurs
+   * d'écran.
    */
   selfDescribing?: boolean;
 }
@@ -24,7 +24,7 @@ export const personalFacts = (
   const facts: (PersonalFact | null)[] = [
     personal.birthYear ? { label: text.birthYear, value: String(personal.birthYear) } : null,
     personal.nationality
-      ? { label: text.nationality, value: personal.nationality[lang], selfDescribing: true }
+      ? { label: text.nationality, value: personal.nationality[lang] }
       : null,
     personal.permit
       ? { label: text.permit, value: personal.permit[lang], selfDescribing: true }

@@ -206,8 +206,13 @@ h1 {
     display: inline;
   }
 
+  // « Libellé : valeur » ; le français veut une espace insécable avant les deux-points.
   dt::after {
-    content: ' ';
+    content: ': ';
+  }
+
+  dt:lang(fr)::after {
+    content: '\00a0: ';
   }
 }
 

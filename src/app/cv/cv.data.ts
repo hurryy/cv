@@ -31,7 +31,7 @@ export const CV: Cv = {
   personal: {
     photo: '/img/yann-hurry.jpg',
     birthYear: 1994,
-    nationality: { fr: 'Française', en: 'French' },
+    nationality: { fr: 'française', en: 'French' },
     permit: { fr: 'Permis G', en: 'G permit' },
     referencesOnRequest: true,
   },
