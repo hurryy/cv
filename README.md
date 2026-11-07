@@ -27,6 +27,8 @@ docker run --rm -p 8089:8080 cv:local   # http://localhost:8089
 Internet ──▶ edge (Caddy, TLS, 80/443) ──réseau docker `edge`──▶ cv (Caddy statique, 8080)
 ```
 
+Installation pas à pas, réglages GitHub, mise en ligne et dépannage : [`docs/VPS.md`](docs/VPS.md).
+
 Sur le VPS :
 
 1. `/srv/edge` — `edge/docker-compose.yml`, `edge/conf/Caddyfile`, `.env` d'après
