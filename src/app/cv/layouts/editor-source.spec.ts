@@ -13,9 +13,12 @@ describe('editorSource', () => {
     expect(source).toContain('export const cv: Cv = {');
     expect(source).toContain(`  /** ${UI_TEXT.fr.experiencesTitle} */`);
     expect(source).toContain(`      role: '${CV.experiences[0].role.fr}',`);
-    expect(source).toContain(`      period: ['2020-11', null], // ${UI_TEXT.fr.present}`);
-    expect(source).toContain("      period: ['2020-01', '2020-10'],");
-    expect(source).toContain("    'Back': ['C#', '.NET Core', 'ASP.NET'],");
+    expect(source).toContain(`      period: ['2024-04', null], // ${UI_TEXT.fr.present}`);
+    expect(source).toContain("      period: ['2020-01', '2020-11'],");
+    expect(source).toContain("    'Back-end': ['C#', '.NET', 'ASP.NET', 'REST API', 'SOAP'],");
+    expect(source).toContain(
+      "company: 'SQLI · Services Industriels de Genève', location: 'Vernier, Suisse',",
+    );
     expect(source).toContain(`    'Français': '${UI_TEXT.fr.nativeLanguage}',`);
     expect(source.endsWith('};')).toBe(true);
   });
@@ -25,8 +28,9 @@ describe('editorSource', () => {
     expect(quote('a\\b').text).toBe("'a\\\\b'");
     expect(quote(`a\r\nb${String.fromCharCode(0x2028)}c`).text).toBe("'a\\r\\nb\\u2028c'");
     expect(toText(editorSource(CV, 'en', UI_TEXT.en))).toContain(
-      "degree: 'Master\\'s degree in MIAGE (IT for business)',",
+      "degree: 'Bachelor\\'s degree in MIAGE (IT for business)',",
     );
+    expect(toText(editorSource(CV, 'en', UI_TEXT.en))).toContain("location: 'Linköping, Sweden',");
   });
 
   it('colours keywords, types, strings and comments', () => {

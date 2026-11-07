@@ -17,9 +17,6 @@ export type CvFormat = 'ch' | 'fr';
 /** Mois au format `AAAA-MM`. */
 export type YearMonth = `${number}-${number}`;
 
-/** Jour au format `AAAA-MM-JJ`. */
-export type IsoDate = `${number}-${number}-${number}`;
-
 export interface Period {
   start: YearMonth;
   /** `null` : poste ou formation en cours. */
@@ -29,7 +26,7 @@ export interface Period {
 export interface Experience {
   role: Localized;
   company: string;
-  location: string;
+  location: Localized;
   period: Period;
   summary: Localized;
   stack: string[];
@@ -38,7 +35,7 @@ export interface Experience {
 export interface Education {
   degree: Localized;
   school: string;
-  location: string;
+  location: Localized;
   period: Period;
 }
 
@@ -68,7 +65,11 @@ export interface SpokenLanguage {
 export interface Personal {
   /** Chemin public de la photo (`/img/…`), fichier déposé dans `public/`. */
   photo?: string;
-  birthDate?: IsoDate;
+  /**
+   * Année seule : un âge calculé au prérendu vieillirait entre deux builds, une date complète
+   * en dirait trop.
+   */
+  birthYear?: number;
   nationality?: Localized;
   /** Permis de séjour ou de travail (ex. permis G). */
   permit?: Localized;
