@@ -610,25 +610,25 @@ describe('App', () => {
       {
         url: '/ch',
         href: '/pdf/yann-hurry-cv-ch-fr.pdf',
-        name: 'Yann-HURRY-CV-CH-FR.pdf',
+        name: 'Yann-HURRY-CV-FR.pdf',
         label: 'Télécharger le PDF',
       },
       {
         url: '/ch/en',
         href: '/pdf/yann-hurry-cv-ch-en.pdf',
-        name: 'Yann-HURRY-CV-CH-EN.pdf',
+        name: 'Yann-HURRY-CV-EN.pdf',
         label: 'Download PDF',
       },
       {
         url: '/fr',
         href: '/pdf/yann-hurry-cv-fr-fr.pdf',
-        name: 'Yann-HURRY-CV-FR-FR.pdf',
+        name: 'Yann-HURRY-CV-FR.pdf',
         label: 'Télécharger le PDF',
       },
       {
         url: '/fr/en',
         href: '/pdf/yann-hurry-cv-fr-en.pdf',
-        name: 'Yann-HURRY-CV-FR-EN.pdf',
+        name: 'Yann-HURRY-CV-EN.pdf',
         label: 'Download PDF',
       },
     ];
@@ -647,7 +647,7 @@ describe('App', () => {
     it('derives the file name from the name in the data', async () => {
       const page = await render('/ch', { ...CV, name: ' Jean  DUPONT ' });
       expect(page.querySelector('a[download]')?.getAttribute('download')).toBe(
-        'Jean-DUPONT-CV-CH-FR.pdf',
+        'Jean-DUPONT-CV-FR.pdf',
       );
     });
   });

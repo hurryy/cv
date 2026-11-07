@@ -47,9 +47,7 @@ export class CvPage {
   protected readonly otherLang = computed(() => OTHER_LANG[this.lang()]);
   protected readonly otherLangPath = computed(() => cvPath(this.format(), this.otherLang()));
   protected readonly pdf = computed(() => pdfPath(this.format(), this.lang()));
-  protected readonly pdfName = computed(() =>
-    pdfFileName(this.cv.name, this.format(), this.lang()),
-  );
+  protected readonly pdfName = computed(() => pdfFileName(this.cv.name, this.lang()));
   private readonly shared = computed(() => ({
     title: `${this.text().cvOf} ${this.cv.name}`,
     text: this.cv.description[this.lang()],

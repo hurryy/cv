@@ -148,5 +148,5 @@ export const pdfPath = (format: CvFormat, lang: Lang): string =>
   `/pdf/yann-hurry-cv-${format}-${lang}.pdf`;
 
 /** Nom proposé à l'enregistrement du PDF (attribut `download`). */
-export const pdfFileName = (name: string, format: CvFormat, lang: Lang): string =>
-  `${name.trim().replace(/\s+/g, '-')}-CV-${format.toUpperCase()}-${lang.toUpperCase()}.pdf`;
+export const pdfFileName = (name: string, lang: Lang): string =>
+  `${name.trim().replace(/\s+/g, '-')}-CV-${lang.toUpperCase()}.pdf`;
