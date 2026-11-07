@@ -40,8 +40,11 @@ Statut : à faire — itératif avec l'utilisateur, après CV-04
 À arbitrer : photo, en-tête (nationalité / permis, disponibilité, mobilité Annecy–Genève, taux
 d'activité), langues au niveau CECR, références, 2 pages A4 max.
 
-- [ ] Feuille `@media print` A4 : 2 pages, liens cliquables, aucun débordement
-- [ ] PDF téléchargeable, généré depuis la même source
+- [x] Feuille `@media print` A4 : 2 pages, liens cliquables, aucun débordement (vu dans le PDF
+      `ch-fr` généré au build, 2026-11-07)
+- [x] PDF téléchargeable, généré depuis la même source : 4 PDF (format × langue) imprimés par
+      Chromium headless au build de l'image (`scripts/generate-pdf.mjs`), police Roboto ; ch 2 pages,
+      fr 1 page (2026-11-07). Bouton « Partager » : `navigator.share`, sinon `mailto:`
 - [ ] Ouverture publique : retirer `import preview` du bloc CV dans `edge/conf/Caddyfile`
 
 ## [CV-07] Français / anglais, thème clair / sombre, PDF téléchargeables
@@ -111,7 +114,7 @@ gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rend
 Écarts assumés avec les maquettes : « Mis à jour en » vient de `Cv.updated` (date du contenu,
 à avancer à chaque modification), pas du build, pour éviter un écart prérendu / hydratation ;
 « En bref » est une liste `Cv.highlights`, chaque entrée vérifiée présente dans les compétences
-par un test ; libellé « PDF » gardé dans la barre d'outils ; périodes en `04/2024`. Budget
+par un test ; périodes en `04/2024`. Budget
 `anyComponentStyle` relevé à 7 / 10 kB (`sobre.scss` ≈ 6,75 kB compilé). `rootMargin` de la
 barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un peu décalé).
 
@@ -150,12 +153,12 @@ barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un
       `achievements`, `domains` ; contenu FR et EN tiré des PDF suisses
 - [x] Sélecteur de style, `StyleService`, `?style=` retirés ; Commentaires et Éditeur restent
       dans `layouts/`, non rendus ; clair et sombre (CV-07)
-- [ ] Impression A4 claire sur 2 pages au plus : à vérifier dans l'aperçu d'impression
+- [x] Impression A4 claire sur 2 pages au plus (PDF générés : ch 2 pages, fr 1)
 - [x] Tests mis à jour : 6 fichiers / 88 tests
 - [x] **Rappel à l'utilisateur, à la livraison** (fait le 2026-11-07, relecture en attente) : il relit et corrige lui-même dans
       `cv.data.ts` les réalisations (dont « envoi de courriels sur Amazon » chez N2JSoft et
       « coding game pour Deezer » chez Apollo) et les secteurs, déduits par Claude
-- [ ] PDF téléchargeables : les anciens ne correspondent plus, à refaire ou générer (CV-05)
+- [x] PDF téléchargeables : générés au build (CV-05)
 
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
@@ -242,6 +245,6 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Dernière tâche terminée | CV-09 : mise en page unique « Bandeau et frise » (bureau, mobile, effet page, Détails) ; avant, CV-10 |
 | Tâche en cours | aucune |
 | Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
-| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 6 fichiers / 88 tests ; rendu CV-09 vu dans un navigateur sauf l'impression |
+| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 6 fichiers / 97 tests ; image Docker locale : 4 PDF générés |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 et CV-09 (sur `claude`) |
-| Attend l'utilisateur | relire dans `cv.data.ts` contextes, réalisations et secteurs de CV-09 (déduits par Claude) ; aperçu d'impression `/ch` ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
+| Attend l'utilisateur | relire dans `cv.data.ts` contextes, réalisations et secteurs de CV-09 (déduits par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
