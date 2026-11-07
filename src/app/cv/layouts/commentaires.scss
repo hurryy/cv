@@ -1,0 +1,163 @@
+:host {
+  display: block;
+}
+
+.cv {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  line-height: 1.55;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--mono);
+  color: var(--accent);
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.links,
+.languages {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.75rem;
+}
+
+.links a {
+  color: var(--fg);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  color: var(--muted);
+
+  dt {
+    display: inline;
+
+    // Espace insécable avant le deux-points en français, aucune espace en anglais.
+    &::after {
+      content: '\a0: ';
+    }
+
+    &:lang(en)::after {
+      content: ': ';
+    }
+  }
+
+  dd {
+    display: inline;
+    margin: 0;
+    color: var(--fg);
+  }
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+}
+
+h2 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--comment);
+}
+
+.entry {
+  display: grid;
+  gap: 0.25rem 1.25rem;
+
+  @media (min-width: 40rem) {
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0.125rem 0 0;
+  }
+}
+
+.period {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.stack {
+  margin-top: 0.375rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+
+  li {
+    display: inline;
+  }
+
+  li + li::before {
+    content: ' · ';
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+
+  li {
+    padding: 0.25rem 0.625rem;
+    background: var(--surface);
+    border-radius: 6px;
+  }
+}

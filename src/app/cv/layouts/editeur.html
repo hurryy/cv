@@ -1,0 +1,23 @@
+<div class="editor">
+  <h1 id="editeur-title" class="visually-hidden">
+    {{ cv.name }} — {{ cv.headline[lang()] }}
+  </h1>
+  <div class="tabs" aria-hidden="true">
+    <span class="tab"><span class="ts">TS</span> {{ text().editorFile }}</span>
+  </div>
+  <!-- Focusable : au clavier, la boîte défile quand une ligne dépasse (axe scrollable-region-focusable). -->
+  <div class="code" role="region" aria-labelledby="editeur-title" tabindex="0">
+    @for (line of lines(); track $index) {
+      <div class="line">
+        <span class="number" aria-hidden="true">{{ $index + 1 }}</span>
+        <code
+          >@for (token of line; track $index) {<span [class]="token.kind">{{ token.text }}</span>}</code
+        >
+      </div>
+    }
+  </div>
+  <div class="status" aria-hidden="true">
+    <span>{{ statusBar }}</span>
+    <span>{{ lang().toUpperCase() }} · {{ lines().length }}</span>
+  </div>
+</div>

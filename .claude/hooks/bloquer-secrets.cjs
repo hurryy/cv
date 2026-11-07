@@ -24,6 +24,12 @@ const MOTIFS = [
   [/\.git-credentials/i, '.git-credentials'],
   [/\.npmrc/i, '.npmrc'],
   [/secrets\.json/i, 'secrets.json'],
+  // Le fichier porte `GH_TOKEN` dans son bloc `env`. `gh` lit la variable seul, sans qu'on la
+  // cite ; PowerShell ignore la casse des noms de variables ; `gh auth token` et
+  // `gh auth status -t` impriment le jeton.
+  [/settings\.local\.json/i, 'settings.local.json'],
+  [/\bGH_TOKEN\b/i, 'jeton GitHub GH_TOKEN'],
+  [/\bgh(\.exe)?\s+auth\s+(token\b|git-credential\b|status\b[^;&|\n]*\s(-\w*t\w*|--show-token)\b)/i, 'affichage du jeton par gh auth'],
   [/\.vscode[/\\]settings\.json/i, '.vscode/settings.json'],
   [/Code[/\\]User[/\\]/i, 'réglages utilisateur de VS Code'],
   // `config -q` valide le fichier sans rien afficher : il reste permis.

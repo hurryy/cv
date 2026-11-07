@@ -1,0 +1,98 @@
+<div class="cv">
+  <header class="head">
+    @if (photo(); as photo) {
+      <img class="photo" [src]="photo" [alt]="cv.name" width="96" height="96" />
+    }
+    <div class="identity">
+      <h1>{{ cv.name }}</h1>
+      <p class="headline">{{ cv.headline[lang()] }}</p>
+      <ul class="links">
+        @for (link of cv.links; track link.url) {
+          <li>
+            <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+          </li>
+        }
+      </ul>
+      @if (facts().length) {
+        <dl class="facts personal">
+          @for (fact of facts(); track fact.label) {
+            <div>
+              <dt>{{ fact.label }}</dt>
+              <dd>{{ fact.value }}</dd>
+            </div>
+          }
+        </dl>
+      }
+    </div>
+  </header>
+
+  <section aria-labelledby="commentaires-experiences">
+    <h2 id="commentaires-experiences">
+      <span aria-hidden="true">/** </span>{{ text().experiencesTitle
+      }}<span aria-hidden="true"> */</span>
+    </h2>
+    @for (experience of cv.experiences; track $index) {
+      <article class="entry">
+        <p class="period">{{ experience.period | period: lang() : 'iso' }}</p>
+        <div>
+          <h3>{{ experience.role[lang()] }}</h3>
+          <p class="muted">{{ experience.company }} · {{ experience.location }}</p>
+          <p>{{ experience.summary[lang()] }}</p>
+          <ul class="stack">
+            @for (tech of experience.stack; track tech) {
+              <li>{{ tech }}</li>
+            }
+          </ul>
+        </div>
+      </article>
+    }
+  </section>
+
+  @if (skills().length) {
+    <section aria-labelledby="commentaires-skills">
+      <h2 id="commentaires-skills">
+        <span aria-hidden="true">/** </span>{{ text().skillsTitle
+        }}<span aria-hidden="true"> */</span>
+      </h2>
+      <ul class="tags">
+        @for (skill of skills(); track skill) {
+          <li>{{ skill }}</li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section aria-labelledby="commentaires-education">
+    <h2 id="commentaires-education">
+      <span aria-hidden="true">/** </span>{{ text().educationTitle
+      }}<span aria-hidden="true"> */</span>
+    </h2>
+    @for (education of cv.education; track $index) {
+      <article class="entry">
+        <p class="period">{{ education.period | period: lang() : 'iso' }}</p>
+        <p>
+          <strong>{{ education.degree[lang()] }}</strong>
+          <span class="muted"> · {{ education.school }}</span>
+        </p>
+      </article>
+    }
+  </section>
+
+  @if (languages().length) {
+    <section aria-labelledby="commentaires-languages">
+      <h2 id="commentaires-languages">
+        <span aria-hidden="true">/** </span>{{ text().languagesTitle
+        }}<span aria-hidden="true"> */</span>
+      </h2>
+      <ul class="languages">
+        @for (language of languages(); track language.name) {
+          <li>{{ language.name }} — {{ language.level }}</li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (referencesOnRequest()) {
+    <p class="muted">{{ text().referencesOnRequest }}</p>
+  }
+</div>

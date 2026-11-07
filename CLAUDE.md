@@ -91,7 +91,8 @@ des gestes manuels, tous deux conditionnés à la variable de dépôt `DEPLOY_EN
 
 Aucun agent ni l'orchestrateur ne lit, ne cherche ni n'affiche : `.env` et `.env.*` (sauf les
 gabarits `*.example`), `*.pem`, les clés SSH (`id_*`, `deploy_cv*`, `~/.ssh/`), `.npmrc`,
-`.git-credentials`, `secrets.json`, les réglages VS Code, ni les variables d'environnement
+`.git-credentials`, `secrets.json`, `.claude/settings.local.json` (porte `GH_TOKEN`), les
+réglages VS Code, ni les variables d'environnement
 (`env`, `printenv`, `Get-ChildItem Env:`, `docker compose config`, `docker inspect` sans
 `--format`). Une valeur manque → s'arrêter et la demander à l'utilisateur.
 
