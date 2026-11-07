@@ -184,6 +184,28 @@ Le Caddy de bordure sert tous les sites du VPS mais vit dans `cv/` parce que le 
 premier déployé. Quand app-shop s'y branche (retrait de son propre Caddy, réseau `edge`
 externe), le déplacer dans un dépôt dédié.
 
+## [CV-10] Doc et script d'installation du VPS
+
+Statut : à faire — demandé le 2026-11-07, après la mise en service du VPS (CV-02, CV-03)
+
+- [ ] `docs/VPS.md` : installation, vérification, configuration ; fichiers à envoyer pour
+      une réinstallation ; commandes réellement utilisées le 2026-11-07
+- [ ] Section « Vulgarisation » : ce qui a été fait, ce qui est configuré où, ce qui tourne
+      où (PC, GitHub, GHCR, OVH DNS, VPS : Caddy de bordure, conteneur `cv`), les trois clés
+      SSH (`id_rsa` perso, `deploy_cv` CI, clé d'hôte du VPS)
+- [ ] Étapes GitHub : environment `production` et reviewer, secrets `SSH_*`, variables
+      `DEPLOY_PATH` et `DEPLOY_ENABLED`, rulesets ; `gh auth login` de l'utilisateur pour
+      écrire, `GH_TOKEN` en lecture seule pour Claude
+- [ ] Script PowerShell depuis le PC qui enchaîne : clé perso sur `ubuntu`, envoi et
+      lancement de `bootstrap-vps.sh`, `/srv/edge`, `/srv/cv`, vérifications ; secrets
+      demandés à l'exécution, jamais écrits ; arrêts aux points de contrôle (DNS, accès SSH)
+- [ ] Pièges rencontrés : mot de passe à changer à la 1re connexion (pas de TTY), clé d'hôte
+      changée après réinstallation, séquences parasites de tmux, groupe `sudo` vide sur OVH,
+      `conf/` illisible par Caddy (`cap_drop: ALL`), TXT `3|welcome` qui bloque le CNAME
+      `www`, `ssh-keygen -lf -` et `Out-File` sous PowerShell 5.1
+- [ ] Correctifs du dépôt liés : `bootstrap-vps.sh` (`$SUDO_USER` admin, `conf` en 755),
+      en-têtes de `hardening` absents des 401 de `basic_auth` (Caddyfile)
+
 ---
 
 ## Terminé
