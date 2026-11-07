@@ -147,23 +147,19 @@ externe), le déplacer dans un dépôt dédié.
 
 ## [CV-10] Doc et script d'installation du VPS
 
-Statut : à faire — demandé le 2026-11-07, après la mise en service du VPS (CV-02, CV-03)
+Statut : fait le 2026-11-07 (doc et script relus deux fois) — `install-vps.ps1` jamais
+exécuté contre un vrai VPS, à éprouver à la prochaine réinstallation ; reste le choix de
+mise en ligne ci-dessous
 
-- [ ] `docs/VPS.md` : installation, vérification, configuration ; fichiers à envoyer pour
-      une réinstallation ; commandes réellement utilisées le 2026-11-07
-- [ ] Section « Vulgarisation » : ce qui a été fait, ce qui est configuré où, ce qui tourne
-      où (PC, GitHub, GHCR, OVH DNS, VPS : Caddy de bordure, conteneur `cv`), les trois clés
-      SSH (`id_rsa` perso, `deploy_cv` CI, clé d'hôte du VPS)
-- [ ] Étapes GitHub : environment `production` et reviewer, secrets `SSH_*`, variables
-      `DEPLOY_PATH` et `DEPLOY_ENABLED`, rulesets ; `gh auth login` de l'utilisateur pour
-      écrire, `GH_TOKEN` en lecture seule pour Claude
-- [ ] Script PowerShell depuis le PC qui enchaîne : clé perso sur `ubuntu`, envoi et
-      lancement de `bootstrap-vps.sh`, `/srv/edge`, `/srv/cv`, vérifications ; secrets
-      demandés à l'exécution, jamais écrits ; arrêts aux points de contrôle (DNS, accès SSH)
-- [ ] Pièges rencontrés : mot de passe à changer à la 1re connexion (pas de TTY), clé d'hôte
-      changée après réinstallation, séquences parasites de tmux, groupe `sudo` vide sur OVH,
-      `conf/` illisible par Caddy (`cap_drop: ALL`), TXT `3|welcome` qui bloque le CNAME
-      `www`, `ssh-keygen -lf -` et `Out-File` sous PowerShell 5.1
+- [x] `docs/VPS.md` : vulgarisation (ce qui tourne où, clés, comptes, jetons), installation
+      pas à pas, GitHub, mise en ligne, configuration de bordure, vérifications, fichiers à
+      envoyer, dépannage (tous les pièges du 2026-11-07, dont Build & Push sans publication
+      et merge en rebase) ; lien depuis `README.md`
+- [x] `edge/install-vps.ps1` : 10 étapes, reprise `-From`, bootstrap dans tmux, redémarrage
+      vérifié par `boot_id`, DNS contrôlé avant Caddy, mot de passe de pré-ouverture par
+      l'entrée standard (jamais en argument ni sur le PC), `.env` créés en 600
+- [ ] Mineurs de relecture : avec `-From` > 1, IP et domaine non revalidés ; reprise
+      `-From 7` sans recontrôle de l'AAAA
 - [x] Correctifs du dépôt liés : `bootstrap-vps.sh` (`$SUDO_USER` admin, `conf` en 755),
       en-têtes de `hardening` absents des 401 de `basic_auth` (Caddyfile) — faits le
       2026-11-07 ; `Server: Caddy` reste sur les réponses d'erreur (mineur). Sur le VPS
@@ -219,9 +215,9 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Champ | Valeur |
 |---|---|
 | Mis à jour | 2026-11-07 |
-| Dernière tâche terminée | CV-04 (contenu réel, `birthYear`, photo) et correctifs `edge/` de CV-10 ; CV-02 et CV-03 : VPS en service, CV-08 déployé en pré-ouverture |
-| Tâche en cours | CV-10 : `docs/VPS.md` et `edge/install-vps.ps1` |
-| Prochaine action | Claude : CV-10. Utilisateur : PR `claude` → `dev` → `master`, « Docker Build & Push » puis « Deploy » ; sur le VPS, recopier `edge/conf/Caddyfile` dans `/srv/edge/conf/` et `docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile` ; relire le contenu sur `/ch` |
+| Dernière tâche terminée | CV-10 : `docs/VPS.md`, `edge/install-vps.ps1` ; avant, CV-04 (contenu réel, photo) et correctifs `edge/` |
+| Tâche en cours | aucune |
+| Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. `claude` diverge de `dev` depuis la PR #5 mergée en rebase (même contenu) : réaligner = force-push, à décider par l'utilisateur. Ensuite : maquettes CV-09 avec le vrai contenu |
 | Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 65 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 ; Caddy local : 401 avec HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy` |
-| Livré, non déployé | CV-04, correctifs `edge/` (script, Caddyfile) |
+| Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 (doc et script, sur `claude`) |
 | Attend l'utilisateur | points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 ; maquettes CV-09 avec le vrai contenu |
