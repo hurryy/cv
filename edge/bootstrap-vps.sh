@@ -14,9 +14,10 @@
 # `tmux attach -t bootstrap`.
 #
 # Le script est rejouable. Il ne coupe root et les mots de passe que si `deploy`
-# et un membre de sudo ont chacun une clé. Garder la session ouverte et tester
-# `ssh deploy@<ip>` et `ssh ubuntu@<ip>` depuis un second terminal avant de la
-# fermer.
+# et un administrateur (membre de sudo ou utilisateur qui lance le script, à qui
+# sudo donne toutes les commandes) ont chacun une clé. Garder la session ouverte
+# et tester `ssh deploy@<ip>` et `ssh ubuntu@<ip>` depuis un second terminal
+# avant de la fermer.
 set -euo pipefail
 
 DEPLOY_USER=deploy
@@ -142,7 +143,11 @@ JSON
 systemctl restart docker
 
 # --- dossiers des sites -------------------------------------------------------
-install -d -m 750 -o "$DEPLOY_USER" -g "$DEPLOY_USER" /srv/edge /srv/edge/conf /srv/cv
+install -d -m 750 -o "$DEPLOY_USER" -g "$DEPLOY_USER" /srv/edge /srv/cv
+# Caddy tourne en root mais sans CAP_DAC_OVERRIDE (cap_drop: ALL) : il ne lit
+# que ce que les permissions ouvrent à tous. Le Caddyfile ne contient aucun
+# secret ; le .env reste dans /srv/edge, fermé.
+install -d -m 755 -o "$DEPLOY_USER" -g "$DEPLOY_USER" /srv/edge/conf
 
 # --- pare-feu -----------------------------------------------------------------
 # Docker publie ses ports en contournant ufw (règles iptables propres) : seuls
@@ -161,17 +166,42 @@ dpkg-reconfigure -f noninteractive unattended-upgrades
 # --- SSH ----------------------------------------------------------------------
 # `deploy` n'a pas sudo : couper root sans autre administrateur joignable par clé
 # enfermerait dehors (seul le mode rescue OVH resterait). Les images Ubuntu OVH
-# fournissent `ubuntu`, membre de sudo.
+# fournissent `ubuntu`, qui tient sudo de cloud-init.
 # Seule compte une ligne qui commence par le type de clé : une ligne à options,
 # comme le `command="…exit 142"` de root chez OVH, peut refuser toute session.
 has_plain_key() {
   [ -f "$1" ] && grep -qE '^(ssh-ed25519|ssh-rsa|ecdsa-sha2-[a-z0-9]+|sk-[a-z0-9-]+@openssh\.com)[[:space:]]' "$1"
 }
 
+# Un administrateur compte s'il a une clé sans options et si la politique sudo
+# lui donne toutes les commandes en tant que root : `sudo -l -U` l'interroge
+# sans mot de passe. sudo écrit chaque règle sur une ligne indentée, par
+# exemple `    (ALL : ALL) ALL` ou `    (ALL) NOPASSWD: ALL` ; une règle
+# restreinte comme `(ALL) NOPASSWD: /usr/bin/systemctl restart x` ne suffit pas.
+# Une règle sans NOPASSWD demande le mot de passe du compte : elle ne compte que
+# si ce mot de passe existe (`passwd -S` rend `P`), sinon sudo serait inutilisable
+# une fois l'accès SSH par mot de passe coupé.
+is_admin_with_key() {
+  local home rules
+  home=$(getent passwd "$1" | cut -d: -f6) || return 1
+  [ -n "$home" ] && has_plain_key "$home/.ssh/authorized_keys" || return 1
+  rules=$(sudo -n -l -U "$1" 2>/dev/null \
+    | grep -E '^[[:space:]]+\(ALL([[:space:]]*:[[:space:]]*ALL)?\)[[:space:]]+([A-Z_]+:[[:space:]]*)*ALL[[:space:]]*$') \
+    || return 1
+  grep -q 'NOPASSWD:' <<<"$rules" && return 0
+  [ "$(passwd -S "$1" 2>/dev/null | awk '{print $2}')" = P ]
+}
+
+# Sur les images OVH, le groupe sudo est vide : `ubuntu` tient ses droits de
+# /etc/sudoers.d/90-cloud-init-users. L'utilisateur qui lance le script est
+# donc candidat au même titre que les membres du groupe.
 admin_with_key=""
-for user in $(getent group sudo | cut -d: -f4 | tr ',' ' '); do
-  home=$(getent passwd "$user" | cut -d: -f6)
-  if has_plain_key "$home/.ssh/authorized_keys"; then
+candidates=$(getent group sudo | cut -d: -f4 | tr ',' ' ') || candidates=""
+if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then
+  candidates="$candidates $SUDO_USER"
+fi
+for user in $candidates; do
+  if is_admin_with_key "$user"; then
     admin_with_key="$user"
   fi
 done
@@ -210,7 +240,7 @@ SSHD
   fi
   echo "Tester 'ssh deploy@<ip>' et 'ssh $admin_with_key@<ip>' AVANT de fermer cette session."
 else
-  echo "SSH laissé tel quel : il faut une clé pour '$DEPLOY_USER' ET un membre de sudo avec une clé." >&2
+  echo "SSH laissé tel quel : il faut une clé pour '$DEPLOY_USER' ET un administrateur sudo avec une clé (membre de sudo ou \$SUDO_USER)." >&2
 fi
 
 systemctl enable --now fail2ban

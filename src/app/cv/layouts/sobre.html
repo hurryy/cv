@@ -78,7 +78,7 @@
             <h3>{{ experience.role[lang()] }}</h3>
             <span class="period">{{ experience.period | period: lang() }}</span>
           </div>
-          <p class="muted">{{ experience.company }} · {{ experience.location }}</p>
+          <p class="muted">{{ experience.company }} · {{ experience.location[lang()] }}</p>
           <p>{{ experience.summary[lang()] }}</p>
           <ul class="inline stack">
             @for (tech of experience.stack; track tech) {
@@ -99,7 +99,7 @@
             <h3>{{ education.degree[lang()] }}</h3>
             <span class="period">{{ education.period | period: lang() }}</span>
           </div>
-          <p class="muted">{{ education.school }} · {{ education.location }}</p>
+          <p class="muted">{{ education.school }} · {{ education.location[lang()] }}</p>
         </article>
       }
     </section>

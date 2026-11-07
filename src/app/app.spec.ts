@@ -38,7 +38,7 @@ const personalCv: Cv = {
   ...CV,
   personal: {
     photo: '/img/photo.jpg',
-    birthDate: '1990-03-15',
+    birthYear: 1990,
     nationality: { fr: 'Française', en: 'French' },
     permit: { fr: 'Permis G', en: 'G permit' },
     availability: { fr: 'Immédiate', en: 'Immediately' },
@@ -144,13 +144,13 @@ describe('App', () => {
         expect(layout.querySelector('img')?.getAttribute('alt')).toBe(CV.name);
         const facts = Array.from(layout.querySelectorAll('.personal dt'), (dt) => dt.textContent);
         expect(facts).toEqual([
-          UI_TEXT.fr.birthDate,
+          UI_TEXT.fr.birthYear,
           UI_TEXT.fr.nationality,
           UI_TEXT.fr.permit,
           UI_TEXT.fr.availability,
           UI_TEXT.fr.workload,
         ]);
-        expect(layout.textContent).toContain('15.03.1990');
+        expect(layout.querySelector('.personal dd')?.textContent).toBe('1990');
         expect(layout.textContent).toContain('Permis G');
         expect(layout.textContent).toContain(UI_TEXT.fr.referencesOnRequest);
       }
@@ -168,7 +168,8 @@ describe('App', () => {
       const page = await render('/fr', personalCv);
       for (const layout of [sobre(page), commentaires(page), editeur(page)]) {
         expect(layout.querySelector('img')).toBeNull();
-        expect(layout.querySelector('.personal dt')?.textContent).not.toBe(UI_TEXT.fr.birthDate);
+        expect(layout.querySelector('.personal')).toBeNull();
+        expect(layout.textContent).not.toContain('1990');
         expect(layout.textContent).not.toContain('Permis G');
         expect(layout.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
       }
@@ -189,17 +190,50 @@ describe('App', () => {
       expect(sobre(page).textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
     });
 
-    it('is absent from the published data', async () => {
-      const page = await render('/ch');
-      expect(page.querySelector('img')).toBeNull();
-      expect(commentaires(page).querySelector('.personal')).toBeNull();
+    it('is published with the year of birth only', async () => {
+      const swiss = sobre(await render('/ch'));
+      expect(swiss.querySelector('img')?.getAttribute('src')).toBe('/img/yann-hurry.jpg');
+      expect(swiss.querySelector('.personal dd')?.textContent).toBe('1994');
+      expect(swiss.textContent).toContain('Permis G');
+      expect(swiss.textContent).toContain(UI_TEXT.fr.referencesOnRequest);
     });
+
+    it('stays out of the published French format', async () => {
+      const page = await render('/fr');
+      expect(page.querySelector('img')).toBeNull();
+      expect(page.textContent).not.toContain('1994');
+      expect(page.textContent).not.toContain('Permis G');
+    });
+  });
+
+  it('translates locations into English in every layout', async () => {
+    const page = await render('/ch/en');
+    for (const layout of [sobre(page), commentaires(page), editeur(page)]) {
+      expect(layout.textContent).toContain('Vernier, Switzerland');
+      expect(layout.textContent).not.toContain('Suisse');
+      expect(layout.textContent).not.toContain('Suède');
+    }
+    // Le style « commentaires » n'affiche pas le lieu des formations.
+    for (const layout of [sobre(page), editeur(page)]) {
+      expect(layout.textContent).toContain('Linköping, Sweden');
+    }
+  });
+
+  it('keeps locations in French in every layout', async () => {
+    const page = await render('/ch');
+    for (const layout of [sobre(page), commentaires(page), editeur(page)]) {
+      expect(layout.textContent).toContain('Vernier, Suisse');
+      expect(layout.textContent).not.toContain('Switzerland');
+    }
   });
 
   it('shows languages with their level', async () => {
     const page = await render('/ch/en', {
       ...CV,
-      languages: [...CV.languages, { name: { fr: 'Anglais', en: 'English' }, level: 'B2' }],
+      languages: [
+        { name: { fr: 'Français', en: 'French' }, level: 'native' },
+        { name: { fr: 'Anglais', en: 'English' }, level: 'B2' },
+      ],
     });
     const items = Array.from(sobre(page).querySelectorAll('.languages li'), (li) =>
       li.textContent?.trim(),

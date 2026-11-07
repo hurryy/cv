@@ -11,7 +11,7 @@ export interface UiText {
   present: string;
   /** Niveau d'une langue maternelle. */
   nativeLanguage: string;
-  birthDate: string;
+  birthYear: string;
   nationality: string;
   permit: string;
   availability: string;
@@ -40,7 +40,7 @@ export const UI_TEXT: Record<Lang, UiText> = {
     contactTitle: 'Contact',
     present: "aujourd'hui",
     nativeLanguage: 'langue maternelle',
-    birthDate: 'Date de naissance',
+    birthYear: 'Année de naissance',
     nationality: 'Nationalité',
     permit: 'Permis',
     availability: 'Disponibilité',
@@ -63,7 +63,7 @@ export const UI_TEXT: Record<Lang, UiText> = {
     contactTitle: 'Contact',
     present: 'present',
     nativeLanguage: 'native',
-    birthDate: 'Date of birth',
+    birthYear: 'Year of birth',
     nationality: 'Nationality',
     permit: 'Permit',
     availability: 'Availability',

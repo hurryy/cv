@@ -9,72 +9,29 @@ Format d'un ticket : `## [ID] Titre`, `Statut`, critères d'acceptation en cases
 
 ## À faire
 
-## [CV-02] Réglages GitHub et premier passage de la CI
-
-Statut : à faire — **utilisateur** (jeton `gh` en lecture seule)
-
-- [ ] Dépôt `hurryy/cv` : protection de `master` et `dev` (PR obligatoire, check `cv` requis,
-      pas de force-push), « Allow auto-merge » décoché
-- [ ] Environment `production` avec required reviewer
-- [ ] Secrets de l'environment : `SSH_HOST`, `SSH_USER`, `SSH_KEY` (clé dédiée),
-      `SSH_KNOWN_HOSTS` (`ssh-keyscan`), `SSH_PORT` (facultatif)
-- [ ] Variable `DEPLOY_PATH` (ex. `/srv/cv`), puis `DEPLOY_ENABLED=true` en dernier
-- [ ] CI verte sur `claude`
-- [ ] Le check `cv` de `ci.yml` et le job `build` de `docker-build.yml` passent
-
-## [CV-03] VPS OVH neuf
-
-Statut : script corrigé et relu le 2026-11-05 (`edge/bootstrap-vps.sh`, shellcheck propre,
-durcissement SSH vérifié sur un vrai sshd en conteneur, jamais exécuté sur le VPS) —
-exécution par l'utilisateur
-
-Prérequis utilisateur : VPS commandé ou réinstallé en **Ubuntu 24.04 LTS** avec sa clé SSH
-personnelle ; une **paire de clés dédiée au déploiement** (`ssh-keygen -t ed25519 -f
-deploy_cv -C deploy@github`) dont la publique est passée au script et la privée va dans le
-secret `SSH_KEY`.
-
-VPS retenu (2026-11-05) : OVH VPS 2020 Value 1-2-40 (1 vCore, 2 Go, 40 Go), réinstallé en
-Ubuntu 24.04 par l'utilisateur avec sa clé personnelle. **Toute action sur le VPS est faite
-par l'utilisateur**, jamais par Claude. `ACME_EMAIL` : l'adresse du compte de l'utilisateur.
-
-Défauts du script relevés le 2026-11-05, corrigés le jour même (non exécutés sur le VPS) :
-- [x] Les clés reprises de `/root/.ssh/authorized_keys` portent sur les images OVH une option
-      `command="…Please login as the user ubuntu…"` : recopiées telles quelles, elles
-      bloquent `deploy`. Reprendre les clés de l'administrateur qui lance le script
-      (`$SUDO_USER`), options de ligne retirées
-- [x] L'en-tête documente `ssh root@<ip>`, fermé sur les images OVH : `ssh -t ubuntu@<ip>`,
-      `tmux`, puis `sudo bash` dans la session
-- [x] Swap de 2 Go (fichier, rejouable, `vm.swappiness=10`) : 2 Go de RAM ne suffisent pas
-      à MySQL + Nest d'app-shop sans marge
-- [x] Le message final renvoie à un `edge/README` absent
-- [x] Durcissement SSH sans effet : `50-cloud-init.conf` (`PasswordAuthentication yes`) passe
-      avant `90-hardening.conf`, sshd gardant la première valeur ; fichier renommé
-      `00-hardening.conf` et effet relu par `sshd -T`
-
-À voir plus tard : fail2ban peut bannir l'IP de l'utilisateur pendant ses essais de connexion,
-session ouverte comprise (10 min) ; `ignoreip` éventuel.
-
-- [ ] `edge/bootstrap-vps.sh` : utilisateur `deploy` par clé, root SSH coupé (seulement si un
-      membre de sudo a une clé), `ufw` 22/80/443, `unattended-upgrades`, fail2ban, Docker
-      Engine + Compose, rotation des logs, `/srv/edge` et `/srv/cv`
-- [ ] DNS OVH : A/AAAA `yannhurry.fr` et `www` → IP du VPS, **avant** le premier démarrage
-      de Caddy
-- [ ] `/srv/edge` : `edge/docker-compose.yml`, `edge/conf/Caddyfile`, `.env` d'après
-      `edge/.env.example` ; `docker compose up -d`
-- [ ] `/srv/cv` : `.env` d'après `.env.prod.example`
-- [ ] Premier déploiement : « Docker Build & Push » puis « Deploy » depuis `master`
-- [ ] `curl -I https://yannhurry.fr` : 401 sans identifiants, `noindex`, HSTS ; `www` → 301
-
 ## [CV-04] Contenu à jour
 
-Statut : à faire — **utilisateur**, relecture par Claude
+Statut : fait le 2026-11-07, non déployé — à relire par l'utilisateur sur `/ch` et `/ch/en`
 
-- [ ] `src/app/cv/cv.data.ts` : expériences post-2020, compétences, langues, formations
-- [ ] Lien GitHub : l'ancien CV pointait vers une URL invalide, il a été retiré
-- [ ] Données suisses (`personal` : photo, naissance, nationalité, permis, dispo, taux), niveau
-      d'anglais (CECR), références sur demande. Une fois renseignées, elles partent dans le
-      bundle JS servi aussi sous `/fr` : masquées à l'écran, pas absentes
-- [ ] Compétences : CV-08 n'a mis que celles des expériences, plus C# et TypeScript
+Sources hors dépôt (`C:\Development\Resources\CV\`, jamais copiées dans `cv/`) : CV Suisse
+FR/EN (source de vérité), brouillon SQLI (mission SIG seulement ; ses ajouts non étayés
+ailleurs écartés). Décisions de l'utilisateur (2026-11-07) : client SIG nommé ; publiés :
+photo, année de naissance, nationalité, permis G ; anglais B2 ; stages GFI et Boondooa omis ;
+adresse, téléphone, date complète et permis de conduire jamais.
+
+- [x] `src/app/cv/cv.data.ts` : 5 expériences (SQLI · SIG, N2JSoft, OnCloud, Apollo,
+      Cognizant), 4 formations, compétences en 5 groupes, français natif et anglais B2
+- [x] `personal` : photo `public/img/yann-hurry.jpg` (400×400, sans EXIF), `birthYear`
+      (remplace `birthDate` : un âge prérendu vieillirait entre deux builds), nationalité,
+      permis, références sur demande. Elles partent dans le bundle JS servi aussi sous
+      `/fr` : masquées à l'écran, pas absentes
+- [ ] À trancher par l'utilisateur : M1 MIAGE 2016–2018 (seul le semestre ERASMUS de
+      Linköping est publié) ; dates divergentes entre sources (DUT 2013 ou 2014, N2JSoft
+      février ou mars 2022 : retenus 2013-09 et 2022-03)
+- [x] `location` en `Localized` (« Vernier, Suisse » / « Vernier, Switzerland ») ; la stack
+      reste unique, en forme anglaise standard (« REST API »)
+- [ ] À valider par l'utilisateur, faits repris des PDF : Apollo jusqu'en 2020-11 (mois où
+      OnCloud commence), Cognizant à Grenoble dès 2018-03
 
 ## [CV-05] Design et format franco-suisse
 
@@ -184,6 +141,10 @@ Le Caddy de bordure sert tous les sites du VPS mais vit dans `cv/` parce que le 
 premier déployé. Quand app-shop s'y branche (retrait de son propre Caddy, réseau `edge`
 externe), le déplacer dans un dépôt dédié.
 
+- [ ] En-têtes : le snippet `(hardening)` les pose avant `reverse_proxy` ; si l'amont
+      d'app-shop (helmet) en envoie aussi, vérifier qu'ils ne se doublent pas
+      (`X-Frame-Options: DENY, SAMEORIGIN`) et retirer l'un des deux (`header_down`)
+
 ## [CV-10] Doc et script d'installation du VPS
 
 Statut : à faire — demandé le 2026-11-07, après la mise en service du VPS (CV-02, CV-03)
@@ -203,12 +164,37 @@ Statut : à faire — demandé le 2026-11-07, après la mise en service du VPS (
       changée après réinstallation, séquences parasites de tmux, groupe `sudo` vide sur OVH,
       `conf/` illisible par Caddy (`cap_drop: ALL`), TXT `3|welcome` qui bloque le CNAME
       `www`, `ssh-keygen -lf -` et `Out-File` sous PowerShell 5.1
-- [ ] Correctifs du dépôt liés : `bootstrap-vps.sh` (`$SUDO_USER` admin, `conf` en 755),
-      en-têtes de `hardening` absents des 401 de `basic_auth` (Caddyfile)
+- [x] Correctifs du dépôt liés : `bootstrap-vps.sh` (`$SUDO_USER` admin, `conf` en 755),
+      en-têtes de `hardening` absents des 401 de `basic_auth` (Caddyfile) — faits le
+      2026-11-07 ; `Server: Caddy` reste sur les réponses d'erreur (mineur). Sur le VPS
+      déjà installé : recopier le Caddyfile puis `caddy reload`
+- [ ] Mise en ligne : script `release.ps1` (PR, build, deploy, sans toucher aux workflows)
+      ou workflow déclenché sur `master` avec approbation — à trancher par l'utilisateur
+
+À voir plus tard : fail2ban peut bannir l'IP de l'utilisateur pendant ses essais de connexion
+(10 min) ; `ignoreip` éventuel.
 
 ---
 
 ## Terminé
+
+## [CV-03] VPS OVH neuf
+
+Fait le 2026-11-07 par l'utilisateur, guidé : OVH VPS 2020 Value 1-2-40, Ubuntu 24.04,
+`51.83.79.249` / `2001:41d0:305:2100::485e`. `bootstrap-vps.sh` exécuté (deux défauts
+découverts, corrigés dans le dépôt : CV-10) ; SSH durci, `deploy` et `ubuntu` par clé ; DNS
+OVH A/AAAA racine et CNAME `www` ; `/srv/edge` démarré, certificats Let's Encrypt obtenus ;
+`/srv/cv/.env`. Vérifié : `https://yannhurry.fr` 401 `noindex`, `www` 301, HTTP 308.
+
+## [CV-02] Réglages GitHub et premier passage de la CI
+
+Fait le 2026-11-07 par l'utilisateur (son `gh`, le jeton de Claude restant en lecture
+seule) : environment `production` avec reviewer, secrets `SSH_HOST`, `SSH_USER`, `SSH_KEY`,
+`SSH_KNOWN_HOSTS`, variable `DEPLOY_PATH` d'environment, `DEPLOY_ENABLED=true` de dépôt,
+ruleset `protect-master-dev` (PR, check `cv`, ni suppression ni force-push,
+`require_extra_approval_for_unattributed_changes: false`), auto-merge désactivé. PR #2
+(`claude` → `dev`) et #3 (`dev` → `master`) mergées ; « Docker Build & Push » puis
+« Deploy » réussis : CV-07 et CV-08 déployés.
 
 ## [CV-01] Migration Angular 11 → 21 et containerisation
 
@@ -232,10 +218,10 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 
 | Champ | Valeur |
 |---|---|
-| Mis à jour | 2026-11-06 |
-| Dernière tâche terminée | CV-08 : styles Sobre (défaut, `DEFAULT_STYLE` de `cv.config.ts`), Commentaires, Éditeur ; routes `/ch` `/fr` `/ch/en` `/fr/en` |
-| Tâche en cours | CV-09 (maquettes v2 à retravailler, non validées) ; CV-03 attend l'exécution du script par l'utilisateur |
-| Prochaine action | Utilisateur : déposer ses CV PDF perso et pro hors dépôt et donner les chemins, dire quelles données personnelles peuvent être publiées. Claude : en extraire le contenu (CV-04), remplir les maquettes et les retravailler ensemble jusqu'à validation ; coder CV-09 seulement ensuite. Utilisateur, en parallèle : exécuter `edge/bootstrap-vps.sh` corrigé sur le VPS réinstallé (procédure en tête du script), puis DNS et `/srv/edge` (CV-03) |
-| Contrôle | `check.ps1` 2026-11-05 : build, lint, test à 0 ; Vitest 5 fichiers / 62 tests ; image : `/` et `/en` 301, 4 routes 200, inconnu 302, asset absent 404 ; shellcheck `edge/bootstrap-vps.sh` à 0 |
-| Livré, non déployé | CV-08 (styles, routes pays), CV-07 (FR/EN, thème, lien PDF), CV-01 (migration, image Caddy, workflows, `edge/`), style provisoire SCSS (accent `#36648b`, feuille A4), icônes SVG inline ; `edge/bootstrap-vps.sh` prêt, jamais exécuté |
-| Attend l'utilisateur | 1. merger `claude` → `dev` → `master` ; 2. CV-02 (réglages GitHub, secrets, clé de déploiement) ; 3. VPS en Ubuntu 24.04 puis CV-03 ensemble ; 4. CV-04, contenu |
+| Mis à jour | 2026-11-07 |
+| Dernière tâche terminée | CV-04 (contenu réel, `birthYear`, photo) et correctifs `edge/` de CV-10 ; CV-02 et CV-03 : VPS en service, CV-08 déployé en pré-ouverture |
+| Tâche en cours | CV-10 : `docs/VPS.md` et `edge/install-vps.ps1` |
+| Prochaine action | Claude : CV-10. Utilisateur : PR `claude` → `dev` → `master`, « Docker Build & Push » puis « Deploy » ; sur le VPS, recopier `edge/conf/Caddyfile` dans `/srv/edge/conf/` et `docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile` ; relire le contenu sur `/ch` |
+| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 65 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 ; Caddy local : 401 avec HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy` |
+| Livré, non déployé | CV-04, correctifs `edge/` (script, Caddyfile) |
+| Attend l'utilisateur | points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 ; maquettes CV-09 avec le vrai contenu |

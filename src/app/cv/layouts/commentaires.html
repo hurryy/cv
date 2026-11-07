@@ -36,7 +36,7 @@
         <p class="period">{{ experience.period | period: lang() : 'iso' }}</p>
         <div>
           <h3>{{ experience.role[lang()] }}</h3>
-          <p class="muted">{{ experience.company }} · {{ experience.location }}</p>
+          <p class="muted">{{ experience.company }} · {{ experience.location[lang()] }}</p>
           <p>{{ experience.summary[lang()] }}</p>
           <ul class="stack">
             @for (tech of experience.stack; track tech) {
