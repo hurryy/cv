@@ -107,15 +107,14 @@ Burger refusé : quatre entrées tiennent sur une ligne, un menu caché ajoute u
 gestion de focus pour rien.
 
 - [ ] Bandeau : photo (`/ch`), nom, titre, profil, ligne d'infos (lieu, année de naissance,
-      nationalité et permis en `/ch`, langues), LinkedIn. Profil = « À propos de moi » des PDF
-      suisses (choix de l'utilisateur, 2026-11-07), tel quel :
-      FR « Précédemment développeur back-end, j'ai étendu mes compétences afin de pouvoir
-      travailler sur l'ensemble des aspects d'un projet (fullstack). Demandeur de nouveaux défis
-      qui apportent de la valeur à la société, je suis également en quête de développement
-      professionnel et personnel. »
-      EN « Previously a back-end developer, I have expanded my skills to be able to work on all
-      aspects of a project (full-stack). Eager for new challenges that bring value to society, I
-      am also seeking professional and personal development. »
+      nationalité et permis en `/ch`, langues), LinkedIn. Profil (choix de l'utilisateur, 2026-11-07 ; pas
+      en recherche, donc aucun poste visé) :
+      FR « J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris
+      Angular en main pour suivre une fonctionnalité de la base de données jusqu'à l'écran.
+      Aujourd'hui, j'aime porter un produit de bout en bout. »
+      EN « I started on the back end, where the business rules live. I then took up Angular to
+      follow a feature from the database all the way to the screen. Today, I enjoy owning a
+      product end to end. »
 - [ ] « En bref » sur mobile : 6 technologies clés, dérivées des compétences (`highlight` dans
       `cv.data.ts`), pas une liste écrite une seconde fois
 - [ ] Expériences en frise (période à gauche sur bureau, au-dessus sur mobile) ; ligne
