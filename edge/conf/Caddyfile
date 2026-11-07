@@ -2,14 +2,17 @@
 	email {$ACME_EMAIL}
 }
 
+# Une suppression (`-Server`) rend différé tout le bloc `header` qui la porte,
+# et une erreur (401 de basic_auth, 502) court-circuite les en-têtes différés :
+# la suppression reste donc dans sa propre directive.
 (hardening) {
 	header {
-		-Server
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		X-Frame-Options "DENY"
 	}
+	header -Server
 }
 
 # Pré-ouverture : tant que le contenu du CV n'est pas validé, le site est
