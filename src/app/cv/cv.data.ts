@@ -3,8 +3,7 @@ import { Cv } from './cv.model';
 
 /**
  * Contenu du CV. Seule source à éditer pour mettre le CV à jour : l'affichage en dérive, dans
- * les deux langues. Listes en ordre anti-chronologique. Changer le contenu, c'est aussi avancer
- * `updated`.
+ * les deux langues. Listes en ordre anti-chronologique.
  *
  * PDF : le build de l'image imprime chaque page prérendue (`/ch`, `/fr`,
  * `/ch/en`, `/fr/en`) par Chromium (`npm run pdf`, `scripts/generate-pdf.mjs`) : le PDF suit
@@ -271,7 +270,6 @@ export const CV: Cv = {
     { name: { fr: 'Français', en: 'French' }, level: 'native' },
     { name: { fr: 'Anglais', en: 'English' }, level: 'B2' },
   ],
-  updated: '2026-11',
 };
 
 /** Contenu injecté dans la page ; les tests le remplacent pour couvrir les cas sans données. */

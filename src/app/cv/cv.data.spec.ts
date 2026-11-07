@@ -8,11 +8,4 @@ describe('CV data', () => {
       expect(skills).toContain(highlight);
     }
   });
-
-  it('dates the content with a real month', () => {
-    const [year, month] = CV.updated.split('-').map(Number);
-    expect(year).toBeGreaterThanOrEqual(2026);
-    expect(month).toBeGreaterThanOrEqual(1);
-    expect(month).toBeLessThanOrEqual(12);
-  });
 });

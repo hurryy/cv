@@ -111,9 +111,8 @@ Décisions de l'utilisateur (2026-11-07), qui remplacent celles du 2026-11-06 (C
 Burger refusé : quatre entrées tiennent sur une ligne, un menu caché ajoute un tap et de la
 gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rendu hétérogène).
 
-Écarts assumés avec les maquettes : « Mis à jour en » vient de `Cv.updated` (date du contenu,
-à avancer à chaque modification), pas du build, pour éviter un écart prérendu / hydratation ;
-« En bref » est une liste `Cv.highlights`, chaque entrée vérifiée présente dans les compétences
+Écarts assumés avec les maquettes : aucune date de mise à jour, ni sur la page ni dans les PDF
+(retirée à la demande de l'utilisateur le 2026-11-07) ; « En bref » est une liste `Cv.highlights`, chaque entrée vérifiée présente dans les compétences
 par un test ; périodes en `04/2024`. Budget
 `anyComponentStyle` relevé à 7 / 10 kB (`sobre.scss` ≈ 6,75 kB compilé). `rootMargin` de la
 barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un peu décalé).
@@ -135,8 +134,7 @@ barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un
       sur demande » en `/ch`
 - [x] Effet page (validé le 2026-11-07, maquette « B · grand écran, effet page + Détails ») :
       fond gris-bleu, feuille blanche de 1040 px avec ombre et liseré d'accent en haut ; barre
-      d'outils hors feuille au-dessus (FR/EN, thème, « Télécharger le PDF ») ; « Mis à jour en
-      <mois année> » sous la feuille (date du contenu, voir plus haut). Sous 1100 px : feuille
+      d'outils hors feuille au-dessus (FR/EN, thème, « Télécharger le PDF »). Sous 1100 px : feuille
       pleine largeur, sans ombre ni marge
 - [x] Mobile : barre de raccourcis collante (Expériences · Compétences · Formation, 44 px,
       section en cours soulignée, focus posé sur la section atteinte)
@@ -149,7 +147,7 @@ barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un
       version longue suisse, même source
 - [x] Format suisse : `achievements` (`/ch` seulement) ; format France sans photo, infos
       personnelles, Détails ni références
-- [x] Modèle : `profile`, `location`, `highlights`, `updated` ; par expérience `context`,
+- [x] Modèle : `profile`, `location`, `highlights` ; par expérience `context`,
       `achievements`, `domains` ; contenu FR et EN tiré des PDF suisses
 - [x] Sélecteur de style, `StyleService`, `?style=` retirés ; Commentaires et Éditeur restent
       dans `layouts/`, non rendus ; clair et sombre (CV-07)
@@ -245,6 +243,6 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Dernière tâche terminée | CV-09 : mise en page unique « Bandeau et frise » (bureau, mobile, effet page, Détails) ; avant, CV-10 |
 | Tâche en cours | aucune |
 | Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
-| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 6 fichiers / 97 tests ; image Docker locale : 4 PDF générés |
+| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 90 tests ; image Docker locale : 4 PDF générés |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 et CV-09 (sur `claude`) |
 | Attend l'utilisateur | relire dans `cv.data.ts` contextes, réalisations et secteurs de CV-09 (déduits par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |

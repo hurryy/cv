@@ -214,16 +214,6 @@ describe('App', () => {
     });
   }
 
-  describe('content update date', () => {
-    it.each([
-      ['/ch', 'Mis à jour en mars 2025'],
-      ['/ch/en', 'Updated March 2025'],
-    ])('is written below the sheet at %s', async (url, label) => {
-      const page = await render(url, { ...CV, updated: '2025-03' });
-      expect(layout(page).querySelector('.updated')?.textContent).toBe(label);
-    });
-  });
-
   describe('redirections', () => {
     it.each([
       ['/', '/ch'],
@@ -386,11 +376,11 @@ describe('App', () => {
       const page = harness.routeNativeElement as HTMLElement;
       FakeIntersectionObserver.of('skills').fire({ skills: true });
 
-      FakeIntersectionObserver.of('updated').fire({ updated: true });
+      FakeIntersectionObserver.of('sheet-end').fire({ 'sheet-end': true });
       harness.detectChanges();
       expect(current(page)).toEqual(['/ch#education']);
 
-      FakeIntersectionObserver.of('updated').fire({ updated: false });
+      FakeIntersectionObserver.of('sheet-end').fire({ 'sheet-end': false });
       harness.detectChanges();
       expect(current(page)).toEqual(['/ch#skills']);
     });

@@ -103,9 +103,4 @@ export interface Cv {
   highlights?: string[];
   education: Education[];
   languages: SpokenLanguage[];
-  /**
-   * Mois de la dernière mise à jour du contenu, affiché sous le CV. Écrit à la main : une date
-   * de build pourrait différer entre le prérendu et l'hydratation.
-   */
-  updated: YearMonth;
 }

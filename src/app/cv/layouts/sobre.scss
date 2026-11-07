@@ -521,17 +521,10 @@ details[open] > summary::after {
   color: var(--muted);
 }
 
-.updated {
-  max-width: var(--sheet-width);
-  padding: 0 1rem;
-  margin: 1rem auto 0;
-  font-size: 0.75rem;
-  color: var(--page-fg);
-  text-align: right;
-
-  @media screen and (min-width: $sheet) {
-    padding: 0;
-  }
+// Sentinelle de bas de page (`trackActiveSection`) : sans hauteur, elle ne croiserait jamais la
+// fenêtre d'observation.
+.sheet-end {
+  height: 1px;
 }
 
 // A4, toujours clair (`styles.scss`) : tout déplié, sans fond, ombre ni navigation. Les règles
@@ -543,6 +536,10 @@ details[open] > summary::after {
 
   .sheet {
     border-top: 0;
+  }
+
+  .sheet-end {
+    display: none;
   }
 
   summary {
@@ -607,11 +604,6 @@ details[open] > summary::after {
   .tags li {
     background: none;
     border: 1px solid var(--line);
-  }
-
-  .updated {
-    padding: 0;
-    margin-top: 3mm;
   }
 }
 

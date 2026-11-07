@@ -15,10 +15,6 @@ export interface UiText {
   shortcuts: Record<ShortcutSection, string>;
   /** Bouton qui déplie le contexte et les réalisations d'une expérience. */
   details: string;
-  /** Précède le mois et l'année de mise à jour du contenu. */
-  updated: string;
-  /** De janvier à décembre, tels qu'écrits après `updated`. */
-  months: readonly string[];
   /** Fin d'une période en cours. */
   present: string;
   /** Niveau d'une langue maternelle. */
@@ -53,21 +49,6 @@ export const UI_TEXT: Record<Lang, UiText> = {
     shortcutsLabel: 'Sections du CV',
     shortcuts: { experiences: 'Expériences', skills: 'Compétences', education: 'Formation' },
     details: 'Détails',
-    updated: 'Mis à jour en',
-    months: [
-      'janvier',
-      'février',
-      'mars',
-      'avril',
-      'mai',
-      'juin',
-      'juillet',
-      'août',
-      'septembre',
-      'octobre',
-      'novembre',
-      'décembre',
-    ],
     present: "aujourd'hui",
     nativeLanguage: 'langue maternelle',
     birthYear: 'Année de naissance',
@@ -93,21 +74,6 @@ export const UI_TEXT: Record<Lang, UiText> = {
     shortcutsLabel: 'CV sections',
     shortcuts: { experiences: 'Experience', skills: 'Skills', education: 'Education' },
     details: 'Details',
-    updated: 'Updated',
-    months: [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ],
     present: 'present',
     nativeLanguage: 'native',
     birthYear: 'Year of birth',

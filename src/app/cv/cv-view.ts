@@ -1,4 +1,4 @@
-import { Lang, Personal, SpokenLanguage, YearMonth } from './cv.model';
+import { Lang, Personal, SpokenLanguage } from './cv.model';
 import { UiText } from './ui-text';
 
 /** Une ligne « libellé : valeur » des données personnelles. */
@@ -37,9 +37,3 @@ export const personalFacts = (
 
 export const languageLevel = (language: SpokenLanguage, text: UiText): string =>
   language.level === 'native' ? text.nativeLanguage : language.level;
-
-/** `2026-11` → « Mis à jour en novembre 2026 » / « Updated November 2026 ». */
-export const updatedLabel = (updated: YearMonth, text: UiText): string => {
-  const [year, month] = updated.split('-');
-  return `${text.updated} ${text.months[Number(month) - 1]} ${year}`;
-};

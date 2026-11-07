@@ -10,7 +10,6 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { updatedLabel } from '../cv-view';
 import { Icon } from '../icon';
 import { PeriodPipe } from '../period.pipe';
 import { ShortcutSection, cvPath } from '../ui-text';
@@ -51,7 +50,6 @@ export class SobreLayout extends FormattedCvLayout {
       achievements: (experience.achievements ?? []).map((achievement) => achievement[lang]),
     }));
   });
-  protected readonly updated = computed(() => updatedLabel(this.cv.updated, this.text()));
   /** Section que la barre de raccourcis souligne ; jamais posée au prérendu. */
   protected readonly activeSection = signal<ShortcutSection | null>(null);
 
@@ -159,14 +157,14 @@ export class SobreLayout extends FormattedCvLayout {
       }
     }
 
-    // La date de mise à jour clôt la page : visible, le bas de page est atteint.
+    // La sentinelle vide clôt la page : visible, le bas de page est atteint.
     const end = new Observer((entries) => {
       atEnd = entries.some((entry) => entry.isIntersecting);
       update();
     });
-    const updated = host.querySelector('.updated');
-    if (updated) {
-      end.observe(updated);
+    const sentinel = host.querySelector('.sheet-end');
+    if (sentinel) {
+      end.observe(sentinel);
     }
 
     return () => {
