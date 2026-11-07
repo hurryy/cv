@@ -240,9 +240,10 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Champ | Valeur |
 |---|---|
 | Mis à jour | 2026-11-07 |
-| Dernière tâche terminée | CV-09 : mise en page unique « Bandeau et frise » (bureau, mobile, effet page, Détails) ; avant, CV-10 |
-| Tâche en cours | aucune |
-| Prochaine action | Utilisateur : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
+| Dernière tâche terminée | Textes de `cv.data.ts` reformulés (skill `redaction-naturelle`) et tirets visibles retirés ; avant : date « Mis à jour » retirée, « Nationalité : française », CV-05 (PDF au build, Partager), CV-09 |
+| Tâche en cours | aucune ; arrêt demandé par l'utilisateur le 2026-11-07 |
+| Validation | **rien n'est validé par l'utilisateur** : CV-09, CV-05, retrait de la date et reformulation sont développés et poussés sur `claude`, pas relus. Drapeau à côté de FR/EN : refusé (2026-11-07) |
+| Prochaine action | Utilisateur : relire `/ch` et `/fr` (FR et EN) et les 4 PDF depuis une image locale (`docker build`), valider ou demander des retouches. Ensuite : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
 | Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 90 tests ; image Docker locale : 4 PDF générés |
-| Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10 et CV-09 (sur `claude`) |
-| Attend l'utilisateur | relire dans `cv.data.ts` contextes, réalisations et secteurs de CV-09 (déduits par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
+| Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10, CV-09, CV-05 et suites (sur `claude`, non validés) |
+| Attend l'utilisateur | validation de tout ce qui est sur `claude` ; relire dans `cv.data.ts` contextes, réalisations et secteurs (déduits puis reformulés par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
