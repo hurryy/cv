@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { Cv, CvFormat, Lang } from './cv.model';
-import { SITE_ORIGIN, cvPath } from './ui-text';
+import { canonicalUrl } from './ui-text';
 
 const ALTERNATES: readonly [hreflang: string, format: CvFormat, lang: Lang][] = [
   ['fr-CH', 'ch', 'fr'],
@@ -26,13 +26,13 @@ export class PageMeta {
 
     this.link('link[rel="canonical"]', { rel: 'canonical' }).setAttribute(
       'href',
-      SITE_ORIGIN + cvPath(format, lang),
+      canonicalUrl(format, lang),
     );
     for (const [hreflang, targetFormat, targetLang] of ALTERNATES) {
       this.link(`link[rel="alternate"][hreflang="${hreflang}"]`, {
         rel: 'alternate',
         hreflang,
-      }).setAttribute('href', SITE_ORIGIN + cvPath(targetFormat, targetLang));
+      }).setAttribute('href', canonicalUrl(targetFormat, targetLang));
     }
   }
 

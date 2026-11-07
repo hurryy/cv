@@ -606,18 +606,140 @@ describe('App', () => {
   });
 
   describe('PDF link', () => {
-    const withFrenchPdf: Cv = { ...CV, pdf: { fr: '/pdf/yann-hurry-cv-fr.pdf' } };
+    const cases: { url: string; href: string; name: string; label: string }[] = [
+      {
+        url: '/ch',
+        href: '/pdf/yann-hurry-cv-ch-fr.pdf',
+        name: 'Yann-HURRY-CV-FR.pdf',
+        label: 'Télécharger le PDF',
+      },
+      {
+        url: '/ch/en',
+        href: '/pdf/yann-hurry-cv-ch-en.pdf',
+        name: 'Yann-HURRY-CV-EN.pdf',
+        label: 'Download PDF',
+      },
+      {
+        url: '/fr',
+        href: '/pdf/yann-hurry-cv-fr-fr.pdf',
+        name: 'Yann-HURRY-CV-FR.pdf',
+        label: 'Télécharger le PDF',
+      },
+      {
+        url: '/fr/en',
+        href: '/pdf/yann-hurry-cv-fr-en.pdf',
+        name: 'Yann-HURRY-CV-EN.pdf',
+        label: 'Download PDF',
+      },
+    ];
 
-    it('is shown, as a download, for the language that declares one', async () => {
-      const page = await render('/fr', withFrenchPdf);
-      const link = page.querySelector<HTMLAnchorElement>('a[download]');
-      expect(link?.getAttribute('href')).toBe('/pdf/yann-hurry-cv-fr.pdf');
-      expect(link?.getAttribute('aria-label')).toBe(UI_TEXT.fr.downloadPdfLabel);
+    for (const { url, href, name, label } of cases) {
+      it(`points at ${url} to the PDF of that format and language`, async () => {
+        const page = await render(url);
+        const links = page.querySelectorAll<HTMLAnchorElement>('a[download]');
+        expect(links.length).toBe(1);
+        expect(links[0].getAttribute('href')).toBe(href);
+        expect(links[0].getAttribute('download')).toBe(name);
+        expect(links[0].textContent?.trim()).toBe(label);
+      });
+    }
+
+    it('derives the file name from the name in the data', async () => {
+      const page = await render('/ch', { ...CV, name: ' Jean  DUPONT ' });
+      expect(page.querySelector('a[download]')?.getAttribute('download')).toBe(
+        'Jean-DUPONT-CV-FR.pdf',
+      );
+    });
+  });
+
+  describe('share link', () => {
+    const shareLink = (page: HTMLElement) =>
+      page.querySelector<HTMLAnchorElement>('a[href^="mailto:"]');
+
+    /** Pose ou retire `navigator.share`, absent de jsdom. */
+    const stubShare = (share?: (data: ShareData) => Promise<void>) => {
+      Object.defineProperty(window.navigator, 'share', { value: share, configurable: true });
+    };
+
+    /** Laisse la promesse de `navigator.share` se régler. */
+    const settle = () => new Promise((resolve) => setTimeout(resolve));
+
+    afterEach(() => {
+      delete (window.navigator as { share?: unknown }).share;
     });
 
-    it('is hidden for a language without one', async () => {
-      const page = await render('/ch/en', withFrenchPdf);
-      expect(page.querySelector('a[download]')).toBeNull();
+    it('is a mailto: link to the canonical URL of /ch, encoded', async () => {
+      const page = await render('/ch');
+      const link = shareLink(page);
+      expect(link?.getAttribute('href')).toBe(
+        'mailto:?subject=CV%20de%20Yann%20HURRY&body=https%3A%2F%2Fyannhurry.fr%2Fch',
+      );
+      expect(link?.textContent?.trim()).toBe('Partager');
+    });
+
+    it('is a mailto: link to the canonical URL of /fr/en, encoded', async () => {
+      const page = await render('/fr/en');
+      const link = shareLink(page);
+      expect(link?.getAttribute('href')).toBe(
+        'mailto:?subject=CV%20of%20Yann%20HURRY&body=https%3A%2F%2Fyannhurry.fr%2Ffr%2Fen',
+      );
+      expect(link?.textContent?.trim()).toBe('Share');
+    });
+
+    it('follows its mailto: link when the browser cannot share', async () => {
+      const page = await render('/ch');
+      let prevented: boolean | undefined;
+      // Écouteur posé après celui de la page : il voit son verdict, puis annule la navigation
+      // vers le mailto:, que jsdom ne sait pas suivre.
+      shareLink(page)?.addEventListener('click', (click) => {
+        prevented = click.defaultPrevented;
+        click.preventDefault();
+      });
+
+      shareLink(page)?.click();
+
+      expect(prevented).toBe(false);
+    });
+
+    it('opens the native share sheet instead, when there is one', async () => {
+      const share = vi.fn<(data: ShareData) => Promise<void>>().mockResolvedValue(undefined);
+      stubShare(share);
+      const open = vi.spyOn(window, 'open').mockReturnValue(null);
+      const page = await render('/fr/en');
+      const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+
+      shareLink(page)?.dispatchEvent(event);
+      await settle();
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(share).toHaveBeenCalledWith({
+        title: 'CV of Yann HURRY',
+        text: CV.description.en,
+        url: 'https://yannhurry.fr/fr/en',
+      });
+      expect(open).not.toHaveBeenCalled();
+    });
+
+    it('does nothing more when the user cancels the share sheet', async () => {
+      stubShare(() => Promise.reject(new DOMException('Share canceled', 'AbortError')));
+      const open = vi.spyOn(window, 'open').mockReturnValue(null);
+      const page = await render('/ch');
+
+      shareLink(page)?.click();
+      await settle();
+
+      expect(open).not.toHaveBeenCalled();
+    });
+
+    it('falls back to the mailto: link when sharing fails otherwise', async () => {
+      stubShare(() => Promise.reject(new DOMException('Not allowed', 'NotAllowedError')));
+      const open = vi.spyOn(window, 'open').mockReturnValue(null);
+      const page = await render('/ch');
+
+      shareLink(page)?.click();
+      await settle();
+
+      expect(open).toHaveBeenCalledWith(shareLink(page)?.getAttribute('href'), '_self');
     });
   });
 

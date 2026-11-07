@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 /**
- * Tracés 24 × 24. `code`, `school`, `dark_mode` et `download` viennent de Material Icons
+ * Tracés 24 × 24. `code`, `school`, `dark_mode`, `download` et `share` viennent de Material Icons
  * (Apache 2.0). Le logo LinkedIn reprend le tracé publié par Simple Icons (CC0) ; il reste une
  * marque de LinkedIn, employée ici pour désigner le profil.
  */
@@ -13,6 +13,8 @@ const PATHS = {
   dark_mode:
     'M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
   download: 'M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z',
+  share:
+    'M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z',
 } as const;
 
 export type IconName = keyof typeof PATHS;

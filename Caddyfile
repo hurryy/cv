@@ -13,7 +13,7 @@
 	# être mis en cache, sinon un déploiement reste invisible.
 	@immutable path *.js *.css *.woff2
 
-	# Un asset absent (ancien hash après déploiement, PDF non fourni) rend 404 :
+	# Un asset absent (ancien hash après déploiement, PDF absent) rend 404 :
 	# sans ça, try_files servirait index.html sous une URL .js, marqué immuable.
 	@missingAsset {
 		path *.js *.css *.woff2 *.ico *.pdf

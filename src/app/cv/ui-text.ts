@@ -35,7 +35,9 @@ export interface UiText {
   otherLanguageLabel: string;
   darkThemeLabel: string;
   downloadPdf: string;
-  downloadPdfLabel: string;
+  /** Suivi du nom du titulaire : sujet du courriel et titre du partage. */
+  cvOf: string;
+  share: string;
   /** Nom du fichier affiché dans l'onglet du style Éditeur. */
   editorFile: string;
 }
@@ -77,8 +79,9 @@ export const UI_TEXT: Record<Lang, UiText> = {
     otherLanguage: 'EN',
     otherLanguageLabel: 'EN, version anglaise du CV',
     darkThemeLabel: 'Thème sombre',
-    downloadPdf: 'PDF',
-    downloadPdfLabel: 'PDF, télécharger le CV',
+    downloadPdf: 'Télécharger le PDF',
+    cvOf: 'CV de',
+    share: 'Partager',
     editorFile: 'cv.ts',
   },
   en: {
@@ -116,8 +119,9 @@ export const UI_TEXT: Record<Lang, UiText> = {
     otherLanguage: 'FR',
     otherLanguageLabel: 'FR, French version of the CV',
     darkThemeLabel: 'Dark theme',
-    downloadPdf: 'PDF',
-    downloadPdfLabel: 'PDF, download the CV',
+    downloadPdf: 'Download PDF',
+    cvOf: 'CV of',
+    share: 'Share',
     editorFile: 'cv.en.ts',
   },
 };
@@ -130,3 +134,19 @@ export const cvPath = (format: CvFormat, lang: Lang): string =>
 
 /** Origine publique, pour les liens `hreflang` et canonical qui doivent être absolus. */
 export const SITE_ORIGIN = 'https://yannhurry.fr';
+
+/** Adresse publique d'une page du CV : canonical, `hreflang`, lien partagé. */
+export const canonicalUrl = (format: CvFormat, lang: Lang): string =>
+  SITE_ORIGIN + cvPath(format, lang);
+
+/**
+ * Chemin public du PDF d'une page. Le fichier n'existe que dans l'image Docker (ou après
+ * `npm run pdf`) : `scripts/generate-pdf.mjs` imprime chaque page prérendue sous le chemin que
+ * désigne son lien de téléchargement. Sous `ng serve`, le lien rend 404.
+ */
+export const pdfPath = (format: CvFormat, lang: Lang): string =>
+  `/pdf/yann-hurry-cv-${format}-${lang}.pdf`;
+
+/** Nom proposé à l'enregistrement du PDF (attribut `download`). */
+export const pdfFileName = (name: string, lang: Lang): string =>
+  `${name.trim().replace(/\s+/g, '-')}-CV-${lang.toUpperCase()}.pdf`;

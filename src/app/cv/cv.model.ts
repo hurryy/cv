@@ -95,11 +95,6 @@ export interface Cv {
   location?: Localized;
   /** Meta description de la page. */
   description: Localized;
-  /**
-   * Chemin public du PDF par langue (`/pdf/…`), fichier déposé dans `public/pdf/`. Une langue
-   * sans PDF déclaré n'affiche pas de lien.
-   */
-  pdf?: Partial<Localized>;
   personal?: Personal;
   links: ProfileLink[];
   experiences: Experience[];

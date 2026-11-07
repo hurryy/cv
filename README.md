@@ -8,11 +8,16 @@ CV en ligne de Yann HURRY — Angular 21, prérendu en HTML statique, servi par 
 npm ci
 npm start          # http://localhost:4200
 npm run build      # dist/cv/browser
+npm run pdf        # après build : dist/cv/browser/pdf/, Chromium requis (CHROMIUM_BIN)
 npm run lint
 npm test -- --watch=false
 ```
 
 Le contenu se modifie dans `src/app/cv/cv.data.ts`, et nulle part ailleurs.
+
+Les PDF (un par format et par langue) sont imprimés depuis les pages prérendues pendant le
+build de l'image (`scripts/generate-pdf.mjs`). Sous `npm start`, le lien « Télécharger le PDF »
+rend 404.
 
 ## Image
 

@@ -17,12 +17,14 @@
   >
     <app-icon name="dark_mode" />
   </button>
-  @if (pdf(); as pdf) {
-    <a class="tool primary" [href]="pdf" download [attr.aria-label]="text().downloadPdfLabel">
-      <app-icon name="download" />
-      {{ text().downloadPdf }}
-    </a>
-  }
+  <a class="tool" [href]="mailto()" (click)="share($event)">
+    <app-icon name="share" />
+    {{ text().share }}
+  </a>
+  <a class="tool primary" [href]="pdf()" [attr.download]="pdfName()">
+    <app-icon name="download" />
+    {{ text().downloadPdf }}
+  </a>
 </div>
 
 <main>

@@ -6,8 +6,9 @@ import { Cv } from './cv.model';
  * les deux langues. Listes en ordre anti-chronologique. Changer le contenu, c'est aussi avancer
  * `updated`.
  *
- * PDF : déposer `yann-hurry-cv-fr.pdf` / `yann-hurry-cv-en.pdf` dans `public/pdf/`, puis
- * déclarer `pdf: { fr: '/pdf/yann-hurry-cv-fr.pdf', en: '/pdf/yann-hurry-cv-en.pdf' }`.
+ * PDF : le build de l'image imprime chaque page prérendue (`/ch`, `/fr`,
+ * `/ch/en`, `/fr/en`) par Chromium (`npm run pdf`, `scripts/generate-pdf.mjs`) : le PDF suit
+ * ce fichier, dans le format et la langue de la page.
  *
  * Format suisse : `personal` (photo, année de naissance, nationalité, permis, disponibilité,
  * taux d'activité, références) et les détails des expériences (`context`, `achievements`)
