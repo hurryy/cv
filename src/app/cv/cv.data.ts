@@ -22,10 +22,10 @@ export const CV: Cv = {
     fr: "J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris Angular en main pour suivre une fonctionnalité de la base de données jusqu'à l'écran. Aujourd'hui, j'aime porter un produit de bout en bout.",
     en: 'I started on the back end, where the business rules live. I then took up Angular to follow a feature from the database all the way to the screen. Today, I enjoy owning a product end to end.',
   },
-  location: { fr: 'Annecy – Genève', en: 'Annecy – Geneva' },
+  location: { fr: 'Annecy - Genève', en: 'Annecy - Geneva' },
   description: {
-    fr: 'CV de Yann HURRY, développeur .NET et Angular, Annecy – Genève.',
-    en: 'CV of Yann HURRY, .NET and Angular developer, Annecy – Geneva.',
+    fr: 'CV de Yann HURRY, développeur .NET et Angular, Annecy - Genève.',
+    en: 'CV of Yann HURRY, .NET and Angular developer, Annecy - Geneva.',
   },
   personal: {
     photo: '/img/yann-hurry.jpg',
@@ -50,13 +50,13 @@ export const CV: Cv = {
         en: 'Development and maintenance of the SIG customer portal: .NET REST APIs, Angular and Angular Material front end, REST and SOAP API integration.',
       },
       context: {
-        fr: "En mission pour SQLI, développement et maintenance de l'Espace Client des Services Industriels de Genève, avec l'objectif d'améliorer l'expérience utilisateur et la performance des applications, en équipe Scrum.",
-        en: 'On assignment for SQLI, development and maintenance of the Services Industriels de Genève customer portal, aiming to improve user experience and application performance, in a Scrum team.',
+        fr: "Mission SQLI aux Services Industriels de Genève, dans une équipe Scrum. Je développe et maintiens l'Espace Client, le portail des clients de SIG.",
+        en: "SQLI assignment at Services Industriels de Genève, in a Scrum team. I develop and maintain SIG's customer portal (Espace Client).",
       },
       achievements: [
         {
-          fr: "Conception et maintenance d'API REST .NET Core, pour la performance et la sécurité des transactions",
-          en: 'Design and maintenance of .NET Core REST APIs for transaction performance and security',
+          fr: 'Conception et maintenance des API REST en .NET Core',
+          en: 'Design and maintenance of the .NET Core REST APIs',
         },
         {
           fr: "Interfaces de l'espace client en Angular et Material",
@@ -93,21 +93,21 @@ export const CV: Cv = {
         { fr: 'Gestion des temps et des absences', en: 'Time and leave management' },
       ],
       summary: {
-        fr: 'En télétravail, développement et maintenance de Keeple, solution RH (absences, gestion des temps, télétravail), et de son application mobile.',
-        en: 'Remote position: development and maintenance of Keeple, an HR software product (leave management, time tracking, remote work), and its mobile app.',
+        fr: 'Développement et maintenance de Keeple, logiciel RH (absences, temps de travail, télétravail), et de son application mobile. Poste en télétravail.',
+        en: 'Development and maintenance of Keeple, an HR software product (leave, working time, remote work), and its mobile app. Remote position.',
       },
       context: {
-        fr: "Keeple est une solution RH web de gestion des absences et du temps des collaborateurs. Développeur full stack et mobile, je suis intervenu sur l'ensemble du projet, de l'architecture et de la base de données jusqu'à l'interface.",
-        en: 'Keeple is a web-based HR solution for managing employee absences and working time. As a full-stack and mobile developer, I worked across the whole project, from architecture and database to the user interface.',
+        fr: "Keeple est un logiciel RH en ligne qui gère les absences et le temps de travail des salariés. J'ai travaillé sur tout le projet : architecture, base de données, interface web et application mobile.",
+        en: 'Keeple is an online HR product that handles employee leave and working time. I worked on the whole project: architecture, database, web interface and mobile app.',
       },
       achievements: [
         {
-          fr: 'Déclaration du télétravail : gestion des règles, pose et interactions avec le planning',
-          en: 'Remote-work declaration: rule management, requests and scheduling interactions',
+          fr: 'Déclaration du télétravail : règles, pose et lien avec le planning',
+          en: 'Remote-work declaration: rules, requests and the link with the schedule',
         },
         {
-          fr: "Co-développement d'une application d'envoi de courriels via Amazon, à l'interface entre Keeple, N2F et les API d'Amazon",
-          en: 'Co-developed an email dispatch application via Amazon, linking Keeple, N2F and the Amazon APIs',
+          fr: "Application d'envoi de courriels entre Keeple, N2F et les API d'Amazon, développée à plusieurs",
+          en: 'Email dispatch application between Keeple, N2F and the Amazon APIs, built with other developers',
         },
         {
           fr: 'Nouveau module de gestion des temps : saisie par activité ou par jour, vues semaine et mois',
@@ -115,7 +115,7 @@ export const CV: Cv = {
         },
         {
           fr: 'Module de gestion des temps sur mobile : saisie, déclarations et section « mes déclarations »',
-          en: 'Mobile time-tracking module: time entry, declarations and a “my declarations” section',
+          en: 'Mobile time-tracking module: time entry, declarations and a "my declarations" section',
         },
       ],
       stack: ['.NET Core', 'Angular', 'SQL Server', 'Flutter'],
@@ -134,8 +134,8 @@ export const CV: Cv = {
         en: 'Web applications for clients: a quotation tool for smoke detection and fire safety equipment, and a crowdfunding application.',
       },
       context: {
-        fr: "Au sein d'une équipe de cinq développeurs, développement et maintenance d'applications web pour des clients.",
-        en: 'In a five-developer team, development and maintenance of web applications for clients.',
+        fr: 'Dans une équipe de cinq développeurs, je développais et maintenais des applications web pour des clients.',
+        en: 'In a team of five developers, I built and maintained web applications for clients.',
       },
       achievements: [
         {
@@ -160,8 +160,8 @@ export const CV: Cv = {
         en: 'Technical assessment platform for recruiting: configurable questionnaires and live-proctored coding challenges.',
       },
       context: {
-        fr: "Société de services informatiques ; projet interne de création d'une application de tests techniques pour le recrutement.",
-        en: 'IT services company; internal project building an application for technical recruitment tests.',
+        fr: "Projet interne d'une société de services informatiques : créer l'outil qui fait passer les tests techniques aux candidats.",
+        en: 'Internal project at an IT services company: building the tool that runs technical tests for candidates.',
       },
       achievements: [
         {
@@ -174,7 +174,7 @@ export const CV: Cv = {
         },
         {
           fr: "Coding game « Deezer » : page HTML à reconstruire en JavaScript, avec appels d'API",
-          en: '“Deezer” coding game: an HTML page to rebuild in JavaScript, with API calls',
+          en: '"Deezer" coding game: an HTML page to rebuild in JavaScript, with API calls',
         },
         {
           fr: "Supervision en direct d'un ou plusieurs candidats (WebSockets)",

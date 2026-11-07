@@ -128,7 +128,7 @@ describe('App', () => {
       it(`sets <html lang="${lang}">, the title and the description`, () => {
         const document = TestBed.inject(DOCUMENT);
         expect(html().getAttribute('lang')).toBe(lang);
-        expect(TestBed.inject(Title).getTitle()).toBe(`${CV.name} — ${CV.headline[lang]}`);
+        expect(TestBed.inject(Title).getTitle()).toBe(`${CV.name} - ${CV.headline[lang]}`);
         expect(
           document.head.querySelector('meta[name="description"]')?.getAttribute('content'),
         ).toBe(CV.description[lang]);
@@ -548,7 +548,7 @@ describe('App', () => {
     const cv = layout(await render('/ch/en'));
     expect(cv.textContent).toContain('Vernier, Switzerland');
     expect(cv.textContent).toContain('Linköping, Sweden');
-    expect(cv.textContent).toContain('Annecy – Geneva');
+    expect(cv.textContent).toContain('Annecy - Geneva');
     expect(cv.textContent).toContain('Energy, Customer portal');
     expect(cv.textContent).not.toContain('Suisse');
     expect(cv.textContent).not.toContain('Suède');
@@ -558,7 +558,7 @@ describe('App', () => {
   it('keeps locations and sectors in French', async () => {
     const cv = layout(await render('/ch'));
     expect(cv.textContent).toContain('Vernier, Suisse');
-    expect(cv.textContent).toContain('Annecy – Genève');
+    expect(cv.textContent).toContain('Annecy - Genève');
     expect(cv.textContent).toContain('Énergie, Espace client');
     expect(cv.textContent).not.toContain('Switzerland');
   });
@@ -574,7 +574,7 @@ describe('App', () => {
     const items = Array.from(layout(page).querySelectorAll('.languages li'), (li) =>
       li.textContent?.trim(),
     );
-    expect(items).toEqual([`French — ${UI_TEXT.en.nativeLanguage}`, 'English — B2']);
+    expect(items).toEqual([`French - ${UI_TEXT.en.nativeLanguage}`, 'English - B2']);
   });
 
   describe('language switch', () => {

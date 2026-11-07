@@ -21,7 +21,7 @@ export class PageMeta {
 
   apply(format: CvFormat, lang: Lang, cv: Cv): void {
     this.document.documentElement.setAttribute('lang', lang);
-    this.title.setTitle(`${cv.name} — ${cv.headline[lang]}`);
+    this.title.setTitle(`${cv.name} - ${cv.headline[lang]}`);
     this.meta.updateTag({ name: 'description', content: cv.description[lang] });
 
     this.link('link[rel="canonical"]', { rel: 'canonical' }).setAttribute(

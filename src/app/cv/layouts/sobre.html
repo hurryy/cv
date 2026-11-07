@@ -38,7 +38,7 @@
         @if (languages().length) {
           <ul class="languages" [attr.aria-label]="text().languagesTitle">
             @for (language of languages(); track language.name) {
-              <li>{{ language.name }} — {{ language.level }}</li>
+              <li>{{ language.name }} - {{ language.level }}</li>
             }
           </ul>
         }
