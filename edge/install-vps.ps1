@@ -16,10 +16,12 @@ Usage, depuis la racine du dépôt cv :
    5. contrôle des accès `ubuntu` et `deploy`, du durcissement SSH, du redémarrage ;
    6. DNS (A de la racine et de www, interrogés chez 8.8.8.8) : arrêt tant qu'il ne pointe pas ;
    7. /srv/edge : compose, Caddyfile, .env (mot de passe demandé, jamais écrit sur le PC),
-      démarrage de Caddy, attente des certificats ; avec -From 7, contrôle DNS d'abord ;
+      démarrage de Caddy, attente des certificats ; avec -From 7, contrôle DNS (A et AAAA)
+      d'abord ;
    8. /srv/cv/.env s'il manque ;
    9. vérifications HTTP (401, HSTS, noindex, www 301, http 308) ;
   10. rappel des réglages GitHub, clé d'hôte et son empreinte.
+L'IP et le domaine sont contrôlés avant la première étape jouée, quel que soit -From.
 
 Ne fait pas : les réglages GitHub (secrets, environment, ruleset, DEPLOY_ENABLED), le DNS chez
 OVH, la publication ni le déploiement. Voir docs/VPS.md.
@@ -94,6 +96,20 @@ function Read-YesNo([string]$Question) {
 function Assert-ExitCode([string]$What) {
     if ($LASTEXITCODE -ne 0) {
         throw "$What : code de sortie $LASTEXITCODE."
+    }
+}
+
+# TryParse accepte aussi les formes abrégées (« 51.83.249 », « 1 ») : seule la forme pointée à
+# quatre octets, telle que .NET la réécrit, passe.
+function Assert-VpsTarget([string]$Address, [string]$Name) {
+    $parsed = $null
+    if (-not [System.Net.IPAddress]::TryParse($Address, [ref]$parsed) -or
+        $parsed.AddressFamily -ne [System.Net.Sockets.AddressFamily]::InterNetwork -or
+        $parsed.ToString() -ne $Address) {
+        throw "Adresse IPv4 invalide : '$Address' (sans chevrons, par exemple 51.83.79.249)."
+    }
+    if ($Name -notmatch '^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$') {
+        throw "Domaine invalide : '$Name' (sans www, sans https://)."
     }
 }
 
@@ -178,14 +194,6 @@ function Get-DeployPublicKey {
 function Invoke-Step1 {
     Write-Step 1 'Prérequis du PC'
 
-    $parsed = $null
-    if (-not [System.Net.IPAddress]::TryParse($Ip, [ref]$parsed) -or
-        $parsed.AddressFamily -ne [System.Net.Sockets.AddressFamily]::InterNetwork) {
-        throw "Adresse IPv4 invalide : '$Ip' (sans chevrons, par exemple 51.83.79.249)."
-    }
-    if ($Domain -notmatch '^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$') {
-        throw "Domaine invalide : '$Domain' (sans www, sans https://)."
-    }
     Write-Ok "VPS $Ip, domaine $Domain"
 
     foreach ($tool in 'ssh', 'scp', 'ssh-keygen', 'ssh-keyscan', 'curl.exe') {
@@ -474,6 +482,25 @@ function Test-DnsPointsToVps {
     return $ok
 }
 
+# Vrai si la racine n'a pas d'AAAA, ou n'en a que portées par le VPS : Let's Encrypt essaie
+# l'IPv6 en premier et échoue sur une AAAA étrangère.
+function Test-AaaaOnVps {
+    $aaaa = @(Get-DnsAddresses $Domain 'AAAA')
+    if ($aaaa.Count -eq 0) {
+        Write-Info 'Pas d''AAAA : IPv4 seulement.'
+        return $true
+    }
+    $ubuntu = Get-UbuntuOptions
+    $v6 = Invoke-Capture { & ssh @ubuntu -o BatchMode=yes $UbuntuTarget 'ip -6 -o addr show scope global' }
+    $missing = @($aaaa | Where-Object { $v6.Text -notmatch [regex]::Escape($_) })
+    if ($missing.Count -eq 0) {
+        Write-Ok "AAAA $($aaaa -join ', ') présente sur le VPS."
+        return $true
+    }
+    Write-Warn "AAAA $($missing -join ', ') absente du VPS : Let's Encrypt essaiera l'IPv6 et échouera."
+    return $false
+}
+
 function Invoke-Step6 {
     Write-Step 6 'DNS'
     Write-Info "Zone DNS OVH attendue : A de la racine sur $Ip, www en CNAME vers $Domain."
@@ -487,20 +514,9 @@ function Invoke-Step6 {
         Confirm-Continue 'Entrée pour revérifier, Q pour quitter'
     }
 
-    $aaaa = @(Get-DnsAddresses $Domain 'AAAA')
-    if ($aaaa.Count -gt 0) {
-        $ubuntu = Get-UbuntuOptions
-        $v6 = Invoke-Capture { & ssh @ubuntu -o BatchMode=yes $UbuntuTarget 'ip -6 -o addr show scope global' }
-        $missing = @($aaaa | Where-Object { $v6.Text -notmatch [regex]::Escape($_) })
-        if ($missing.Count -eq 0) {
-            Write-Ok "AAAA $($aaaa -join ', ') présente sur le VPS."
-        } else {
-            Write-Warn "AAAA $($missing -join ', ') absente du VPS : Let's Encrypt essaiera l'IPv6 et échouera."
-            Write-Info 'Retirer l''AAAA chez OVH ou corriger l''IPv6 du VPS avant de continuer.'
-            Confirm-Continue
-        }
-    } else {
-        Write-Info 'Pas d''AAAA : IPv4 seulement.'
+    if (-not (Test-AaaaOnVps)) {
+        Write-Info 'Retirer l''AAAA chez OVH ou corriger l''IPv6 du VPS avant de continuer.'
+        Confirm-Continue
     }
 }
 
@@ -599,6 +615,10 @@ function Invoke-Step7 {
         if (-not (Test-DnsPointsToVps)) {
             $script:CurrentStep = 6
             throw "Le DNS ne pointe pas sur $Ip : Caddy n'est pas démarré (limite Let's Encrypt). Reprendre avec -From 6."
+        }
+        if (-not (Test-AaaaOnVps)) {
+            $script:CurrentStep = 6
+            throw "L'AAAA de $Domain ne correspond pas au VPS : Caddy n'est pas démarré (limite Let's Encrypt). Retirer l'AAAA chez OVH ou corriger l'IPv6 du VPS, puis reprendre avec -From 6."
         }
     }
 
@@ -772,6 +792,7 @@ function Get-ResumeCommand([int]$Step) {
 $script:ScriptParameters = $PSBoundParameters
 
 try {
+    Assert-VpsTarget $Ip $Domain
     for ($step = $From; $step -le $LastStep; $step++) {
         & "Invoke-Step$step"
     }

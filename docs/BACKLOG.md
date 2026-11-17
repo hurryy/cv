@@ -183,8 +183,10 @@ mise en ligne ci-dessous
 - [x] `edge/install-vps.ps1` : 10 étapes, reprise `-From`, bootstrap dans tmux, redémarrage
       vérifié par `boot_id`, DNS contrôlé avant Caddy, mot de passe de pré-ouverture par
       l'entrée standard (jamais en argument ni sur le PC), `.env` créés en 600
-- [ ] Mineurs de relecture : avec `-From` > 1, IP et domaine non revalidés ; reprise
-      `-From 7` sans recontrôle de l'AAAA
+- [x] Mineurs de relecture (2026-11-17) : IP (forme canonique exigée) et domaine validés
+      avant la première étape jouée, quel que soit `-From` ; reprise `-From 7` avec le même
+      contrôle AAAA que l'étape 6, arrêt et renvoi vers `-From 6` si l'AAAA n'est pas sur le
+      VPS. Vérifié hors réseau (fonctions extraites, 14 cas), jamais contre un VPS
 - [x] Correctifs du dépôt liés : `bootstrap-vps.sh` (`$SUDO_USER` admin, `conf` en 755),
       en-têtes de `hardening` absents des 401 de `basic_auth` (Caddyfile) — faits le
       2026-11-07 ; `Server: Caddy` reste sur les réponses d'erreur (mineur). Sur le VPS
@@ -239,11 +241,11 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 
 | Champ | Valeur |
 |---|---|
-| Mis à jour | 2026-11-07 |
-| Dernière tâche terminée | Textes de `cv.data.ts` reformulés (skill `redaction-naturelle`) et tirets visibles retirés ; avant : date « Mis à jour » retirée, « Nationalité : française », CV-05 (PDF au build, Partager), CV-09 |
-| Tâche en cours | aucune ; arrêt demandé par l'utilisateur le 2026-11-07 |
+| Mis à jour | 2026-11-17 |
+| Dernière tâche terminée | CV-10 mineurs de relecture (`install-vps.ps1`, reprise `-From`) ; avant : textes de `cv.data.ts` reformulés (skill `redaction-naturelle`) et tirets visibles retirés ; avant : date « Mis à jour » retirée, « Nationalité : française », CV-05 (PDF au build, Partager), CV-09 |
+| Tâche en cours | aucune côté cv : session autonome du 2026-11-17, CV-10 mineurs faits, le reste attend l'utilisateur ; recette : `docs/RECETTE.md` |
 | Validation | **rien n'est validé par l'utilisateur** : CV-09, CV-05, retrait de la date et reformulation sont développés et poussés sur `claude`, pas relus. Drapeau à côté de FR/EN : refusé (2026-11-07) |
 | Prochaine action | Utilisateur : relire `/ch` et `/fr` (FR et EN) et les 4 PDF depuis une image locale (`docker build`), valider ou demander des retouches. Ensuite : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
-| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 90 tests ; image Docker locale : 4 PDF générés |
+| Contrôle | `check.ps1` 2026-11-17 : build, lint, test à 0 ; Vitest 5 fichiers / 90 tests. Image Docker locale (4 PDF) : dernière le 2026-11-07 |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10, CV-09, CV-05 et suites (sur `claude`, non validés) |
 | Attend l'utilisateur | validation de tout ce qui est sur `claude` ; relire dans `cv.data.ts` contextes, réalisations et secteurs (déduits puis reformulés par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
