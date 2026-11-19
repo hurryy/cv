@@ -8,6 +8,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "pdf": "node scripts/generate-pdf.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

@@ -1,0 +1,42 @@
+# Sites d'app-shop, servis par le Caddy de bordure.
+#
+# Ce fichier n'est importé par aucun Caddyfile actif. Il s'active en ajoutant, à
+# la fin de conf/Caddyfile (après la définition des snippets, dont il dépend) :
+#   import /etc/caddy/sites/app-shop.caddy
+# et seulement quand shop.yannhurry.fr et apishop.yannhurry.fr résolvent vers le
+# VPS : un nom sans DNS fait échouer le certificat Let's Encrypt, et 5 échecs
+# par heure bloquent le nom (app-shop/docs/MEP.md).
+#
+# Les amonts sont joints par le réseau Docker `edge` sous les alias déclarés par
+# le docker-compose.prod.yml d'app-shop. Des noms de service génériques
+# (`angular`, `nestjs`) entreraient en collision avec un autre site du réseau.
+#
+# Les domaines sont écrits en clair : le bundle Angular de production appelle
+# https://apishop.yannhurry.fr/api/ en dur, ils ne sont donc pas réglables.
+
+shop.yannhurry.fr {
+	import hardening
+	encode zstd gzip
+	reverse_proxy shop-front:8080
+}
+
+apishop.yannhurry.fr {
+	import hardening
+	encode zstd gzip
+	# Inscription fermée pendant les essais : le nom apparaît dans les journaux
+	# Certificate Transparency dès l'émission du certificat, et l'API répond à
+	# tous. Le premier admin naît par `npm run admin:create` sur le VPS. Ces deux
+	# lignes se retirent à l'ouverture d'app-shop (app-shop/docs/MEP.md).
+	@register path /api/auth/register
+	respond @register 403
+	reverse_proxy shop-api:5000 {
+		# helmet pose déjà ces en-têtes côté API ; ceux de l'amont sont retirés
+		# pour qu'une seule valeur, celle de `hardening`, sorte (sinon
+		# `X-Frame-Options: DENY, SAMEORIGIN`). Les autres en-têtes de helmet
+		# (CSP, COOP, CORP…) n'ont pas d'équivalent ici et sont gardés.
+		header_down -Strict-Transport-Security
+		header_down -X-Content-Type-Options
+		header_down -Referrer-Policy
+		header_down -X-Frame-Options
+	}
+}

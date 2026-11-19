@@ -4,5 +4,7 @@
 Dockerfile text eol=lf
 .dockerignore text eol=lf
 Caddyfile text eol=lf
+*.caddy text eol=lf
 docker-compose*.yml text eol=lf
 *.sh text eol=lf
+scripts/** text eol=lf

@@ -5,25 +5,32 @@ import { Cv } from './cv.model';
  * Contenu du CV. Seule source à éditer pour mettre le CV à jour : l'affichage en dérive, dans
  * les deux langues. Listes en ordre anti-chronologique.
  *
- * PDF : déposer `yann-hurry-cv-fr.pdf` / `yann-hurry-cv-en.pdf` dans `public/pdf/`, puis
- * déclarer `pdf: { fr: '/pdf/yann-hurry-cv-fr.pdf', en: '/pdf/yann-hurry-cv-en.pdf' }`.
+ * PDF : le build de l'image imprime chaque page prérendue (`/`, `/en`, et `/fr`, `/fr/en` si
+ * le format France est publié, `cv-formats.ts`) par Chromium (`npm run pdf`,
+ * `scripts/generate-pdf.mjs`) : le PDF suit ce fichier, dans le format et la langue de la page.
  *
  * Format suisse : `personal` (photo, année de naissance, nationalité, permis, disponibilité,
- * taux d'activité, références) n'apparaît que sous `/ch`, champ par champ, une fois renseigné.
+ * taux d'activité, références) et les détails des expériences (`context`, `achievements`)
+ * n'apparaissent que dans ce format, champ par champ, une fois renseignés.
  * Le dépôt est public : ni adresse, ni téléphone, ni date de naissance complète, ni permis de
  * conduire.
  */
 export const CV: Cv = {
   name: 'Yann HURRY',
   headline: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
+  profile: {
+    fr: "J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris Angular en main pour suivre une fonctionnalité de la base de données jusqu'à l'écran. Aujourd'hui, j'aime porter un produit de bout en bout.",
+    en: 'I started on the back end, where the business rules live. I then took up Angular to follow a feature from the database all the way to the screen. Today, I enjoy owning a product end to end.',
+  },
+  location: { fr: 'Annecy - Genève', en: 'Annecy - Geneva' },
   description: {
-    fr: 'CV de Yann HURRY, développeur .NET et Angular, Annecy – Genève.',
-    en: 'CV of Yann HURRY, .NET and Angular developer, Annecy – Geneva.',
+    fr: 'CV de Yann HURRY, développeur .NET et Angular, Annecy - Genève.',
+    en: 'CV of Yann HURRY, .NET and Angular developer, Annecy - Geneva.',
   },
   personal: {
     photo: '/img/yann-hurry.jpg',
     birthYear: 1994,
-    nationality: { fr: 'Française', en: 'French' },
+    nationality: { fr: 'française', en: 'French' },
     permit: { fr: 'Permis G', en: 'G permit' },
     referencesOnRequest: true,
   },
@@ -34,10 +41,37 @@ export const CV: Cv = {
       company: 'SQLI · Services Industriels de Genève',
       location: { fr: 'Vernier, Suisse', en: 'Vernier, Switzerland' },
       period: { start: '2024-04', end: null },
+      domains: [
+        { fr: 'Énergie', en: 'Energy' },
+        { fr: 'Espace client', en: 'Customer portal' },
+      ],
       summary: {
         fr: "Développement et maintenance de l'Espace Client SIG : API REST .NET, interfaces Angular et Material, intégration d'API REST et SOAP.",
         en: 'Development and maintenance of the SIG customer portal: .NET REST APIs, Angular and Angular Material front end, REST and SOAP API integration.',
       },
+      context: {
+        fr: "Mission SQLI aux Services Industriels de Genève, dans une équipe Scrum. Je développe et maintiens l'Espace Client, le portail des clients de SIG.",
+        en: "SQLI assignment at Services Industriels de Genève, in a Scrum team. I develop and maintain SIG's customer portal (Espace Client).",
+      },
+      achievements: [
+        {
+          fr: 'Conception et maintenance des API REST en .NET Core',
+          en: 'Design and maintenance of the .NET Core REST APIs',
+        },
+        {
+          fr: "Interfaces de l'espace client en Angular et Material",
+          en: 'Customer portal user interfaces in Angular and Material',
+        },
+        {
+          fr: "Intégration d'API REST et SOAP de partenaires (ADAL, MSAL)",
+          en: 'Integration of partner REST and SOAP APIs (ADAL, MSAL)',
+        },
+        { fr: 'Revues de code et mises à jour techniques', en: 'Code reviews and technical upgrades' },
+        {
+          fr: 'Conseil aux Product Owners sur la conception des fonctionnalités',
+          en: 'Advising Product Owners on feature design',
+        },
+      ],
       stack: [
         '.NET',
         'C#',
@@ -54,10 +88,36 @@ export const CV: Cv = {
       company: 'N2JSoft',
       location: { fr: 'Annecy, France', en: 'Annecy, France' },
       period: { start: '2022-03', end: '2024-03' },
+      domains: [
+        { fr: 'RH', en: 'HR' },
+        { fr: 'Gestion des temps et des absences', en: 'Time and leave management' },
+      ],
       summary: {
-        fr: 'En télétravail, développement et maintenance de Keeple, solution RH (absences, gestion des temps, télétravail), et de son application mobile.',
-        en: 'Remote position: development and maintenance of Keeple, an HR software product (leave management, time tracking, remote work), and its mobile app.',
+        fr: 'Développement et maintenance de Keeple, logiciel RH (absences, temps de travail, télétravail), et de son application mobile. Poste en télétravail.',
+        en: 'Development and maintenance of Keeple, an HR software product (leave, working time, remote work), and its mobile app. Remote position.',
       },
+      context: {
+        fr: "Keeple est un logiciel RH en ligne qui gère les absences et le temps de travail des salariés. J'ai travaillé sur tout le projet : architecture, base de données, interface web et application mobile.",
+        en: 'Keeple is an online HR product that handles employee leave and working time. I worked on the whole project: architecture, database, web interface and mobile app.',
+      },
+      achievements: [
+        {
+          fr: 'Déclaration du télétravail : règles, pose et lien avec le planning',
+          en: 'Remote-work declaration: rules, requests and the link with the schedule',
+        },
+        {
+          fr: "Application d'envoi de courriels entre Keeple, N2F et les API d'Amazon, développée à plusieurs",
+          en: 'Email dispatch application between Keeple, N2F and the Amazon APIs, built with other developers',
+        },
+        {
+          fr: 'Nouveau module de gestion des temps : saisie par activité ou par jour, vues semaine et mois',
+          en: 'New time-tracking module: entry by activity or by day, weekly and monthly views',
+        },
+        {
+          fr: 'Module de gestion des temps sur mobile : saisie, déclarations et section « mes déclarations »',
+          en: 'Mobile time-tracking module: time entry, declarations and a "my declarations" section',
+        },
+      ],
       stack: ['.NET Core', 'Angular', 'SQL Server', 'Flutter'],
     },
     {
@@ -65,10 +125,28 @@ export const CV: Cv = {
       company: 'OnCloud',
       location: { fr: 'Annecy, France', en: 'Annecy, France' },
       period: { start: '2020-11', end: '2022-02' },
+      domains: [
+        { fr: 'Sécurité incendie', en: 'Fire safety' },
+        { fr: 'Finance participative', en: 'Crowdfunding' },
+      ],
       summary: {
         fr: "Applications web pour des clients : outil de devis d'équipements de détection de fumée et de sécurité incendie, application de crowdfunding.",
         en: 'Web applications for clients: a quotation tool for smoke detection and fire safety equipment, and a crowdfunding application.',
       },
+      context: {
+        fr: 'Dans une équipe de cinq développeurs, je développais et maintenais des applications web pour des clients.',
+        en: 'In a team of five developers, I built and maintained web applications for clients.',
+      },
+      achievements: [
+        {
+          fr: 'Application de devis, en équipe : module de calcul, paramétrage, édition finale en PDF',
+          en: 'Quotation application, built as a team: calculation module, configuration, final PDF quote',
+        },
+        {
+          fr: "Application de crowdfunding : calcul des intérêts, planning des échéances, interface d'administration des projets",
+          en: 'Crowdfunding application: interest calculation, payment schedule, project administration interface',
+        },
+      ],
       stack: ['.NET Core', '.NET Framework', 'Vue.js', 'Razor', 'SQL Server'],
     },
     {
@@ -76,10 +154,33 @@ export const CV: Cv = {
       company: 'Apollo',
       location: { fr: 'Grenoble, France', en: 'Grenoble, France' },
       period: { start: '2020-01', end: '2020-11' },
+      domains: [{ fr: 'Recrutement', en: 'Recruitment' }],
       summary: {
         fr: 'Plateforme de tests techniques pour le recrutement : questionnaires paramétrables et coding games supervisés en direct.',
         en: 'Technical assessment platform for recruiting: configurable questionnaires and live-proctored coding challenges.',
       },
+      context: {
+        fr: "Projet interne d'une société de services informatiques : créer l'outil qui fait passer les tests techniques aux candidats.",
+        en: 'Internal project at an IT services company: building the tool that runs technical tests for candidates.',
+      },
+      achievements: [
+        {
+          fr: 'Questionnaires paramétrables à faire passer aux candidats',
+          en: 'Configurable questionnaires for candidates',
+        },
+        {
+          fr: "Édition des questionnaires depuis une interface d'administration",
+          en: 'Questionnaire editing from an administration interface',
+        },
+        {
+          fr: "Coding game « Deezer » : page HTML à reconstruire en JavaScript, avec appels d'API",
+          en: '"Deezer" coding game: an HTML page to rebuild in JavaScript, with API calls',
+        },
+        {
+          fr: "Supervision en direct d'un ou plusieurs candidats (WebSockets)",
+          en: 'Live supervision of one or more candidates (WebSockets)',
+        },
+      ],
       stack: ['.NET Core', 'Angular', 'SQL Server', 'WebSockets'],
     },
     {
@@ -90,10 +191,29 @@ export const CV: Cv = {
       company: 'Cognizant',
       location: { fr: 'Grenoble, France', en: 'Grenoble, France' },
       period: { start: '2018-03', end: '2019-09' },
+      domains: [{ fr: 'Gestion de flotte', en: 'Fleet management' }],
       summary: {
         fr: "Maintenance corrective et évolutive d'un outil de gestion de flotte de véhicules.",
         en: 'Maintenance and enhancement of a vehicle fleet management application.',
       },
+      context: {
+        fr: "Société de services informatiques : stage de six mois suivi d'une année d'alternance, sur un outil de gestion de flotte de véhicules.",
+        en: 'IT services company: six-month internship followed by a one-year apprenticeship, on a vehicle fleet management tool.',
+      },
+      achievements: [
+        {
+          fr: 'Bus de données pour communiquer avec une application partenaire',
+          en: 'Data bus for communication with a partner application',
+        },
+        {
+          fr: 'Script batch de migration des données et du schéma de base en production',
+          en: 'Batch script for production data and database schema migrations',
+        },
+        {
+          fr: 'Application de centralisation des données du personnel (React)',
+          en: 'Personnel data centralization application (React)',
+        },
+      ],
       stack: ['ASP.NET', 'C#', 'SSIS', 'Azure Service Bus', 'SQL Server'],
     },
   ],
@@ -113,6 +233,7 @@ export const CV: Cv = {
       items: ['Git', 'Azure DevOps', 'CI/CD', 'Scrum'],
     },
   ],
+  highlights: ['C#', '.NET', 'Angular', 'TypeScript', 'SQL Server', 'Azure DevOps'],
   education: [
     {
       degree: { fr: 'Master 2 MIAGE', en: "Master's degree (M2) in MIAGE (IT for business)" },
