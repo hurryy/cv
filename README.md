@@ -15,7 +15,7 @@ npm test -- --watch=false
 
 Le contenu se modifie dans `src/app/cv/cv.data.ts`, et nulle part ailleurs.
 
-Les PDF (un par format et par langue) sont imprimés depuis les pages prérendues pendant le
+Les PDF (un par format publié et par langue) sont imprimés depuis les pages prérendues pendant le
 build de l'image (`scripts/generate-pdf.mjs`). Sous `npm start`, le lien « Télécharger le PDF »
 rend 404.
 

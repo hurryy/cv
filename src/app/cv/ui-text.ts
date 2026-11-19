@@ -94,9 +94,17 @@ export const UI_TEXT: Record<Lang, UiText> = {
 
 export const OTHER_LANG: Record<Lang, Lang> = { fr: 'en', en: 'fr' };
 
-/** Chemin d'une page du CV ; doit rester aligné sur `app.routes.ts` et le `Caddyfile`. */
-export const cvPath = (format: CvFormat, lang: Lang): string =>
-  lang === 'fr' ? `/${format}` : `/${format}/${lang}`;
+/** Le format suisse occupe la racine du site. */
+const FORMAT_PREFIX: Record<CvFormat, string> = { ch: '', fr: '/fr' };
+
+/**
+ * Chemin d'une page du CV, d'où `app.routes.ts` tire ses routes ; doit rester aligné sur le
+ * `Caddyfile` et `scripts/generate-pdf.mjs`.
+ */
+export const cvPath = (format: CvFormat, lang: Lang): string => {
+  const prefix = FORMAT_PREFIX[format];
+  return lang === 'fr' ? prefix || '/' : `${prefix}/${lang}`;
+};
 
 /** Origine publique, pour les liens `hreflang` et canonical qui doivent être absolus. */
 export const SITE_ORIGIN = 'https://yannhurry.fr';

@@ -160,19 +160,22 @@ barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un
 
 ## [CV-11] CV suisse à la racine, version France masquée
 
-Statut : à faire — demandé par l'utilisateur le 2026-11-19 : « pour le cv on va cacher la
-version française pour l'instant et afficher le cv ch à la racine plus avec /ch ».
+Statut : fait le 2026-11-19 sur `claude`, non relu — demandé par l'utilisateur le 2026-11-19 :
+« pour le cv on va cacher la version française pour l'instant et afficher le cv ch à la racine
+plus avec /ch ».
 
-- [ ] Le CV au format suisse est servi à `/` (prérendu compris), plus à `/ch`
-- [ ] La version France est masquée, son code conservé et réactivable par un seul réglage
-      (drapeau ou route), sans réécriture
-- [ ] `/ch` → `/` et `/fr` → `/` en redirection permanente ; côté Caddy (`Caddyfile` de
-      l'image) ou Angular, choix justifié dans le lot (un site prérendu sans serveur Node
-      plaide pour Caddy : un vrai 301, lisible par les moteurs)
-- [ ] Liens de navigation, sélecteur de format retiré ou masqué ; PDF : seuls les PDF CH
-      (FR et EN) proposés et générés
-- [ ] Sitemap, `hreflang`, `canonical` mis à jour s'ils existent
-- [ ] Langues FR et EN conservées
+- [x] Le CV au format suisse est servi à `/` et `/en` (prérendus), plus à `/ch`
+- [x] La version France est masquée, son code conservé et réactivable par un seul réglage :
+      `FRANCE_FORMAT_PUBLISHED` dans `src/app/cv/cv-formats.ts` (`true` : pages `/fr`,
+      `/fr/en` prérendues, `hreflang`, PDF, et le `Caddyfile` ne les redirige plus)
+- [x] `/ch` → `/` en 301 et `/fr` → `/` en 302 (masquage temporaire : un 301 resterait en
+      cache après la réouverture) par le `Caddyfile` de l'image (vraie redirection sans serveur
+      Node), langue gardée (`/ch/en`, `/fr/en` → `/en`), query conservée, sous-chemins vers `/`.
+      Angular ne fait que `**` → `/`, pour `ng serve`
+- [x] Aucun lien vers la version France (il n'y avait pas de sélecteur de format) ; PDF : seuls
+      `ch-fr` et `ch-en` proposés et générés
+- [x] `hreflang` et `canonical` mis à jour ; ni sitemap ni `robots.txt` dans l'image
+- [x] Langues FR et EN conservées (la langue reste `data.lang`, le format `data.format`)
 
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
@@ -257,11 +260,11 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 
 | Champ | Valeur |
 |---|---|
-| Mis à jour | 2026-11-17 |
-| Dernière tâche terminée | CV-10 mineurs de relecture (`install-vps.ps1`, reprise `-From`) ; avant : textes de `cv.data.ts` reformulés (skill `redaction-naturelle`) et tirets visibles retirés ; avant : date « Mis à jour » retirée, « Nationalité : française », CV-05 (PDF au build, Partager), CV-09 |
-| Tâche en cours | aucune côté cv : session autonome du 2026-11-17, CV-10 mineurs faits, le reste attend l'utilisateur ; recette : `docs/RECETTE.md` |
+| Mis à jour | 2026-11-19 |
+| Dernière tâche terminée | 2026-11-19 : CV-11 (CV suisse à `/` et `/en`, `/ch` en 301, `/fr` en 302, France masquée par `FRANCE_FORMAT_PUBLISHED`) ; `docs/MEP.md` et `edge/conf/sites/app-shop.caddy` (non importé) |
+| Tâche en cours | aucune côté cv ; recette : `docs/RECETTE.md` ; mise en ligne : `docs/MEP.md` § Actions utilisateur |
 | Validation | **rien n'est validé par l'utilisateur** : CV-09, CV-05, retrait de la date et reformulation sont développés et poussés sur `claude`, pas relus. Drapeau à côté de FR/EN : refusé (2026-11-07) |
-| Prochaine action | Utilisateur : relire `/ch` et `/fr` (FR et EN) et les 4 PDF depuis une image locale (`docker build`), valider ou demander des retouches. Ensuite : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/ch`. Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
-| Contrôle | `check.ps1` 2026-11-17 : build, lint, test à 0 ; Vitest 5 fichiers / 90 tests. Image Docker locale (4 PDF) : dernière le 2026-11-07 |
+| Prochaine action | Utilisateur : relire `/` et `/en` et les 2 PDF CH depuis une image locale (`docker build`), valider ou demander des retouches. Ensuite : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/` et `/en` (`docs/MEP.md`). Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
+| Contrôle | `check.ps1` 2026-11-19 : build, lint, test à 0 ; Vitest 5 fichiers / 101 tests. Image locale 2026-11-19 : `/`, `/en` 200 ; `/ch*` 301 ; `/fr*` 302 ; 2 PDF CH |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10, CV-09, CV-05 et suites (sur `claude`, non validés) |
 | Attend l'utilisateur | validation de tout ce qui est sur `claude` ; relire dans `cv.data.ts` contextes, réalisations et secteurs (déduits puis reformulés par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |

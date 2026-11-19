@@ -8,20 +8,30 @@ import {
   withInMemoryScrolling,
 } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { routes } from './app.routes';
+import { cvRoutes } from './app.routes';
+import { CV_FORMATS } from './cv/cv-formats';
 import { CV, CV_DATA } from './cv/cv.data';
 import { Cv, CvFormat, Lang } from './cv/cv.model';
 import { UI_TEXT } from './cv/ui-text';
 
-const setup = async (url: string, cv: Cv = CV): Promise<RouterTestingHarness> => {
+/** Les deux états de `FRANCE_FORMAT_PUBLISHED`, pour que les tests n'en dépendent pas. */
+const SWISS_ONLY: readonly CvFormat[] = ['ch'];
+const WITH_FRANCE: readonly CvFormat[] = ['ch', 'fr'];
+
+const setup = async (
+  url: string,
+  cv: Cv = CV,
+  formats: readonly CvFormat[] = SWISS_ONLY,
+): Promise<RouterTestingHarness> => {
   TestBed.configureTestingModule({
     providers: [
       provideRouter(
-        routes,
+        cvRoutes(formats),
         withComponentInputBinding(),
         withInMemoryScrolling({ anchorScrolling: 'enabled' }),
       ),
       { provide: CV_DATA, useValue: cv },
+      { provide: CV_FORMATS, useValue: formats },
     ],
   });
   const harness = await RouterTestingHarness.create(url);
@@ -30,8 +40,17 @@ const setup = async (url: string, cv: Cv = CV): Promise<RouterTestingHarness> =>
   return harness;
 };
 
-const render = async (url: string, cv: Cv = CV): Promise<HTMLElement> =>
-  (await setup(url, cv)).routeNativeElement as HTMLElement;
+const render = async (
+  url: string,
+  cv: Cv = CV,
+  formats: readonly CvFormat[] = SWISS_ONLY,
+): Promise<HTMLElement> => (await setup(url, cv, formats)).routeNativeElement as HTMLElement;
+
+const alternatesOf = (head: HTMLHeadElement) =>
+  Array.from(head.querySelectorAll('link[rel="alternate"]'), (link) => [
+    link.getAttribute('hreflang'),
+    link.getAttribute('href'),
+  ]);
 
 const html = () => document.documentElement;
 const layout = (page: HTMLElement) => page.querySelector('app-layout-sobre') as HTMLElement;
@@ -110,9 +129,10 @@ describe('App', () => {
     vi.restoreAllMocks();
   });
 
+  // Format France publié : les quatre pages existent.
   const pages: { url: string; format: CvFormat; lang: Lang; other: string }[] = [
-    { url: '/ch', format: 'ch', lang: 'fr', other: '/ch/en' },
-    { url: '/ch/en', format: 'ch', lang: 'en', other: '/ch' },
+    { url: '/', format: 'ch', lang: 'fr', other: '/en' },
+    { url: '/en', format: 'ch', lang: 'en', other: '/' },
     { url: '/fr', format: 'fr', lang: 'fr', other: '/fr/en' },
     { url: '/fr/en', format: 'fr', lang: 'en', other: '/fr' },
   ];
@@ -122,7 +142,7 @@ describe('App', () => {
       let page: HTMLElement;
 
       beforeEach(async () => {
-        page = await render(url);
+        page = await render(url, CV, WITH_FRANCE);
       });
 
       it(`sets <html lang="${lang}">, the title and the description`, () => {
@@ -140,16 +160,12 @@ describe('App', () => {
         expect(head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
           `https://yannhurry.fr${url}`,
         );
-        const alternates = Array.from(head.querySelectorAll('link[rel="alternate"]'), (link) => [
-          link.getAttribute('hreflang'),
-          link.getAttribute('href'),
-        ]);
-        expect(alternates).toEqual([
-          ['fr-CH', 'https://yannhurry.fr/ch'],
-          ['en-CH', 'https://yannhurry.fr/ch/en'],
+        expect(alternatesOf(head)).toEqual([
+          ['fr-CH', 'https://yannhurry.fr/'],
+          ['en-CH', 'https://yannhurry.fr/en'],
           ['fr-FR', 'https://yannhurry.fr/fr'],
           ['en-FR', 'https://yannhurry.fr/fr/en'],
-          ['x-default', 'https://yannhurry.fr/ch'],
+          ['x-default', 'https://yannhurry.fr/'],
         ]);
       });
 
@@ -214,20 +230,62 @@ describe('App', () => {
     });
   }
 
-  describe('redirections', () => {
+  describe('with the France format hidden', () => {
     it.each([
-      ['/', '/ch'],
-      ['/en', '/ch/en'],
-      ['/nope', '/ch'],
-    ])('sends %s to %s', async (from, to) => {
-      await setup(from);
-      expect(TestBed.inject(Router).url).toBe(to);
+      ['/', 'fr'],
+      ['/en', 'en'],
+    ] as const)('serves the Swiss CV at %s', async (url, lang) => {
+      const page = await render(url);
+      expect(TestBed.inject(Router).url).toBe(url);
+      expect(html().getAttribute('lang')).toBe(lang);
+      expect(layout(page).querySelector('.headline')?.textContent).toBe(CV.headline[lang]);
+      expect(page.querySelectorAll('details').length).toBe(CV.experiences.length);
+      expect(layout(page).querySelector('img')?.getAttribute('src')).toBe('/img/yann-hurry.jpg');
+    });
+
+    it('declares the Swiss pages only as alternates', async () => {
+      await render('/en');
+      const head = TestBed.inject(DOCUMENT).head;
+      expect(head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+        'https://yannhurry.fr/en',
+      );
+      expect(alternatesOf(head)).toEqual([
+        ['fr-CH', 'https://yannhurry.fr/'],
+        ['en-CH', 'https://yannhurry.fr/en'],
+        ['x-default', 'https://yannhurry.fr/'],
+      ]);
+    });
+
+    it.each(['/', '/en'])('links at %s neither to the France format nor to its PDF', async (url) => {
+      const page = await render(url);
+      const hrefs = Array.from(page.querySelectorAll('a[href]'), (link) =>
+        link.getAttribute('href'),
+      );
+      expect(hrefs.filter((href) => href?.startsWith('/fr') || href?.includes('-cv-fr-'))).toEqual(
+        [],
+      );
+    });
+
+    // Le `Caddyfile` renvoie `/ch/en` et `/fr/en` vers `/en` avant que l'application ne charge.
+    it.each(['/ch', '/ch/en', '/fr', '/fr/en', '/fr/x', '/nope'])(
+      'sends %s back to the root',
+      async (from) => {
+        await setup(from);
+        expect(TestBed.inject(Router).url).toBe('/');
+      },
+    );
+  });
+
+  describe('with the France format published', () => {
+    it.each(['/ch', '/ch/en', '/nope'])('sends %s back to the root', async (from) => {
+      await setup(from, CV, WITH_FRANCE);
+      expect(TestBed.inject(Router).url).toBe('/');
     });
   });
 
   describe('experience details', () => {
     it('unfold the context, then the achievements, closed by default', async () => {
-      const page = await render('/ch');
+      const page = await render('/');
       const details = entries(page)[0].querySelector('details') as HTMLDetailsElement;
       expect(details.open).toBe(false);
       const [first] = CV.experiences;
@@ -241,7 +299,7 @@ describe('App', () => {
     });
 
     it('are translated in English', async () => {
-      const page = await render('/ch/en');
+      const page = await render('/en');
       const details = entries(page)[0].querySelector('details');
       expect(details?.querySelector('summary')?.textContent).toBe(
         `${UI_TEXT.en.details}, ${CV.experiences[0].role.en}, ${CV.experiences[0].company}`,
@@ -253,7 +311,7 @@ describe('App', () => {
     });
 
     it('name each button after its experience, for screen readers only', async () => {
-      const page = await render('/ch');
+      const page = await render('/');
       const summaries = Array.from(page.querySelectorAll('summary'));
       const names = summaries.map((summary) => summary.textContent);
       expect(new Set(names).size).toBe(summaries.length);
@@ -267,7 +325,7 @@ describe('App', () => {
 
     it('are left out for an experience without context nor achievements', async () => {
       const [first, ...others] = CV.experiences;
-      const page = await render('/ch', {
+      const page = await render('/', {
         ...CV,
         experiences: [{ ...first, context: undefined, achievements: [] }, ...others],
       });
@@ -276,7 +334,7 @@ describe('App', () => {
     });
 
     it('stay out of the French format', async () => {
-      const page = await render('/fr');
+      const page = await render('/fr', CV, WITH_FRANCE);
       expect(page.querySelector('details')).toBeNull();
       expect(page.textContent).not.toContain(CV.experiences[0].context?.fr);
     });
@@ -284,7 +342,7 @@ describe('App', () => {
 
   describe('printing', () => {
     it('opens every closed <details> before printing and restores them afterwards', async () => {
-      const page = await render('/ch');
+      const page = await render('/');
       const all = Array.from(page.querySelectorAll('details'));
       all[1].open = true;
 
@@ -296,7 +354,7 @@ describe('App', () => {
     });
 
     it('stops listening once the page is destroyed', async () => {
-      const harness = await setup('/ch');
+      const harness = await setup('/');
       const details = (harness.routeNativeElement as HTMLElement).querySelector('details');
       harness.fixture.destroy();
 
@@ -336,7 +394,7 @@ describe('App', () => {
         .map((link) => link.getAttribute('href'));
 
     it('marks the last section crossing the top of the screen as current', async () => {
-      const harness = await setup('/ch/en');
+      const harness = await setup('/en');
       const page = harness.routeNativeElement as HTMLElement;
       const observer = FakeIntersectionObserver.of('experiences');
       expect(observer.targets.map((target) => target.id)).toEqual([
@@ -347,15 +405,15 @@ describe('App', () => {
 
       observer.fire({ experiences: true });
       harness.detectChanges();
-      expect(current(page)).toEqual(['/ch/en#experiences']);
+      expect(current(page)).toEqual(['/en#experiences']);
 
       observer.fire({ skills: true });
       harness.detectChanges();
-      expect(current(page)).toEqual(['/ch/en#skills']);
+      expect(current(page)).toEqual(['/en#skills']);
 
       observer.fire({ experiences: false });
       harness.detectChanges();
-      expect(current(page)).toEqual(['/ch/en#skills']);
+      expect(current(page)).toEqual(['/en#skills']);
 
       observer.fire({ skills: false });
       harness.detectChanges();
@@ -363,38 +421,38 @@ describe('App', () => {
     });
 
     it('marks the last section when it shares the band with the previous one', async () => {
-      const harness = await setup('/ch');
+      const harness = await setup('/');
       const page = harness.routeNativeElement as HTMLElement;
 
       FakeIntersectionObserver.of('skills').fire({ skills: true, education: true });
       harness.detectChanges();
-      expect(current(page)).toEqual(['/ch#education']);
+      expect(current(page)).toEqual(['/#education']);
     });
 
     it('marks the last section once the bottom of the page is reached', async () => {
-      const harness = await setup('/ch');
+      const harness = await setup('/');
       const page = harness.routeNativeElement as HTMLElement;
       FakeIntersectionObserver.of('skills').fire({ skills: true });
 
       FakeIntersectionObserver.of('sheet-end').fire({ 'sheet-end': true });
       harness.detectChanges();
-      expect(current(page)).toEqual(['/ch#education']);
+      expect(current(page)).toEqual(['/#education']);
 
       FakeIntersectionObserver.of('sheet-end').fire({ 'sheet-end': false });
       harness.detectChanges();
-      expect(current(page)).toEqual(['/ch#skills']);
+      expect(current(page)).toEqual(['/#skills']);
     });
 
     it('starts the band below the sticky bar', async () => {
       clearance(56);
-      await setup('/ch');
+      await setup('/');
       expect(FakeIntersectionObserver.of('skills').options?.rootMargin).toBe(
         '-56px 0px -50% 0px',
       );
     });
 
     it('stops observing once the page is destroyed', async () => {
-      const harness = await setup('/ch');
+      const harness = await setup('/');
       harness.fixture.destroy();
       expect(FakeIntersectionObserver.instances.length).toBe(2);
       expect(FakeIntersectionObserver.instances.every((observer) => observer.disconnected)).toBe(
@@ -405,27 +463,27 @@ describe('App', () => {
 
   describe('shortcut links', () => {
     it('keep the query string', async () => {
-      const page = await render('/ch?utm_source=test');
+      const page = await render('/?utm_source=test');
       expect(shortcutLinks(page).map((link) => link.getAttribute('href'))).toEqual([
-        '/ch?utm_source=test#experiences',
-        '/ch?utm_source=test#skills',
-        '/ch?utm_source=test#education',
+        '/?utm_source=test#experiences',
+        '/?utm_source=test#skills',
+        '/?utm_source=test#education',
       ]);
     });
 
     it('navigate to the section within the page', async () => {
-      const harness = await setup('/ch?utm_source=test');
+      const harness = await setup('/?utm_source=test');
       const page = harness.routeNativeElement as HTMLElement;
 
       shortcutLinks(page)[1].click();
       await harness.fixture.whenStable();
 
-      expect(TestBed.inject(Router).url).toBe('/ch?utm_source=test#skills');
+      expect(TestBed.inject(Router).url).toBe('/?utm_source=test#skills');
       expect(harness.routeNativeElement).toBe(page);
     });
 
     it('leave the anchors the router scrolls to below the sticky bar', async () => {
-      const page = (await setup('/ch')).routeNativeElement as HTMLElement;
+      const page = (await setup('/')).routeNativeElement as HTMLElement;
       clearance(56);
       const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
       const skills = page.querySelector('#skills') as HTMLElement;
@@ -438,7 +496,7 @@ describe('App', () => {
     });
 
     it('drop the sticky bar offset once the page is destroyed', async () => {
-      const harness = await setup('/ch');
+      const harness = await setup('/');
       clearance(56);
       const skills = (harness.routeNativeElement as HTMLElement).querySelector('#skills');
       document.body.appendChild(skills as HTMLElement);
@@ -461,7 +519,7 @@ describe('App', () => {
 
   describe('single layout', () => {
     it('has no style picker and ignores ?style=', async () => {
-      const page = await render('/ch?style=commentaires');
+      const page = await render('/?style=commentaires');
       expect(page.querySelector('select')).toBeNull();
       expect(page.querySelector('app-layout-commentaires')).toBeNull();
       expect(page.querySelector('app-layout-editeur')).toBeNull();
@@ -473,7 +531,7 @@ describe('App', () => {
 
   describe('personal data', () => {
     it('is shown in the Swiss format when filled in', async () => {
-      const cv = layout(await render('/ch', personalCv));
+      const cv = layout(await render('/', personalCv));
       expect(cv.querySelector('img')?.getAttribute('src')).toBe('/img/photo.jpg');
       expect(cv.querySelector('img')?.getAttribute('alt')).toBe(CV.name);
       const facts = Array.from(cv.querySelectorAll('.personal dt'), (dt) => dt.textContent);
@@ -490,7 +548,7 @@ describe('App', () => {
     });
 
     it('keeps the label of a self-explanatory value for screen readers only', async () => {
-      const cv = layout(await render('/ch', personalCv));
+      const cv = layout(await render('/', personalCv));
       const hidden = Array.from(
         cv.querySelectorAll('.personal dt.visually-hidden'),
         (dt) => dt.textContent,
@@ -499,13 +557,13 @@ describe('App', () => {
     });
 
     it('is translated in English', async () => {
-      const cv = layout(await render('/ch/en', personalCv));
+      const cv = layout(await render('/en', personalCv));
       expect(cv.textContent).toContain('G permit');
       expect(cv.textContent).toContain(UI_TEXT.en.referencesOnRequest);
     });
 
     it('is hidden in the French format', async () => {
-      const cv = layout(await render('/fr', personalCv));
+      const cv = layout(await render('/fr', personalCv, WITH_FRANCE));
       expect(cv.querySelector('img')).toBeNull();
       expect(cv.querySelector('.personal')).toBeNull();
       expect(cv.textContent).not.toContain('1990');
@@ -515,7 +573,7 @@ describe('App', () => {
 
     it('shows only the fields filled in', async () => {
       const cv = layout(
-        await render('/ch', {
+        await render('/', {
           ...CV,
           personal: { permit: { fr: 'Permis G', en: 'G permit' }, nationality: { fr: '', en: '' } },
         }),
@@ -528,7 +586,7 @@ describe('App', () => {
     });
 
     it('is published with the year of birth only', async () => {
-      const swiss = layout(await render('/ch'));
+      const swiss = layout(await render('/'));
       expect(swiss.querySelector('img')?.getAttribute('src')).toBe('/img/yann-hurry.jpg');
       expect(swiss.querySelector('.personal dd')?.textContent).toBe('1994');
       expect(swiss.textContent).toContain('Permis G');
@@ -536,7 +594,7 @@ describe('App', () => {
     });
 
     it('stays out of the published French format', async () => {
-      const page = await render('/fr');
+      const page = await render('/fr', CV, WITH_FRANCE);
       expect(page.querySelector('img')).toBeNull();
       expect(page.textContent).not.toContain('1994');
       expect(page.textContent).not.toContain('Permis G');
@@ -545,7 +603,7 @@ describe('App', () => {
   });
 
   it('translates locations and sectors into English', async () => {
-    const cv = layout(await render('/ch/en'));
+    const cv = layout(await render('/en'));
     expect(cv.textContent).toContain('Vernier, Switzerland');
     expect(cv.textContent).toContain('Linköping, Sweden');
     expect(cv.textContent).toContain('Annecy - Geneva');
@@ -556,7 +614,7 @@ describe('App', () => {
   });
 
   it('keeps locations and sectors in French', async () => {
-    const cv = layout(await render('/ch'));
+    const cv = layout(await render('/'));
     expect(cv.textContent).toContain('Vernier, Suisse');
     expect(cv.textContent).toContain('Annecy - Genève');
     expect(cv.textContent).toContain('Énergie, Espace client');
@@ -564,7 +622,7 @@ describe('App', () => {
   });
 
   it('shows languages with their level', async () => {
-    const page = await render('/ch/en', {
+    const page = await render('/en', {
       ...CV,
       languages: [
         { name: { fr: 'Français', en: 'French' }, level: 'native' },
@@ -579,13 +637,13 @@ describe('App', () => {
 
   describe('language switch', () => {
     it('leaves the focus alone on first load', async () => {
-      const page = await render('/ch');
+      const page = await render('/');
       expect(TestBed.inject(DOCUMENT).activeElement).not.toBe(page.querySelector('a[hreflang]'));
     });
 
     it('moves the focus back to the language link of the new page', async () => {
-      const harness = await setup('/ch');
-      await harness.navigateByUrl('/ch/en');
+      const harness = await setup('/');
+      await harness.navigateByUrl('/en');
       await harness.fixture.whenStable();
 
       const page = harness.routeNativeElement as HTMLElement;
@@ -598,13 +656,13 @@ describe('App', () => {
   describe('PDF link', () => {
     const cases: { url: string; href: string; name: string; label: string }[] = [
       {
-        url: '/ch',
+        url: '/',
         href: '/pdf/yann-hurry-cv-ch-fr.pdf',
         name: 'Yann-HURRY-CV-FR.pdf',
         label: 'Télécharger le PDF',
       },
       {
-        url: '/ch/en',
+        url: '/en',
         href: '/pdf/yann-hurry-cv-ch-en.pdf',
         name: 'Yann-HURRY-CV-EN.pdf',
         label: 'Download PDF',
@@ -625,7 +683,7 @@ describe('App', () => {
 
     for (const { url, href, name, label } of cases) {
       it(`points at ${url} to the PDF of that format and language`, async () => {
-        const page = await render(url);
+        const page = await render(url, CV, WITH_FRANCE);
         const links = page.querySelectorAll<HTMLAnchorElement>('a[download]');
         expect(links.length).toBe(1);
         expect(links[0].getAttribute('href')).toBe(href);
@@ -635,7 +693,7 @@ describe('App', () => {
     }
 
     it('derives the file name from the name in the data', async () => {
-      const page = await render('/ch', { ...CV, name: ' Jean  DUPONT ' });
+      const page = await render('/', { ...CV, name: ' Jean  DUPONT ' });
       expect(page.querySelector('a[download]')?.getAttribute('download')).toBe(
         'Jean-DUPONT-CV-FR.pdf',
       );
@@ -658,17 +716,17 @@ describe('App', () => {
       delete (window.navigator as { share?: unknown }).share;
     });
 
-    it('is a mailto: link to the canonical URL of /ch, encoded', async () => {
-      const page = await render('/ch');
+    it('is a mailto: link to the canonical URL of /, encoded', async () => {
+      const page = await render('/');
       const link = shareLink(page);
       expect(link?.getAttribute('href')).toBe(
-        'mailto:?subject=CV%20de%20Yann%20HURRY&body=https%3A%2F%2Fyannhurry.fr%2Fch',
+        'mailto:?subject=CV%20de%20Yann%20HURRY&body=https%3A%2F%2Fyannhurry.fr%2F',
       );
       expect(link?.textContent?.trim()).toBe('Partager');
     });
 
     it('is a mailto: link to the canonical URL of /fr/en, encoded', async () => {
-      const page = await render('/fr/en');
+      const page = await render('/fr/en', CV, WITH_FRANCE);
       const link = shareLink(page);
       expect(link?.getAttribute('href')).toBe(
         'mailto:?subject=CV%20of%20Yann%20HURRY&body=https%3A%2F%2Fyannhurry.fr%2Ffr%2Fen',
@@ -677,7 +735,7 @@ describe('App', () => {
     });
 
     it('follows its mailto: link when the browser cannot share', async () => {
-      const page = await render('/ch');
+      const page = await render('/');
       let prevented: boolean | undefined;
       // Écouteur posé après celui de la page : il voit son verdict, puis annule la navigation
       // vers le mailto:, que jsdom ne sait pas suivre.
@@ -695,7 +753,7 @@ describe('App', () => {
       const share = vi.fn<(data: ShareData) => Promise<void>>().mockResolvedValue(undefined);
       stubShare(share);
       const open = vi.spyOn(window, 'open').mockReturnValue(null);
-      const page = await render('/fr/en');
+      const page = await render('/fr/en', CV, WITH_FRANCE);
       const event = new MouseEvent('click', { bubbles: true, cancelable: true });
 
       shareLink(page)?.dispatchEvent(event);
@@ -713,7 +771,7 @@ describe('App', () => {
     it('does nothing more when the user cancels the share sheet', async () => {
       stubShare(() => Promise.reject(new DOMException('Share canceled', 'AbortError')));
       const open = vi.spyOn(window, 'open').mockReturnValue(null);
-      const page = await render('/ch');
+      const page = await render('/');
 
       shareLink(page)?.click();
       await settle();
@@ -724,7 +782,7 @@ describe('App', () => {
     it('falls back to the mailto: link when sharing fails otherwise', async () => {
       stubShare(() => Promise.reject(new DOMException('Not allowed', 'NotAllowedError')));
       const open = vi.spyOn(window, 'open').mockReturnValue(null);
-      const page = await render('/ch');
+      const page = await render('/');
 
       shareLink(page)?.click();
       await settle();
@@ -735,7 +793,7 @@ describe('App', () => {
 
   describe('theme button', () => {
     it('toggles dark mode and reports its state', async () => {
-      const page = await render('/ch');
+      const page = await render('/');
       const button = page.querySelector<HTMLButtonElement>('button.tool');
       expect(button?.getAttribute('aria-label')).toBe(UI_TEXT.fr.darkThemeLabel);
       expect(button?.getAttribute('aria-pressed')).toBe('false');
@@ -749,7 +807,7 @@ describe('App', () => {
   });
 
   it('opens external links in a new tab without leaking the opener', async () => {
-    const page = await render('/ch');
+    const page = await render('/');
     const link = layout(page).querySelector<HTMLAnchorElement>(`a[href="${CV.links[0].url}"]`);
     expect(link?.target).toBe('_blank');
     expect(link?.rel).toContain('noopener');

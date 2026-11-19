@@ -5,13 +5,13 @@ import { Cv } from './cv.model';
  * Contenu du CV. Seule source à éditer pour mettre le CV à jour : l'affichage en dérive, dans
  * les deux langues. Listes en ordre anti-chronologique.
  *
- * PDF : le build de l'image imprime chaque page prérendue (`/ch`, `/fr`,
- * `/ch/en`, `/fr/en`) par Chromium (`npm run pdf`, `scripts/generate-pdf.mjs`) : le PDF suit
- * ce fichier, dans le format et la langue de la page.
+ * PDF : le build de l'image imprime chaque page prérendue (`/`, `/en`, et `/fr`, `/fr/en` si
+ * le format France est publié, `cv-formats.ts`) par Chromium (`npm run pdf`,
+ * `scripts/generate-pdf.mjs`) : le PDF suit ce fichier, dans le format et la langue de la page.
  *
  * Format suisse : `personal` (photo, année de naissance, nationalité, permis, disponibilité,
  * taux d'activité, références) et les détails des expériences (`context`, `achievements`)
- * n'apparaissent que sous `/ch`, champ par champ, une fois renseignés.
+ * n'apparaissent que dans ce format, champ par champ, une fois renseignés.
  * Le dépôt est public : ni adresse, ni téléphone, ni date de naissance complète, ni permis de
  * conduire.
  */

@@ -185,7 +185,7 @@ Contrôle :
 
 ```powershell
 # PC
-curl.exe -sI https://yannhurry.fr/ch
+curl.exe -sI https://yannhurry.fr/
 ```
 
 Attendu : `200`, pas de `x-robots-tag`, `strict-transport-security` présent. `www` toujours en
@@ -193,10 +193,10 @@ Attendu : `200`, pas de `x-robots-tag`, `strict-transport-security` présent. `w
 
 ## 8. CV-11 (CV suisse à la racine)
 
-Ticket ouvert le 2026-11-19, pas développé. S'il est livré et recetté avant l'étape 2, il part
-dans la même PR. Sinon il suit, par le même chemin (étapes 1 à 4). L'ouverture publique peut
-attendre CV-11 si tu veux que la première URL indexée soit `/` et non `/ch` : sinon les
-moteurs indexent `/ch`, puis suivent la redirection 301 prévue par CV-11.
+Développé le 2026-11-19, sur `claude` : il part dans la même PR que le reste. Le CV suisse est à
+`/` et `/en` ; `/ch` redirige en 301, `/fr` en 302 (France masquée pour l'instant, rouverte
+par `FRANCE_FORMAT_PUBLISHED` dans `src/app/cv/cv-formats.ts`). Contrôle après déploiement :
+`curl.exe -sI -u <nom> https://yannhurry.fr/ch` rend `301` vers `/`, `/fr` rend `302`.
 
 ## Actions utilisateur
 
@@ -225,7 +225,7 @@ moteurs indexent `/ch`, puis suivent la redirection 301 prévue par CV-11.
 8. VPS (deploy), seulement si tu relis la production avant ouverture : nouveau hash
    (étape 6), `docker compose up -d` dans `/srv/edge`. Contrôle : `curl.exe -sI -u <nom>
    https://yannhurry.fr` rend `200`.
-9. Relire `https://yannhurry.fr/ch` et `/ch/en` en production, PDF compris.
+9. Relire `https://yannhurry.fr/` et `/en` en production, les deux PDF CH compris.
 10. Ouverture : demander à Claude le lot « retirer `import preview` » (étape 7), le merger
     jusqu'à `master`, puis refaire l'action 7. Contrôle : `curl.exe -sI
-    https://yannhurry.fr/ch` rend `200` sans `x-robots-tag`.
+    https://yannhurry.fr/` rend `200` sans `x-robots-tag`.

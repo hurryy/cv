@@ -16,28 +16,27 @@ Ouvrir `http://localhost:8089`. Le premier build est long (cache Docker vidé).
 
 ## CV-09 — Mise en page « Bandeau et frise »
 
-- [ ] `/` redirige vers `/ch`, `/en` vers `/ch/en` (301).
-- [ ] Bureau, `/ch` : feuille blanche centrée sur fond gris-bleu, liseré d'accent en haut,
+- [ ] `/ch` et `/fr` redirigent vers `/`, `/ch/en` et `/fr/en` vers `/en` (`/ch` en 301, `/fr` en 302, CV-11).
+- [ ] Bureau, `/` : feuille blanche centrée sur fond gris-bleu, liseré d'accent en haut,
       barre d'outils au-dessus (FR/EN, thème, « Télécharger le PDF »).
 - [ ] Bandeau : photo, nom, titre, profil, ligne d'infos (lieu, année de naissance,
-      nationalité, permis, langues), LinkedIn. En `/fr` : ni photo ni infos personnelles.
+      nationalité, permis, langues), LinkedIn.
 - [ ] Expériences en frise, période à gauche ; « Détails » déplie contexte et réalisations
-      en ligne, sans popin. En `/fr` : pas de bouton « Détails ».
-- [ ] Colonne droite : compétences en pastilles, formation, « Références sur demande » en
-      `/ch` seulement.
+      en ligne, sans popin.
+- [ ] Colonne droite : compétences en pastilles, formation, « Références sur demande ».
 - [ ] Fenêtre réduite sous 1100 px : feuille pleine largeur, sans ombre.
 - [ ] Mobile (outils de développement, 360 px) : « En bref » avec 6 technologies, barre de
       raccourcis collante (Expériences · Compétences · Formation) ; la section en cours est
       soulignée en défilant ; un tap sur un raccourci y amène.
 - [ ] Thème sombre (bouton) : contraste correct partout, choix gardé après rechargement.
-- [ ] FR/EN : tous les textes changent, l'URL suit (`/ch/en`).
+- [ ] FR/EN : tous les textes changent, l'URL suit (`/en`).
 - Prouverait un défaut : texte en dur non traduit, débordement horizontal sur mobile,
   soulignement de la barre décalé de plus d'une section.
 
 ## CV-05 — PDF et bouton « Partager »
 
-- [ ] « Télécharger le PDF » sur `/ch`, `/ch/en`, `/fr`, `/fr/en` : 4 fichiers différents,
-      nommés par nom et langue ; ch sur 2 pages, fr sur 1 page, liens cliquables, police Roboto.
+- [ ] « Télécharger le PDF » sur `/` et `/en` : 2 fichiers différents (format suisse ;
+      France masqué par CV-11), nommés par nom et langue, 2 pages, liens cliquables, police Roboto.
 - [ ] Le PDF suisse est la version longue (tout déplié), sans date de mise à jour.
 - [ ] Aperçu d'impression du navigateur (Ctrl+P) : clair même en thème sombre, A4, 2 pages
       au plus, tout déplié.

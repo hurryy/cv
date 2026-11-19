@@ -9,7 +9,7 @@
 // Variables : CHROMIUM_BIN (binaire, `/usr/bin/chromium` par défaut, celui du paquet Debian),
 // PDF_NO_SANDBOX=1 (voir `chromiumArgs`).
 //
-// Code de sortie ≠ 0 si un PDF manque, est vide ou dépasse sa limite de pages (`MAX_PAGES`).
+// Code de sortie ≠ 0 si un PDF manque, est vide ou dépasse sa limite de pages (`maxPages`).
 
 import { execFile } from 'node:child_process';
 import { mkdir, readFile, rm, stat } from 'node:fs/promises';
@@ -21,13 +21,18 @@ import { promisify } from 'node:util';
 const run = promisify(execFile);
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)), 'dist/cv/browser');
-/** Pages prérendues ; alignées sur `app.routes.ts`, chaque format ayant sa limite `MAX_PAGES`. */
-const PAGES = ['/ch', '/ch/en', '/fr', '/fr/en'];
 /**
- * Pages au plus, par format (premier segment de la route) : un CV français tient sur une page,
- * un CV suisse, plus détaillé, sur deux. Un dépassement fait échouer le build de l'image.
+ * Pages à imprimer, alignées sur `cvPath` (`src/app/cv/ui-text.ts`), et pages au plus par PDF :
+ * un CV suisse, plus détaillé, tient sur deux pages, un CV français sur une. Un dépassement fait
+ * échouer le build de l'image. Les pages du format France ne sont prérendues que si
+ * `FRANCE_FORMAT_PUBLISHED` (`src/app/cv/cv-formats.ts`) le dit : absentes, elles sont sautées.
  */
-const MAX_PAGES = { ch: 2, fr: 1 };
+const PAGES = [
+  { page: '/', maxPages: 2 },
+  { page: '/en', maxPages: 2 },
+  { page: '/fr', maxPages: 1, optional: true },
+  { page: '/fr/en', maxPages: 1, optional: true },
+];
 const CHROMIUM = process.env.CHROMIUM_BIN || '/usr/bin/chromium';
 
 const TYPES = {
@@ -121,7 +126,11 @@ const main = async () => {
   const origin = `http://127.0.0.1:${server.address().port}`;
   let failed = false;
   try {
-    for (const page of PAGES) {
+    for (const { page, maxPages, optional } of PAGES) {
+      if (optional && !(await isFile(join(ROOT, page, 'index.html')))) {
+        console.log(`${page} : non prérendue, sautée`);
+        continue;
+      }
       const pdfPath = await pdfPathOf(page);
       const output = join(ROOT, pdfPath);
       await mkdir(join(output, '..'), { recursive: true });
@@ -140,12 +149,8 @@ const main = async () => {
       }
       const pages = countPages(pdf);
       console.log(`${page} → ${pdfPath} : ${pages} page(s), ${pdf.length} octets`);
-      const max = MAX_PAGES[page.split('/')[1]];
-      if (max === undefined) {
-        console.error(`ERREUR ${page} : format sans limite de pages dans MAX_PAGES`);
-        failed = true;
-      } else if (pages > max) {
-        console.error(`ERREUR ${pdfPath} : ${pages} pages, ${max} au plus`);
+      if (pages > maxPages) {
+        console.error(`ERREUR ${pdfPath} : ${pages} pages, ${maxPages} au plus`);
         failed = true;
       }
     }

@@ -23,6 +23,22 @@
 	# Page inconnue : ni fichier, ni dossier prérendu.
 	@unknownPage not file {path} {path}/index.html
 
+	# Le CV suisse vit à la racine (`/`, `/en`), en gardant la langue. `/ch`, son ancienne
+	# adresse, y renvoie pour de bon (301). `/fr`, le format France masqué pour l'instant
+	# (`FRANCE_FORMAT_PUBLISHED`, src/app/cv/cv-formats.ts), y renvoie en 302 : un 301 se met
+	# en cache sans limite et survivrait à la réouverture. Un chemin `/fr` qui a sa page
+	# prérendue n'est pas redirigé : publier de nouveau le format France suffit à le rouvrir.
+	@chEnglish path /ch/en /ch/en/
+	@ch path /ch /ch/*
+	@frEnglish {
+		path /fr/en /fr/en/
+		not file {path}/index.html
+	}
+	@fr {
+		path /fr /fr/*
+		not file {path}/index.html
+	}
+
 	# `route` fige l'ordre des directives : sans lui, Caddy réordonne les deux
 	# `header` et le Cache-Control final n'est plus prévisible.
 	route {
@@ -30,18 +46,17 @@
 		header @immutable Cache-Control "public, max-age=31536000, immutable"
 		header -Server
 
-		# Le CV vit sous /ch et /fr (format suisse ou français) ; les adresses déjà
-		# données (/ et /en) restent valables. Le prérendu ne produit aucune page à
-		# ces deux chemins.
-		redir / /ch{?query} 301
-		redir /en /ch/en{?query} 301
-		redir /en/ /ch/en{?query} 301
+		# `redir` répond sans passer la main : l'anglais, plus précis, passe en premier.
+		redir @chEnglish /en{?query} 301
+		redir @ch /{?query} 301
+		redir @frEnglish /en{?query} 302
+		redir @fr /{?query} 302
 
 		encode zstd gzip
 
 		respond @missingAsset 404
-		redir @unknownPage /ch 302
-		# `{path}/index.html` : chaque page prérendue a son dossier (`/ch/en` → ch/en/index.html).
+		redir @unknownPage / 302
+		# `{path}/index.html` : chaque page prérendue a son dossier (`/en` → en/index.html).
 		try_files {path} {path}/index.html
 		file_server
 	}
