@@ -31,8 +31,8 @@ export const CV: Cv = {
     photo: '/img/yann-hurry.jpg',
     birthYear: 1994,
     nationality: { fr: 'française', en: 'French' },
-    permit: { fr: 'Permis G', en: 'G permit' },
-    referencesOnRequest: true,
+    permit: { fr: 'G', en: 'G' },
+    drivingLicence: { fr: 'A et B', en: 'A and B' },
   },
   links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/in/yann-hurry', icon: 'linkedin' }],
   experiences: [

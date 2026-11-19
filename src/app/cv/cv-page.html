@@ -19,11 +19,15 @@
   </button>
   <a class="tool" [href]="mailto()" (click)="share($event)">
     <app-icon name="share" />
-    {{ text().share }}
+    <span class="wide-only">{{ text().share }}</span>
   </a>
   <a class="tool primary" [href]="pdf()" [attr.download]="pdfName()">
     <app-icon name="download" />
-    {{ text().downloadPdf }}
+    <!-- Un seul élément flex : le `gap` de `.tool` ne doit pas séparer les deux mots. -->
+    <span
+      ><span class="wide-only">{{ text().downloadPdf.verb }}</span>
+      {{ text().downloadPdf.object }}</span
+    >
   </a>
 </div>
 

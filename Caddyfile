@@ -16,7 +16,7 @@
 	# Un asset absent (ancien hash après déploiement, PDF absent) rend 404 :
 	# sans ça, try_files servirait index.html sous une URL .js, marqué immuable.
 	@missingAsset {
-		path *.js *.css *.woff2 *.ico *.pdf
+		path *.js *.css *.woff2 *.ico *.pdf *.svg *.png *.jpg
 		not file
 	}
 

@@ -261,10 +261,10 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Champ | Valeur |
 |---|---|
 | Mis à jour | 2026-11-19 |
-| Dernière tâche terminée | 2026-11-19 : données du CV validées par l'utilisateur (ADAL/MSAL et compétence Mobile retirés, expériences reformulées en fr et en, `ea2a503`) ; ouverture publique préparée (`import preview` retiré, contrôles de `install-vps.ps1` et `docs/VPS.md` à 200) |
+| Dernière tâche terminée | 2026-11-19 : référencement (JSON-LD `Person`, Open Graph, `robots.txt`, sitemap hreflang), favicon « YH », retour mobile (barre d'outils, bloc d'infos en grille, permis de travail et de conduire, « Quick overview »), 404 des images absentes dans le Caddyfile de l'image ; tout sur `claude`, non déployé |
 | Tâche en cours | aucune côté cv ; recette : `docs/RECETTE.md` ; mise en ligne : `docs/MEP.md` § Actions utilisateur |
 | Validation | contenu et image locale validés par l'utilisateur le 2026-11-19 ; ouverture publique décidée le même jour, sans relecture de la production sous mot de passe |
-| Prochaine action | Utilisateur : `docs/MEP.md` § Actions utilisateur — PR `claude` → `dev` → `master`, « Docker Build & Push », « Deploy » contrôlé, **puis seulement** recopie du Caddyfile (elle ouvre le site), relecture de `/` et `/en` |
-| Contrôle | `check.ps1` 2026-11-19 : build, lint, test à 0 ; Vitest 5 fichiers / 101 tests. `caddy adapt` du Caddyfile de bordure : 0, sans `basic_auth` ni `X-Robots-Tag` |
+| Prochaine action | Utilisateur : pour publier, PR `claude` → `dev` → `master`, « Docker Build & Push », « Deploy » (`docs/MEP.md` actions 2 à 4 ; pas de recopie du Caddyfile de bordure). Puis Google Search Console : valider le domaine et soumettre `https://yannhurry.fr/sitemap.xml` |
+| Contrôle | `check.ps1` 2026-11-19 : build, lint, test à 0 ; Vitest 7 fichiers / 121 tests. Image locale : favicon, photo, `robots.txt`, `sitemap.xml` en 200, image absente en 404 ; grille d'infos à 1 colonne à 360 px, 2 à 1050 px, sans défilement horizontal |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10, CV-09, CV-05 et suites (sur `claude`, non validés) |
-| Attend l'utilisateur | la mise en ligne (`docs/MEP.md`) ; choix de mise en ligne de CV-10 ; points ouverts de CV-04 (M1, dates) |
+| Attend l'utilisateur | choix de mise en ligne de CV-10 ; points ouverts de CV-04 (M1, dates) |

@@ -1,15 +1,14 @@
-import { Lang, Personal, SpokenLanguage } from './cv.model';
+import { Cv, CvFormat, Lang, Personal, SpokenLanguage } from './cv.model';
 import { UiText } from './ui-text';
+
+/** Données personnelles que montre un format : toutes en `ch`, aucune en `fr`. */
+export const shownPersonal = (cv: Cv, format: CvFormat): Personal | undefined =>
+  format === 'ch' ? cv.personal : undefined;
 
 /** Une ligne « libellé : valeur » des données personnelles. */
 export interface PersonalFact {
   label: string;
   value: string;
-  /**
-   * La valeur se comprend seule (« Permis G ») : le libellé n'est lu que par les lecteurs
-   * d'écran.
-   */
-  selfDescribing?: boolean;
 }
 
 /** Données personnelles renseignées, dans l'ordre d'affichage ; la photo est à part. */
@@ -26,8 +25,9 @@ export const personalFacts = (
     personal.nationality
       ? { label: text.nationality, value: personal.nationality[lang] }
       : null,
-    personal.permit
-      ? { label: text.permit, value: personal.permit[lang], selfDescribing: true }
+    personal.permit ? { label: text.permit, value: personal.permit[lang] } : null,
+    personal.drivingLicence
+      ? { label: text.drivingLicence, value: personal.drivingLicence[lang] }
       : null,
     personal.availability ? { label: text.availability, value: personal.availability[lang] } : null,
     personal.workload ? { label: text.workload, value: personal.workload[lang] } : null,

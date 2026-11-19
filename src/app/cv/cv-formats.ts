@@ -5,7 +5,8 @@ import { CvFormat } from './cv.model';
  * Publie le format France (`/fr`, `/fr/en`) à côté du format suisse, servi à la racine. Seul
  * réglage à changer pour le rouvrir : à `true`, le build prérend ses pages, les `hreflang` les
  * citent, `npm run pdf` imprime leurs PDF, et le `Caddyfile` cesse de rediriger `/fr` (il ne
- * redirige que les chemins sans page prérendue).
+ * redirige que les chemins sans page prérendue). Seul `public/sitemap.xml` se met à jour à la
+ * main : `seo-files.spec.ts` échoue tant qu'il ne suit pas ce réglage.
  */
 export const FRANCE_FORMAT_PUBLISHED = false;
 

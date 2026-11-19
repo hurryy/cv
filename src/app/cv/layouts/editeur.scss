@@ -1,3 +1,5 @@
+@use '../../../visually-hidden' as *;
+
 // Cette mise en page porte sa propre palette, que le thème choisit comme pour la page.
 // Contrastes mesurés le 2026-11-05 :
 //   clair  : type/bg 4.59, gutter/bg 4.59, on-accent/accent 6.31
@@ -68,12 +70,7 @@
 }
 
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  @include visually-hidden;
 }
 
 .tabs {

@@ -2,9 +2,7 @@ import { Route, Routes } from '@angular/router';
 import { CvPage } from './cv/cv-page';
 import { PUBLISHED_FORMATS } from './cv/cv-formats';
 import { CvFormat, Lang } from './cv/cv.model';
-import { cvPath } from './cv/ui-text';
-
-const LANGS: readonly Lang[] = ['fr', 'en'];
+import { LANGS, cvPath } from './cv/ui-text';
 
 /** `format` et `lang` sont liés aux inputs de `CvPage`. */
 const page = (format: CvFormat, lang: Lang): Route => ({

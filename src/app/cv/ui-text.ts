@@ -22,6 +22,7 @@ export interface UiText {
   birthYear: string;
   nationality: string;
   permit: string;
+  drivingLicence: string;
   availability: string;
   workload: string;
   referencesOnRequest: string;
@@ -30,9 +31,11 @@ export interface UiText {
   /** Les `aria-label` commencent par le libellé visible (WCAG 2.5.3). */
   otherLanguageLabel: string;
   darkThemeLabel: string;
-  downloadPdf: string;
+  /** Lien du PDF ; sur écran étroit, le verbe n'est lu que par les lecteurs d'écran. */
+  downloadPdf: { verb: string; object: string };
   /** Suivi du nom du titulaire : sujet du courriel et titre du partage. */
   cvOf: string;
+  /** Sur écran étroit, n'est lu que par les lecteurs d'écran : le bouton n'y montre que l'icône. */
   share: string;
   /** Nom du fichier affiché dans l'onglet du style Éditeur. */
   editorFile: string;
@@ -53,14 +56,15 @@ export const UI_TEXT: Record<Lang, UiText> = {
     nativeLanguage: 'langue maternelle',
     birthYear: 'Année de naissance',
     nationality: 'Nationalité',
-    permit: 'Permis',
+    permit: 'Permis de travail',
+    drivingLicence: 'Permis de conduire',
     availability: 'Disponibilité',
     workload: "Taux d'activité",
     referencesOnRequest: 'Références sur demande',
     otherLanguage: 'EN',
     otherLanguageLabel: 'EN, version anglaise du CV',
     darkThemeLabel: 'Thème sombre',
-    downloadPdf: 'Télécharger le PDF',
+    downloadPdf: { verb: 'Télécharger le', object: 'PDF' },
     cvOf: 'CV de',
     share: 'Partager',
     editorFile: 'cv.ts',
@@ -70,7 +74,7 @@ export const UI_TEXT: Record<Lang, UiText> = {
     educationTitle: 'Education',
     skillsTitle: 'Skills',
     languagesTitle: 'Languages',
-    highlightsTitle: 'At a glance',
+    highlightsTitle: 'Quick overview',
     shortcutsLabel: 'CV sections',
     shortcuts: { experiences: 'Experience', skills: 'Skills', education: 'Education' },
     details: 'Details',
@@ -78,19 +82,23 @@ export const UI_TEXT: Record<Lang, UiText> = {
     nativeLanguage: 'native',
     birthYear: 'Year of birth',
     nationality: 'Nationality',
-    permit: 'Permit',
+    permit: 'Work permit',
+    drivingLicence: 'Driving licence',
     availability: 'Availability',
     workload: 'Workload',
     referencesOnRequest: 'References available on request',
     otherLanguage: 'FR',
     otherLanguageLabel: 'FR, French version of the CV',
     darkThemeLabel: 'Dark theme',
-    downloadPdf: 'Download PDF',
+    downloadPdf: { verb: 'Download', object: 'PDF' },
     cvOf: 'CV of',
     share: 'Share',
     editorFile: 'cv.en.ts',
   },
 };
+
+/** Langues de chaque format, dans l'ordre des routes et du sitemap. */
+export const LANGS: readonly Lang[] = ['fr', 'en'];
 
 export const OTHER_LANG: Record<Lang, Lang> = { fr: 'en', en: 'fr' };
 

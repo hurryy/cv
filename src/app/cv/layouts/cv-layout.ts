@@ -1,7 +1,7 @@
 import { Directive, computed, inject, input } from '@angular/core';
 import { CV_DATA } from '../cv.data';
 import { CvFormat, Lang } from '../cv.model';
-import { languageLevel, personalFacts } from '../cv-view';
+import { languageLevel, personalFacts, shownPersonal } from '../cv-view';
 import { UI_TEXT } from '../ui-text';
 
 /** Socle des mises en page : toutes lisent les mêmes données, dans la langue de la route. */
@@ -24,9 +24,7 @@ export abstract class CvLayout {
 export abstract class FormattedCvLayout extends CvLayout {
   readonly format = input.required<CvFormat>();
 
-  private readonly personal = computed(() =>
-    this.format() === 'ch' ? this.cv.personal : undefined,
-  );
+  private readonly personal = computed(() => shownPersonal(this.cv, this.format()));
   protected readonly photo = computed(() => this.personal()?.photo || null);
   protected readonly facts = computed(() =>
     personalFacts(this.personal(), this.text(), this.lang()),
