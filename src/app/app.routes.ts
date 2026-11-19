@@ -1,24 +1,27 @@
 import { Route, Routes } from '@angular/router';
 import { CvPage } from './cv/cv-page';
+import { PUBLISHED_FORMATS } from './cv/cv-formats';
 import { CvFormat, Lang } from './cv/cv.model';
+import { cvPath } from './cv/ui-text';
+
+const LANGS: readonly Lang[] = ['fr', 'en'];
 
 /** `format` et `lang` sont liés aux inputs de `CvPage`. */
-const page = (path: string, format: CvFormat, lang: Lang): Route => ({
-  path,
+const page = (format: CvFormat, lang: Lang): Route => ({
+  path: cvPath(format, lang).slice(1),
+  pathMatch: 'full',
   component: CvPage,
   data: { format, lang },
 });
 
 /**
- * Chemins repris par `cvPath` (`cv/ui-text.ts`). En production, `/` et `/en` sont redirigés
- * (301) par le `Caddyfile` avant d'atteindre l'application ; les redirections ci-dessous
- * servent la navigation interne et `ng serve`.
+ * Une page par format publié et par langue. En production, `/ch` et `/fr` (format masqué) sont
+ * redirigés (`/ch` en 301, `/fr` en 302) par le `Caddyfile` avant d'atteindre l'application, en gardant la langue ;
+ * la redirection ci-dessous sert la navigation interne et `ng serve`.
  */
-export const routes: Routes = [
-  page('ch', 'ch', 'fr'),
-  page('ch/en', 'ch', 'en'),
-  page('fr', 'fr', 'fr'),
-  page('fr/en', 'fr', 'en'),
-  { path: 'en', redirectTo: 'ch/en' },
-  { path: '**', redirectTo: 'ch' },
+export const cvRoutes = (formats: readonly CvFormat[]): Routes => [
+  ...formats.flatMap((format) => LANGS.map((lang) => page(format, lang))),
+  { path: '**', redirectTo: '' },
 ];
+
+export const routes: Routes = cvRoutes(PUBLISHED_FORMATS);

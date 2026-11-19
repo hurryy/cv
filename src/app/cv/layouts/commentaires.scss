@@ -1,5 +1,47 @@
+// Cette mise en page porte sa propre palette, que le thème choisit comme pour la page.
+// Contrastes mesurés le 2026-11-05, pire cas :
+// clair muted/surface 5.85, sombre muted/surface 7.09.
+@mixin light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f3f5f7;
+  --fg: #1f2328;
+  --muted: #57606a;
+  --accent: #0550ae;
+  --on-accent: #ffffff;
+  --comment: #116329;
+  --line: #d0d7de;
+}
+
+@mixin dark {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --surface: #161b22;
+  --fg: #e6edf3;
+  --muted: #9da7b3;
+  --accent: #79c0ff;
+  --on-accent: #0d1117;
+  --comment: #7ee787;
+  --line: #30363d;
+}
+
 :host {
+  @include light;
   display: block;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :host-context(html:not([data-theme='light'])) {
+    @include dark;
+  }
+}
+
+@media screen {
+  :host-context(html[data-theme='dark']) {
+    @include dark;
+  }
 }
 
 .cv {

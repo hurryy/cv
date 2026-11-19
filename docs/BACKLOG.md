@@ -40,8 +40,11 @@ Statut : à faire — itératif avec l'utilisateur, après CV-04
 À arbitrer : photo, en-tête (nationalité / permis, disponibilité, mobilité Annecy–Genève, taux
 d'activité), langues au niveau CECR, références, 2 pages A4 max.
 
-- [ ] Feuille `@media print` A4 : 2 pages, liens cliquables, aucun débordement
-- [ ] PDF téléchargeable, généré depuis la même source
+- [x] Feuille `@media print` A4 : 2 pages, liens cliquables, aucun débordement (vu dans le PDF
+      `ch-fr` généré au build, 2026-11-07)
+- [x] PDF téléchargeable, généré depuis la même source : 4 PDF (format × langue) imprimés par
+      Chromium headless au build de l'image (`scripts/generate-pdf.mjs`), police Roboto ; ch 2 pages,
+      fr 1 page (2026-11-07). Bouton « Partager » : `navigator.share`, sinon `mailto:`
 - [ ] Ouverture publique : retirer `import preview` du bloc CV dans `edge/conf/Caddyfile`
 
 ## [CV-07] Français / anglais, thème clair / sombre, PDF téléchargeables
@@ -93,45 +96,86 @@ défaut ; routes (choix de l'utilisateur, 2026-11-05) : `/ch` et `/fr` en franç
 - [x] Prérendu : style par défaut, sans flash au changement côté navigateur
 - [x] Tests : changement de style, valeur `?style=` inconnue → défaut
 
-## [CV-09] Deux styles, Commentaires + Éditeur, bascule `</>`
+## [CV-09] Mise en page unique « Bandeau et frise », bureau et mobile
 
-Statut : à faire — maquettes v2 **non validées**, encore à retravailler avec l'utilisateur
-(avec le vrai contenu des PDF) ; aucun code avant validation.
-Maquettes v2 : https://claude.ai/artifact/VSC8wvwUfgEphZ9GTcVhuU (Commentaires France,
-Commentaires Suisse longue, accordéons — écarté —, Éditeur).
+Statut : fait le 2026-11-07 sur `claude`, non déployé — vu dans un navigateur (bureau clair et
+sombre, mobile : barre collante, raccourcis, focus, Détails) ; aperçu d'impression et tenue
+sur 2 pages A4 non vérifiés, à regarder par l'utilisateur (`/ch`, `/ch/en`).
+Maquettes : https://claude.ai/artifact/5HzcUU8x9BBcQXgeSkep7p — retenues : « B · Bandeau et
+frise — bureau » et « B mobile · En bref + barre collante ». Écartées : A (colonne latérale,
+qui se vide à mi-page), B mobile avec burger.
 
-Décisions de l'utilisateur (2026-11-06) : on garde Commentaires (`/** */`) et Éditeur ; Sobre
-(trop générique) et Terminal sont abandonnés. Pas d'accordéon : description longue directe en
-format suisse (un accordéon fermé est vide dans le PDF). Une seule source, `cv.data.ts`, pour
-les deux langues, les deux formats et les deux styles : pas de fichier par CV ni par thème.
+Décisions de l'utilisateur (2026-11-07), qui remplacent celles du 2026-11-06 (Commentaires +
+Éditeur, bascule `</>`) : une seule mise en page affichée, issue de Sobre. Commentaires et
+Éditeur restent dans le code mais ne sont plus accessibles (ni liste déroulante, ni `?style=`).
+Burger refusé : quatre entrées tiennent sur une ligne, un menu caché ajoute un tap et de la
+gestion de focus pour rien. Pas de logos d'entreprise (marques protégées, rendu hétérogène).
 
-Étape 1 — contenu (avant le code) : l'utilisateur dépose ses CV PDF perso et pro hors dépôt
-(ex. `C:\Development\yannhurry.fr\backups\`) et donne les chemins. Claude en extrait
-descriptions, réalisations, compétences et langues, puis remplit les maquettes. Données
-personnelles : ne reprendre que ce que l'utilisateur autorise à publier (`cv.data.ts` est
-public) ; adresse, téléphone, etc. seulement sur accord explicite.
+Écarts assumés avec les maquettes : aucune date de mise à jour, ni sur la page ni dans les PDF
+(retirée à la demande de l'utilisateur le 2026-11-07) ; « En bref » est une liste `Cv.highlights`, chaque entrée vérifiée présente dans les compétences
+par un test ; périodes en `04/2024`. Budget
+`anyComponentStyle` relevé à 7 / 10 kB (`sobre.scss` ≈ 6,75 kB compilé). `rootMargin` de la
+barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un peu décalé).
 
-À arbitrer avec l'utilisateur : comment présenter une expérience en SSII, en régie chez un
-client (employeur et client, une ou plusieurs missions sous un même employeur, nom du client
-publiable ou non) — impacte le modèle (`Experience`), les deux styles et l'éditeur.
-Lié : secteurs métier par expérience (ex. RH, Congés, Énergie), champ `domains: Localized[]` ;
-en régie, secteur du client, donc par mission. Affichage à maquetter sans ajouter un 3e type
-de tag identique aux compétences et à la stack (texte sur la ligne entreprise, ou tag contour).
+- [x] Bandeau : photo (`/ch`), nom, titre, profil, ligne d'infos (lieu, année de naissance,
+      nationalité et permis en `/ch`, langues), LinkedIn. Profil (choix de l'utilisateur, 2026-11-07 ; pas
+      en recherche, donc aucun poste visé) :
+      FR « J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris
+      Angular en main pour suivre une fonctionnalité de la base de données jusqu'à l'écran.
+      Aujourd'hui, j'aime porter un produit de bout en bout. »
+      EN « I started on the back end, where the business rules live. I then took up Angular to
+      follow a feature from the database all the way to the screen. Today, I enjoy owning a
+      product end to end. »
+- [x] « En bref » sur mobile : 6 technologies clés (`highlights`, incluses dans les compétences)
+- [x] Expériences en frise (période à gauche sur bureau, au-dessus sur mobile) ; ligne
+      entreprise · lieu · secteur en italique ; résumé ; réalisations ; stack en étiquettes
+      carrées, distinctes des pastilles de compétences
+- [x] Colonne droite sur bureau : compétences en pastilles groupées, formation ; « Références
+      sur demande » en `/ch`
+- [x] Effet page (validé le 2026-11-07, maquette « B · grand écran, effet page + Détails ») :
+      fond gris-bleu, feuille blanche de 1040 px avec ombre et liseré d'accent en haut ; barre
+      d'outils hors feuille au-dessus (FR/EN, thème, « Télécharger le PDF »). Sous 1100 px : feuille
+      pleine largeur, sans ombre ni marge
+- [x] Mobile : barre de raccourcis collante (Expériences · Compétences · Formation, 44 px,
+      section en cours soulignée, focus posé sur la section atteinte)
+- [x] Bouton « Détails » sur chaque expérience, bureau et mobile, qui déplie en ligne
+      (`<details>`, pas de popin : décision du 2026-11-07) le contexte du poste et les
+      réalisations ; résumé et stack restent visibles. Contenu de détail tiré des PDF suisses,
+      complété par l'utilisateur
+- [x] Impression et PDF : tout déplié (`beforeprint` / `afterprint`, et `::details-content` en
+      secours pour un Chrome headless) ; la page en ligne est la version courte, le PDF la
+      version longue suisse, même source
+- [x] Format suisse : `achievements` (`/ch` seulement) ; format France sans photo, infos
+      personnelles, Détails ni références
+- [x] Modèle : `profile`, `location`, `highlights` ; par expérience `context`,
+      `achievements`, `domains` ; contenu FR et EN tiré des PDF suisses
+- [x] Sélecteur de style, `StyleService`, `?style=` retirés ; Commentaires et Éditeur restent
+      dans `layouts/`, non rendus ; clair et sombre (CV-07)
+- [x] Impression A4 claire sur 2 pages au plus (PDF générés : ch 2 pages, fr 1)
+- [x] Tests mis à jour : 6 fichiers / 88 tests
+- [x] **Rappel à l'utilisateur, à la livraison** (fait le 2026-11-07, relecture en attente) : il relit et corrige lui-même dans
+      `cv.data.ts` les réalisations (dont « envoi de courriels sur Amazon » chez N2JSoft et
+      « coding game pour Deezer » chez Apollo) et les secteurs, déduits par Claude
+- [x] PDF téléchargeables : générés au build (CV-05)
 
-- [ ] Style Commentaires, ordre : profil (ce que Yann cherche, sans répéter l'expérience
-      actuelle), compétences en tags groupés, expériences, formations, langues
-- [ ] Expériences : années seules (`2020 → aujourd'hui`, `2020`), stack en tags comme les
-      compétences, `description` (2 lignes, partout)
-- [ ] Format suisse : `achievements` (3 à 5 réalisations par poste, `/ch` seulement), situation
-      (`personal`), « Références sur demande » ; 2 pages A4 au plus
-- [ ] Formations : ville affichée
-- [ ] Éditeur : un `export const` par section, une chaîne par entrée ; description et stack
-      dans un `/** … @stack … */` au-dessus ; toujours généré depuis `cv.data.ts`
-- [ ] Liste déroulante remplacée par un bouton `</>` (bascule Commentaires ↔ Éditeur,
-      `aria-pressed`), mémorisé comme le style actuel ; `?style=` conservé
-- [ ] Style par défaut et impression : Commentaires (clair, A4) ; layout Sobre supprimé
-- [ ] Modèle : `description: Localized`, `achievements?: Localized[]` ; tests mis à jour
-- [ ] PDF téléchargeables : les anciens ne correspondent plus, à refaire ou générer (CV-05)
+## [CV-11] CV suisse à la racine, version France masquée
+
+Statut : fait le 2026-11-19 sur `claude`, non relu — demandé par l'utilisateur le 2026-11-19 :
+« pour le cv on va cacher la version française pour l'instant et afficher le cv ch à la racine
+plus avec /ch ».
+
+- [x] Le CV au format suisse est servi à `/` et `/en` (prérendus), plus à `/ch`
+- [x] La version France est masquée, son code conservé et réactivable par un seul réglage :
+      `FRANCE_FORMAT_PUBLISHED` dans `src/app/cv/cv-formats.ts` (`true` : pages `/fr`,
+      `/fr/en` prérendues, `hreflang`, PDF, et le `Caddyfile` ne les redirige plus)
+- [x] `/ch` → `/` en 301 et `/fr` → `/` en 302 (masquage temporaire : un 301 resterait en
+      cache après la réouverture) par le `Caddyfile` de l'image (vraie redirection sans serveur
+      Node), langue gardée (`/ch/en`, `/fr/en` → `/en`), query conservée, sous-chemins vers `/`.
+      Angular ne fait que `**` → `/`, pour `ng serve`
+- [x] Aucun lien vers la version France (il n'y avait pas de sélecteur de format) ; PDF : seuls
+      `ch-fr` et `ch-en` proposés et générés
+- [x] `hreflang` et `canonical` mis à jour ; ni sitemap ni `robots.txt` dans l'image
+- [x] Langues FR et EN conservées (la langue reste `data.lang`, le format `data.format`)
 
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
@@ -147,23 +191,21 @@ externe), le déplacer dans un dépôt dédié.
 
 ## [CV-10] Doc et script d'installation du VPS
 
-Statut : à faire — demandé le 2026-11-07, après la mise en service du VPS (CV-02, CV-03)
+Statut : fait le 2026-11-07 (doc et script relus deux fois) — `install-vps.ps1` jamais
+exécuté contre un vrai VPS, à éprouver à la prochaine réinstallation ; reste le choix de
+mise en ligne ci-dessous
 
-- [ ] `docs/VPS.md` : installation, vérification, configuration ; fichiers à envoyer pour
-      une réinstallation ; commandes réellement utilisées le 2026-11-07
-- [ ] Section « Vulgarisation » : ce qui a été fait, ce qui est configuré où, ce qui tourne
-      où (PC, GitHub, GHCR, OVH DNS, VPS : Caddy de bordure, conteneur `cv`), les trois clés
-      SSH (`id_rsa` perso, `deploy_cv` CI, clé d'hôte du VPS)
-- [ ] Étapes GitHub : environment `production` et reviewer, secrets `SSH_*`, variables
-      `DEPLOY_PATH` et `DEPLOY_ENABLED`, rulesets ; `gh auth login` de l'utilisateur pour
-      écrire, `GH_TOKEN` en lecture seule pour Claude
-- [ ] Script PowerShell depuis le PC qui enchaîne : clé perso sur `ubuntu`, envoi et
-      lancement de `bootstrap-vps.sh`, `/srv/edge`, `/srv/cv`, vérifications ; secrets
-      demandés à l'exécution, jamais écrits ; arrêts aux points de contrôle (DNS, accès SSH)
-- [ ] Pièges rencontrés : mot de passe à changer à la 1re connexion (pas de TTY), clé d'hôte
-      changée après réinstallation, séquences parasites de tmux, groupe `sudo` vide sur OVH,
-      `conf/` illisible par Caddy (`cap_drop: ALL`), TXT `3|welcome` qui bloque le CNAME
-      `www`, `ssh-keygen -lf -` et `Out-File` sous PowerShell 5.1
+- [x] `docs/VPS.md` : vulgarisation (ce qui tourne où, clés, comptes, jetons), installation
+      pas à pas, GitHub, mise en ligne, configuration de bordure, vérifications, fichiers à
+      envoyer, dépannage (tous les pièges du 2026-11-07, dont Build & Push sans publication
+      et merge en rebase) ; lien depuis `README.md`
+- [x] `edge/install-vps.ps1` : 10 étapes, reprise `-From`, bootstrap dans tmux, redémarrage
+      vérifié par `boot_id`, DNS contrôlé avant Caddy, mot de passe de pré-ouverture par
+      l'entrée standard (jamais en argument ni sur le PC), `.env` créés en 600
+- [x] Mineurs de relecture (2026-11-17) : IP (forme canonique exigée) et domaine validés
+      avant la première étape jouée, quel que soit `-From` ; reprise `-From 7` avec le même
+      contrôle AAAA que l'étape 6, arrêt et renvoi vers `-From 6` si l'AAAA n'est pas sur le
+      VPS. Vérifié hors réseau (fonctions extraites, 14 cas), jamais contre un VPS
 - [x] Correctifs du dépôt liés : `bootstrap-vps.sh` (`$SUDO_USER` admin, `conf` en 755),
       en-têtes de `hardening` absents des 401 de `basic_auth` (Caddyfile) — faits le
       2026-11-07 ; `Server: Caddy` reste sur les réponses d'erreur (mineur). Sur le VPS
@@ -218,10 +260,11 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 
 | Champ | Valeur |
 |---|---|
-| Mis à jour | 2026-11-07 |
-| Dernière tâche terminée | CV-04 (contenu réel, `birthYear`, photo) et correctifs `edge/` de CV-10 ; CV-02 et CV-03 : VPS en service, CV-08 déployé en pré-ouverture |
-| Tâche en cours | CV-10 : `docs/VPS.md` et `edge/install-vps.ps1` |
-| Prochaine action | Claude : CV-10. Utilisateur : PR `claude` → `dev` → `master`, « Docker Build & Push » puis « Deploy » ; sur le VPS, recopier `edge/conf/Caddyfile` dans `/srv/edge/conf/` et `docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile` ; relire le contenu sur `/ch` |
-| Contrôle | `check.ps1` 2026-11-07 : build, lint, test à 0 ; Vitest 5 fichiers / 65 tests ; shellcheck `edge/bootstrap-vps.sh` à 0 ; Caddy local : 401 avec HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy` |
-| Livré, non déployé | CV-04, correctifs `edge/` (script, Caddyfile) |
-| Attend l'utilisateur | points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 ; maquettes CV-09 avec le vrai contenu |
+| Mis à jour | 2026-11-19 |
+| Dernière tâche terminée | 2026-11-19 : CV-11 (CV suisse à `/` et `/en`, `/ch` en 301, `/fr` en 302, France masquée par `FRANCE_FORMAT_PUBLISHED`) ; `docs/MEP.md` et `edge/conf/sites/app-shop.caddy` (non importé) |
+| Tâche en cours | aucune côté cv ; recette : `docs/RECETTE.md` ; mise en ligne : `docs/MEP.md` § Actions utilisateur |
+| Validation | **rien n'est validé par l'utilisateur** : CV-09, CV-05, retrait de la date et reformulation sont développés et poussés sur `claude`, pas relus. Drapeau à côté de FR/EN : refusé (2026-11-07) |
+| Prochaine action | Utilisateur : relire `/` et `/en` et les 2 PDF CH depuis une image locale (`docker build`), valider ou demander des retouches. Ensuite : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/` et `/en` (`docs/MEP.md`). Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
+| Contrôle | `check.ps1` 2026-11-19 : build, lint, test à 0 ; Vitest 5 fichiers / 101 tests. Image locale 2026-11-19 : `/`, `/en` 200 ; `/ch*` 301 ; `/fr*` 302 ; 2 PDF CH |
+| Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10, CV-09, CV-05 et suites (sur `claude`, non validés) |
+| Attend l'utilisateur | validation de tout ce qui est sur `claude` ; relire dans `cv.data.ts` contextes, réalisations et secteurs (déduits puis reformulés par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
