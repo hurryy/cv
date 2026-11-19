@@ -1,5 +1,9 @@
-import { Lang, Personal, SpokenLanguage } from './cv.model';
+import { Cv, CvFormat, Lang, Personal, SpokenLanguage } from './cv.model';
 import { UiText } from './ui-text';
+
+/** Données personnelles que montre un format : toutes en `ch`, aucune en `fr`. */
+export const shownPersonal = (cv: Cv, format: CvFormat): Personal | undefined =>
+  format === 'ch' ? cv.personal : undefined;
 
 /** Une ligne « libellé : valeur » des données personnelles. */
 export interface PersonalFact {

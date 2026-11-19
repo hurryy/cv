@@ -122,8 +122,10 @@ describe('App', () => {
   afterEach(() => {
     const document = TestBed.inject(DOCUMENT);
     document.head
-      .querySelectorAll('link[rel="alternate"], link[rel="canonical"]')
-      .forEach((link) => link.remove());
+      .querySelectorAll(
+        'link[rel="alternate"], link[rel="canonical"], meta[property], script[type="application/ld+json"]',
+      )
+      .forEach((element) => element.remove());
     document.documentElement.removeAttribute('data-theme');
     document.defaultView?.localStorage.clear();
     vi.restoreAllMocks();
@@ -254,6 +256,26 @@ describe('App', () => {
         ['en-CH', 'https://yannhurry.fr/en'],
         ['x-default', 'https://yannhurry.fr/'],
       ]);
+    });
+
+    it('describes /en for search engines and link previews', async () => {
+      await render('/en');
+      const head = TestBed.inject(DOCUMENT).head;
+      const scripts = head.querySelectorAll('script[type="application/ld+json"]');
+      expect(scripts.length).toBe(1);
+      expect(JSON.parse(scripts[0].textContent ?? '')).toMatchObject({
+        '@type': 'Person',
+        jobTitle: CV.headline.en,
+        url: 'https://yannhurry.fr/en',
+      });
+      expect(head.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe(
+        'https://yannhurry.fr/en',
+      );
+      expect(
+        Array.from(head.querySelectorAll('meta[property="og:locale:alternate"]'), (meta) =>
+          meta.getAttribute('content'),
+        ),
+      ).toEqual(['fr_CH']);
     });
 
     it.each(['/', '/en'])('links at %s neither to the France format nor to its PDF', async (url) => {

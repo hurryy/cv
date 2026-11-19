@@ -92,6 +92,9 @@ export const UI_TEXT: Record<Lang, UiText> = {
   },
 };
 
+/** Langues de chaque format, dans l'ordre des routes et du sitemap. */
+export const LANGS: readonly Lang[] = ['fr', 'en'];
+
 export const OTHER_LANG: Record<Lang, Lang> = { fr: 'en', en: 'fr' };
 
 /** Le format suisse occupe la racine du site. */
