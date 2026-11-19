@@ -590,7 +590,7 @@ describe('App', () => {
       expect(swiss.querySelector('img')?.getAttribute('src')).toBe('/img/yann-hurry.jpg');
       expect(swiss.querySelector('.personal dd')?.textContent).toBe('1994');
       expect(swiss.textContent).toContain('Permis G');
-      expect(swiss.textContent).toContain(UI_TEXT.fr.referencesOnRequest);
+      expect(swiss.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
     });
 
     it('stays out of the published French format', async () => {
