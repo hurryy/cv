@@ -45,7 +45,7 @@ d'activité), langues au niveau CECR, références, 2 pages A4 max.
 - [x] PDF téléchargeable, généré depuis la même source : 4 PDF (format × langue) imprimés par
       Chromium headless au build de l'image (`scripts/generate-pdf.mjs`), police Roboto ; ch 2 pages,
       fr 1 page (2026-11-07). Bouton « Partager » : `navigator.share`, sinon `mailto:`
-- [ ] Ouverture publique : retirer `import preview` du bloc CV dans `edge/conf/Caddyfile`
+- [x] Ouverture publique : retirer `import preview` du bloc CV dans `edge/conf/Caddyfile` (2026-11-19, effectif à la recopie du Caddyfile sur le VPS)
 
 ## [CV-07] Français / anglais, thème clair / sombre, PDF téléchargeables
 
@@ -261,10 +261,10 @@ exécutable telle quelle ; un fait, une place (statut dans le ticket, chiffres d
 | Champ | Valeur |
 |---|---|
 | Mis à jour | 2026-11-19 |
-| Dernière tâche terminée | 2026-11-19 : CV-11 (CV suisse à `/` et `/en`, `/ch` en 301, `/fr` en 302, France masquée par `FRANCE_FORMAT_PUBLISHED`) ; `docs/MEP.md` et `edge/conf/sites/app-shop.caddy` (non importé) |
+| Dernière tâche terminée | 2026-11-19 : données du CV validées par l'utilisateur (ADAL/MSAL et compétence Mobile retirés, expériences reformulées en fr et en, `ea2a503`) ; ouverture publique préparée (`import preview` retiré, contrôles de `install-vps.ps1` et `docs/VPS.md` à 200) |
 | Tâche en cours | aucune côté cv ; recette : `docs/RECETTE.md` ; mise en ligne : `docs/MEP.md` § Actions utilisateur |
-| Validation | **rien n'est validé par l'utilisateur** : CV-09, CV-05, retrait de la date et reformulation sont développés et poussés sur `claude`, pas relus. Drapeau à côté de FR/EN : refusé (2026-11-07) |
-| Prochaine action | Utilisateur : relire `/` et `/en` et les 2 PDF CH depuis une image locale (`docker build`), valider ou demander des retouches. Ensuite : « Docker Build & Push » lancé à la main depuis `master` (job `publish` vert), puis « Deploy » — le Deploy de 13:20 a tiré de nouveau l'ancienne image ; recopier le Caddyfile et `caddy reload` (`docs/VPS.md` § 5) ; relire `/` et `/en` (`docs/MEP.md`). Puis PR `claude` → `dev` (merge commit) pour CV-10 et CV-09 |
-| Contrôle | `check.ps1` 2026-11-19 : build, lint, test à 0 ; Vitest 5 fichiers / 101 tests. Image locale 2026-11-19 : `/`, `/en` 200 ; `/ch*` 301 ; `/fr*` 302 ; 2 PDF CH |
+| Validation | contenu et image locale validés par l'utilisateur le 2026-11-19 ; ouverture publique décidée le même jour, sans relecture de la production sous mot de passe |
+| Prochaine action | Utilisateur : `docs/MEP.md` § Actions utilisateur — PR `claude` → `dev` → `master`, « Docker Build & Push », « Deploy » contrôlé, **puis seulement** recopie du Caddyfile (elle ouvre le site), relecture de `/` et `/en` |
+| Contrôle | `check.ps1` 2026-11-19 : build, lint, test à 0 ; Vitest 5 fichiers / 101 tests. `caddy adapt` du Caddyfile de bordure : 0, sans `basic_auth` ni `X-Robots-Tag` |
 | Livré, non déployé | CV-04, correctifs `edge/` (sur `master`, image non publiée) ; CV-10, CV-09, CV-05 et suites (sur `claude`, non validés) |
-| Attend l'utilisateur | validation de tout ce qui est sur `claude` ; relire dans `cv.data.ts` contextes, réalisations et secteurs (déduits puis reformulés par Claude) ; points ouverts de CV-04 (M1, dates) ; choix de mise en ligne de CV-10 |
+| Attend l'utilisateur | la mise en ligne (`docs/MEP.md`) ; choix de mise en ligne de CV-10 ; points ouverts de CV-04 (M1, dates) |

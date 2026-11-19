@@ -15,9 +15,9 @@
 	header -Server
 }
 
-# Pré-ouverture : tant que le contenu du CV n'est pas validé, le site est
-# protégé par mot de passe et non indexable. Retirer `import preview` du bloc
-# CV pour l'ouvrir au public.
+# Pré-ouverture : protège par mot de passe et rend non indexable un site qui
+# n'est pas encore ouvert au public. L'importer dans le bloc d'un site pour le
+# fermer, l'en retirer pour l'ouvrir.
 (preview) {
 	header X-Robots-Tag "noindex, nofollow"
 	basic_auth {
@@ -32,7 +32,6 @@ www.{$CV_DOMAIN} {
 
 {$CV_DOMAIN} {
 	import hardening
-	import preview
 	encode zstd gzip
 	reverse_proxy cv:8080
 }

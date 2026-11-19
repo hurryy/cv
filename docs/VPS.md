@@ -52,7 +52,7 @@ Dans les blocs de code, la première ligne de commentaire dit où taper la comma
      │ ssh deploy@VPS : pull + up             │                                       │
      └──────────────────────────────────────▶ │  Caddy de bordure   /srv/edge         │
                                               │  ports 80/443, TLS Let's Encrypt,     │
-                                              │  mot de passe de pré-ouverture        │
+                                              │  en-têtes de sécurité                 │
                                               │          │ réseau Docker « edge »     │
                                               │          ▼                            │
                                               │  conteneur cv       /srv/cv           │
@@ -71,8 +71,9 @@ Dans les blocs de code, la première ligne de commentaire dit où taper la comma
 - **Le VPS** fait tourner deux conteneurs Docker :
   - le **Caddy de bordure** (`/srv/edge`) : seul à ouvrir des ports (80 et 443). Il obtient
     et renouvelle seul les certificats HTTPS (Let's Encrypt), ajoute les en-têtes de
-    sécurité, et demande un mot de passe tant que le site est en pré-ouverture. Il servira
-    aussi app-shop plus tard ;
+    sécurité, et demande un mot de passe sur un site encore en pré-ouverture (snippet
+    `preview`, que le CV, ouvert au public, n'importe pas). Il servira aussi app-shop plus
+    tard ;
   - le conteneur **`cv`** (`/srv/cv`) : un second Caddy, sans droits root, qui sert les
     fichiers HTML déjà générés au build. Pas de Node en production. Il n'ouvre aucun port :
     seul le Caddy de bordure le joint, par le réseau Docker interne `edge`.
@@ -318,7 +319,8 @@ ssh -t deploy@51.83.79.249
 ```
 
 Calculer le hash du mot de passe de pré-ouverture (Caddy le demande deux fois, sans
-l'afficher) :
+l'afficher). Le CV est ouvert et ne l'utilise pas, mais `edge/docker-compose.yml` exige
+`PREVIEW_USER` et `PREVIEW_HASH` ; ils servent au premier site fermé par `import preview` :
 
 ```bash
 # VPS (deploy)
@@ -620,9 +622,10 @@ conteneur, pas un reload :
 cd /srv/edge && docker compose up -d
 ```
 
-**Ouvrir le site au public** (CV-05) : retirer la ligne `import preview` du bloc
-`{$CV_DOMAIN}` dans `edge/conf/Caddyfile`, puis recopier et recharger comme ci-dessus. Le mot
-de passe et le `noindex` disparaissent ensemble.
+**Ouvrir ou fermer un site** : le CV est ouvert au public, son bloc `{$CV_DOMAIN}` n'importe
+pas le snippet `preview`. Ajouter `import preview` au bloc d'un site le ferme par mot de passe
+et le rend non indexable (`X-Robots-Tag: noindex, nofollow`) ; le retirer l'ouvre. Recopier et
+recharger comme ci-dessus.
 
 ---
 
@@ -637,14 +640,14 @@ curl.exe -sI https://www.yannhurry.fr
 curl.exe -sI http://yannhurry.fr
 ```
 
-| URL | Attendu en pré-ouverture |
+| URL | Attendu |
 |---|---|
-| `https://yannhurry.fr` | `HTTP/1.1 401` ou `HTTP/2 401`, `strict-transport-security`, `x-robots-tag: noindex, nofollow` |
+| `https://yannhurry.fr` | `HTTP/1.1 200` ou `HTTP/2 200`, `strict-transport-security`, aucun `x-robots-tag` |
 | `https://www.yannhurry.fr` | `301`, `location: https://yannhurry.fr/` |
 | `http://yannhurry.fr` | `308`, `location: https://yannhurry.fr/` |
 
-Avec le mot de passe : `curl.exe -sI -u nom-choisi https://yannhurry.fr` (curl le demande)
-→ `200`.
+Un `401` sur `https://yannhurry.fr` signale que `import preview` est encore dans le bloc du CV
+sur le VPS : recopier le Caddyfile du dépôt et recharger (§ 5).
 
 Sur le VPS :
 

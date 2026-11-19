@@ -64,5 +64,4 @@ Sans VPS, seulement les refus en tête (adresse de documentation, non routable) 
 
 ## Hors recette, attend une décision
 
-Ouverture publique (retrait de `import preview`), mise en ligne (`release.ps1` ou workflow),
-dépôt d'infra pour `edge/` (CV-06), publication et déploiement des images.
+Mise en ligne (`release.ps1` ou workflow), dépôt d'infra pour `edge/` (CV-06), publication et déploiement des images.
