@@ -77,8 +77,10 @@ export interface Personal {
    */
   birthYear?: number;
   nationality?: Localized;
-  /** Permis de séjour ou de travail (ex. permis G). */
+  /** Type du permis de séjour ou de travail (ex. G), sans le mot « permis ». */
   permit?: Localized;
+  /** Catégories du permis de conduire (ex. A et B). */
+  drivingLicence?: Localized;
   availability?: Localized;
   /** Taux d'activité recherché (ex. 80–100 %). */
   workload?: Localized;

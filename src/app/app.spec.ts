@@ -57,6 +57,12 @@ const layout = (page: HTMLElement) => page.querySelector('app-layout-sobre') as 
 const entries = (page: HTMLElement) => Array.from(page.querySelectorAll<HTMLElement>('.entry'));
 const shortcutLinks = (page: HTMLElement) =>
   Array.from(page.querySelectorAll<HTMLAnchorElement>('nav.shortcuts a'));
+/** Paires « libellé, valeur » des données personnelles, dans l'ordre affiché. */
+const personalPairs = (cv: HTMLElement) =>
+  Array.from(cv.querySelectorAll('.personal > div'), (fact) => [
+    fact.querySelector('dt')?.textContent,
+    fact.querySelector('dd')?.textContent,
+  ]);
 
 const personalCv: Cv = {
   ...CV,
@@ -64,7 +70,8 @@ const personalCv: Cv = {
     photo: '/img/photo.jpg',
     birthYear: 1990,
     nationality: { fr: 'Française', en: 'French' },
-    permit: { fr: 'Permis G', en: 'G permit' },
+    permit: { fr: 'G', en: 'G' },
+    drivingLicence: { fr: 'A et B', en: 'A and B' },
     availability: { fr: 'Immédiate', en: 'Immediately' },
     workload: { fr: '80–100 %', en: '80–100%' },
     referencesOnRequest: true,
@@ -561,26 +568,37 @@ describe('App', () => {
         UI_TEXT.fr.birthYear,
         UI_TEXT.fr.nationality,
         UI_TEXT.fr.permit,
+        UI_TEXT.fr.drivingLicence,
         UI_TEXT.fr.availability,
         UI_TEXT.fr.workload,
       ]);
       expect(cv.querySelector('.personal dd')?.textContent).toBe('1990');
-      expect(cv.textContent).toContain('Permis G');
       expect(cv.textContent).toContain(UI_TEXT.fr.referencesOnRequest);
     });
 
-    it('keeps the label of a self-explanatory value for screen readers only', async () => {
+    it('shows every fact as a visible label and its value', async () => {
       const cv = layout(await render('/', personalCv));
-      const hidden = Array.from(
-        cv.querySelectorAll('.personal dt.visually-hidden'),
-        (dt) => dt.textContent,
-      );
-      expect(hidden).toEqual([UI_TEXT.fr.permit]);
+      expect(cv.querySelector('.personal .visually-hidden')).toBeNull();
+      expect(personalPairs(cv)).toEqual([
+        ['Année de naissance', '1990'],
+        ['Nationalité', 'Française'],
+        ['Permis de travail', 'G'],
+        ['Permis de conduire', 'A et B'],
+        ['Disponibilité', 'Immédiate'],
+        ["Taux d'activité", '80–100 %'],
+      ]);
     });
 
     it('is translated in English', async () => {
       const cv = layout(await render('/en', personalCv));
-      expect(cv.textContent).toContain('G permit');
+      expect(personalPairs(cv)).toEqual([
+        ['Year of birth', '1990'],
+        ['Nationality', 'French'],
+        ['Work permit', 'G'],
+        ['Driving licence', 'A and B'],
+        ['Availability', 'Immediately'],
+        ['Workload', '80–100%'],
+      ]);
       expect(cv.textContent).toContain(UI_TEXT.en.referencesOnRequest);
     });
 
@@ -589,7 +607,8 @@ describe('App', () => {
       expect(cv.querySelector('img')).toBeNull();
       expect(cv.querySelector('.personal')).toBeNull();
       expect(cv.textContent).not.toContain('1990');
-      expect(cv.textContent).not.toContain('Permis G');
+      expect(cv.textContent).not.toContain(UI_TEXT.fr.permit);
+      expect(cv.textContent).not.toContain(UI_TEXT.fr.drivingLicence);
       expect(cv.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
     });
 
@@ -597,21 +616,26 @@ describe('App', () => {
       const cv = layout(
         await render('/', {
           ...CV,
-          personal: { permit: { fr: 'Permis G', en: 'G permit' }, nationality: { fr: '', en: '' } },
+          personal: { permit: { fr: 'G', en: 'G' }, nationality: { fr: '', en: '' } },
         }),
       );
       const facts = Array.from(cv.querySelectorAll('.personal dt'), (dt) => dt.textContent);
       expect(facts).toContain(UI_TEXT.fr.permit);
       expect(facts).not.toContain(UI_TEXT.fr.nationality);
+      expect(facts).not.toContain(UI_TEXT.fr.drivingLicence);
       expect(cv.querySelector('img')).toBeNull();
       expect(cv.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
     });
 
-    it('is published with the year of birth only', async () => {
+    it('is published with the year of birth, nationality and both permits', async () => {
       const swiss = layout(await render('/'));
       expect(swiss.querySelector('img')?.getAttribute('src')).toBe('/img/yann-hurry.jpg');
-      expect(swiss.querySelector('.personal dd')?.textContent).toBe('1994');
-      expect(swiss.textContent).toContain('Permis G');
+      expect(personalPairs(swiss)).toEqual([
+        ['Année de naissance', '1994'],
+        ['Nationalité', 'française'],
+        ['Permis de travail', 'G'],
+        ['Permis de conduire', 'A et B'],
+      ]);
       expect(swiss.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
     });
 
@@ -619,7 +643,8 @@ describe('App', () => {
       const page = await render('/fr', CV, WITH_FRANCE);
       expect(page.querySelector('img')).toBeNull();
       expect(page.textContent).not.toContain('1994');
-      expect(page.textContent).not.toContain('Permis G');
+      expect(page.textContent).not.toContain(UI_TEXT.fr.permit);
+      expect(page.textContent).not.toContain(UI_TEXT.fr.drivingLicence);
       expect(page.textContent).not.toContain(UI_TEXT.fr.referencesOnRequest);
     });
   });
@@ -720,6 +745,22 @@ describe('App', () => {
         'Jean-DUPONT-CV-FR.pdf',
       );
     });
+
+    it.each(['/', '/en'])(
+      'keeps at %s only "PDF" visible on a narrow screen, the full label for screen readers',
+      async (url) => {
+        const page = await render(url);
+        const link = page.querySelector<HTMLAnchorElement>('a[download]');
+        const visibleOnWideOnly = Array.from(
+          link?.querySelectorAll('.wide-only') ?? [],
+          (part) => part.textContent,
+        );
+        const { verb, object } = UI_TEXT[url === '/' ? 'fr' : 'en'].downloadPdf;
+        expect(visibleOnWideOnly).toEqual([verb]);
+        expect(link?.textContent?.trim()).toBe(`${verb} ${object}`);
+        expect(link?.hasAttribute('aria-label')).toBe(false);
+      },
+    );
   });
 
   describe('share link', () => {
@@ -754,6 +795,12 @@ describe('App', () => {
         'mailto:?subject=CV%20of%20Yann%20HURRY&body=https%3A%2F%2Fyannhurry.fr%2Ffr%2Fen',
       );
       expect(link?.textContent?.trim()).toBe('Share');
+    });
+
+    it('keeps its label for screen readers when a narrow screen shows the icon only', async () => {
+      const page = await render('/');
+      const label = shareLink(page)?.querySelector('.wide-only');
+      expect(label?.textContent).toBe(UI_TEXT.fr.share);
     });
 
     it('follows its mailto: link when the browser cannot share', async () => {
