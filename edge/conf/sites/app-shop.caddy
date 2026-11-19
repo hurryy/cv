@@ -23,6 +23,12 @@ shop.yannhurry.fr {
 apishop.yannhurry.fr {
 	import hardening
 	encode zstd gzip
+	# Inscription fermée pendant les essais : le nom apparaît dans les journaux
+	# Certificate Transparency dès l'émission du certificat, et l'API répond à
+	# tous. Le premier admin naît par `npm run admin:create` sur le VPS. Ces deux
+	# lignes se retirent à l'ouverture d'app-shop (app-shop/docs/MEP.md).
+	@register path /api/auth/register
+	respond @register 403
 	reverse_proxy shop-api:5000 {
 		# helmet pose déjà ces en-têtes côté API ; ceux de l'amont sont retirés
 		# pour qu'une seule valeur, celle de `hardening`, sorte (sinon
@@ -32,8 +38,5 @@ apishop.yannhurry.fr {
 		header_down -X-Content-Type-Options
 		header_down -Referrer-Policy
 		header_down -X-Frame-Options
-		# Pas de tampon de réponse : nécessaire le jour où l'API pousse du
-		# text/event-stream (partage de liste en SSE).
-		flush_interval -1
 	}
 }
