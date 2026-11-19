@@ -32,7 +32,6 @@ export const CV: Cv = {
     birthYear: 1994,
     nationality: { fr: 'française', en: 'French' },
     permit: { fr: 'Permis G', en: 'G permit' },
-    referencesOnRequest: true,
   },
   links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/in/yann-hurry', icon: 'linkedin' }],
   experiences: [
