@@ -46,25 +46,25 @@ export const CV: Cv = {
         { fr: 'Espace client', en: 'Customer portal' },
       ],
       summary: {
-        fr: "Développement et maintenance de l'Espace Client SIG : API REST .NET, interfaces Angular et Material, intégration d'API REST et SOAP.",
-        en: 'Development and maintenance of the SIG customer portal: .NET REST APIs, Angular and Angular Material front end, REST and SOAP API integration.',
+        fr: "Développement et maintenance de l'Espace Client de SIG : API REST en .NET, interfaces en Angular et Material, intégration des API REST et SOAP internes de SIG.",
+        en: "Development and maintenance of SIG's customer portal: .NET REST APIs, Angular and Material user interfaces, integration of SIG's internal REST and SOAP APIs.",
       },
       context: {
-        fr: "Mission SQLI aux Services Industriels de Genève, dans une équipe Scrum. Je développe et maintiens l'Espace Client, le portail des clients de SIG.",
-        en: "SQLI assignment at Services Industriels de Genève, in a Scrum team. I develop and maintain SIG's customer portal (Espace Client).",
+        fr: "Mission pour SQLI aux Services Industriels de Genève, dans une équipe Scrum. Je développe et maintiens l'Espace Client, le portail des clients de SIG.",
+        en: "SQLI assignment at Services Industriels de Genève (SIG), in a Scrum team. I develop and maintain the Espace Client, SIG's customer portal.",
       },
       achievements: [
         {
           fr: 'Conception et maintenance des API REST en .NET Core',
-          en: 'Design and maintenance of the .NET Core REST APIs',
+          en: 'Designing and maintaining the .NET Core REST APIs',
         },
         {
-          fr: "Interfaces de l'espace client en Angular et Material",
-          en: 'Customer portal user interfaces in Angular and Material',
+          fr: "Développement des interfaces de l'Espace Client en Angular et Material",
+          en: "Building the portal's user interfaces with Angular and Material",
         },
         {
-          fr: "Intégration d'API REST et SOAP de partenaires (ADAL, MSAL)",
-          en: 'Integration of partner REST and SOAP APIs (ADAL, MSAL)',
+          fr: "Intégration des API REST et SOAP des équipes Core et SAP de SIG, qui fournissent les données de l'Espace Client",
+          en: "Integrating the REST and SOAP APIs of SIG's Core and SAP teams, which supply the portal's data",
         },
         { fr: 'Revues de code et mises à jour techniques', en: 'Code reviews and technical upgrades' },
         {
@@ -72,16 +72,7 @@ export const CV: Cv = {
           en: 'Advising Product Owners on feature design',
         },
       ],
-      stack: [
-        '.NET',
-        'C#',
-        'Angular',
-        'Angular Material',
-        'REST API',
-        'SOAP',
-        'Azure DevOps',
-        'MSAL',
-      ],
+      stack: ['.NET', 'C#', 'Angular', 'Angular Material', 'REST API', 'SOAP', 'Azure DevOps'],
     },
     {
       role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
@@ -93,29 +84,29 @@ export const CV: Cv = {
         { fr: 'Gestion des temps et des absences', en: 'Time and leave management' },
       ],
       summary: {
-        fr: 'Développement et maintenance de Keeple, logiciel RH (absences, temps de travail, télétravail), et de son application mobile. Poste en télétravail.',
-        en: 'Development and maintenance of Keeple, an HR software product (leave, working time, remote work), and its mobile app. Remote position.',
+        fr: 'Développement et maintenance de Keeple, un logiciel RH (absences, temps de travail, télétravail), et de son application mobile. Poste en télétravail.',
+        en: 'Development and maintenance of Keeple, an HR software product covering leave, working time and remote work, and of its mobile app. Remote position.',
       },
       context: {
-        fr: "Keeple est un logiciel RH en ligne qui gère les absences et le temps de travail des salariés. J'ai travaillé sur tout le projet : architecture, base de données, interface web et application mobile.",
-        en: 'Keeple is an online HR product that handles employee leave and working time. I worked on the whole project: architecture, database, web interface and mobile app.',
+        fr: "Keeple est un logiciel RH en ligne qui gère les absences et le temps de travail des salariés. J'ai travaillé sur l'ensemble du projet : architecture, base de données, interface web et application mobile.",
+        en: 'Keeple is an online HR product for managing employee leave and working time. I worked across the whole project: architecture, database, web interface and mobile app.',
       },
       achievements: [
         {
-          fr: 'Déclaration du télétravail : règles, pose et lien avec le planning',
-          en: 'Remote-work declaration: rules, requests and the link with the schedule',
+          fr: 'Déclaration du télétravail : règles, pose des jours et lien avec le planning',
+          en: 'Remote-work declarations: rules, booking remote days and integration with the schedule',
         },
         {
-          fr: "Application d'envoi de courriels entre Keeple, N2F et les API d'Amazon, développée à plusieurs",
-          en: 'Email dispatch application between Keeple, N2F and the Amazon APIs, built with other developers',
+          fr: "Service d'envoi de courriels, développé en équipe : Keeple et N2F lui confient leurs courriels, qu'il envoie par une ou plusieurs API d'envoi, dont celle d'Amazon, selon leur disponibilité",
+          en: "Email-sending service, built as a team: Keeple and N2F hand it their emails, and it sends them through one or more sending APIs, including Amazon's, depending on availability",
         },
         {
-          fr: 'Nouveau module de gestion des temps : saisie par activité ou par jour, vues semaine et mois',
-          en: 'New time-tracking module: entry by activity or by day, weekly and monthly views',
+          fr: 'Module de gestion des temps : saisie par activité ou par jour, vues semaine et mois',
+          en: 'Time-tracking module: entry by activity or by day, weekly and monthly views',
         },
         {
-          fr: 'Module de gestion des temps sur mobile : saisie, déclarations et section « mes déclarations »',
-          en: 'Mobile time-tracking module: time entry, declarations and a "my declarations" section',
+          fr: 'Gestion des temps sur mobile : saisie, déclarations et rubrique « Mes déclarations »',
+          en: 'Time tracking on mobile: time entry, declarations and a "My declarations" section',
         },
       ],
       stack: ['.NET Core', 'Angular', 'SQL Server', 'Flutter'],
@@ -130,20 +121,20 @@ export const CV: Cv = {
         { fr: 'Finance participative', en: 'Crowdfunding' },
       ],
       summary: {
-        fr: "Applications web pour des clients : outil de devis d'équipements de détection de fumée et de sécurité incendie, application de crowdfunding.",
+        fr: "Applications web pour des clients : un outil de devis pour des équipements de détection de fumée et de sécurité incendie, et une application de financement participatif.",
         en: 'Web applications for clients: a quotation tool for smoke detection and fire safety equipment, and a crowdfunding application.',
       },
       context: {
         fr: 'Dans une équipe de cinq développeurs, je développais et maintenais des applications web pour des clients.',
-        en: 'In a team of five developers, I built and maintained web applications for clients.',
+        en: 'As one of five developers, I built and maintained web applications for clients.',
       },
       achievements: [
         {
-          fr: 'Application de devis, en équipe : module de calcul, paramétrage, édition finale en PDF',
-          en: 'Quotation application, built as a team: calculation module, configuration, final PDF quote',
+          fr: 'Application de devis, développée en équipe : module de calcul, paramétrage et génération du devis final en PDF',
+          en: 'Quotation application, built as a team: calculation module, configuration and generation of the final quote as a PDF',
         },
         {
-          fr: "Application de crowdfunding : calcul des intérêts, planning des échéances, interface d'administration des projets",
+          fr: "Application de financement participatif : calcul des intérêts, échéancier, interface d'administration des projets",
           en: 'Crowdfunding application: interest calculation, payment schedule, project administration interface',
         },
       ],
@@ -157,11 +148,11 @@ export const CV: Cv = {
       domains: [{ fr: 'Recrutement', en: 'Recruitment' }],
       summary: {
         fr: 'Plateforme de tests techniques pour le recrutement : questionnaires paramétrables et coding games supervisés en direct.',
-        en: 'Technical assessment platform for recruiting: configurable questionnaires and live-proctored coding challenges.',
+        en: 'Technical assessment platform for recruitment: configurable questionnaires and coding challenges monitored live.',
       },
       context: {
-        fr: "Projet interne d'une société de services informatiques : créer l'outil qui fait passer les tests techniques aux candidats.",
-        en: 'Internal project at an IT services company: building the tool that runs technical tests for candidates.',
+        fr: "Projet interne d'une société de services informatiques : l'outil qui fait passer les tests techniques aux candidats.",
+        en: 'Internal project at an IT services company: the tool used to run technical tests for job candidates.',
       },
       achievements: [
         {
@@ -169,16 +160,16 @@ export const CV: Cv = {
           en: 'Configurable questionnaires for candidates',
         },
         {
-          fr: "Édition des questionnaires depuis une interface d'administration",
-          en: 'Questionnaire editing from an administration interface',
+          fr: "Création et modification des questionnaires depuis une interface d'administration",
+          en: 'Creating and editing questionnaires from an admin interface',
         },
         {
-          fr: "Coding game « Deezer » : page HTML à reconstruire en JavaScript, avec appels d'API",
-          en: '"Deezer" coding game: an HTML page to rebuild in JavaScript, with API calls',
+          fr: "Coding game « Deezer » : une page HTML à reconstruire en JavaScript, avec des appels d'API",
+          en: '"Deezer" coding game: rebuilding an HTML page in JavaScript, with API calls',
         },
         {
-          fr: "Supervision en direct d'un ou plusieurs candidats (WebSockets)",
-          en: 'Live supervision of one or more candidates (WebSockets)',
+          fr: "Suivi en direct d'un ou plusieurs candidats (WebSockets)",
+          en: 'Live monitoring of one or more candidates (WebSockets)',
         },
       ],
       stack: ['.NET Core', 'Angular', 'SQL Server', 'WebSockets'],
@@ -194,24 +185,24 @@ export const CV: Cv = {
       domains: [{ fr: 'Gestion de flotte', en: 'Fleet management' }],
       summary: {
         fr: "Maintenance corrective et évolutive d'un outil de gestion de flotte de véhicules.",
-        en: 'Maintenance and enhancement of a vehicle fleet management application.',
+        en: 'Bug fixes and new features on a vehicle fleet management application.',
       },
       context: {
         fr: "Société de services informatiques : stage de six mois suivi d'une année d'alternance, sur un outil de gestion de flotte de véhicules.",
-        en: 'IT services company: six-month internship followed by a one-year apprenticeship, on a vehicle fleet management tool.',
+        en: 'IT services company: a six-month internship followed by a one-year apprenticeship, working on a vehicle fleet management tool.',
       },
       achievements: [
         {
-          fr: 'Bus de données pour communiquer avec une application partenaire',
-          en: 'Data bus for communication with a partner application',
+          fr: 'Bus de données pour échanger avec une application partenaire',
+          en: 'Data bus to exchange data with a partner application',
         },
         {
-          fr: 'Script batch de migration des données et du schéma de base en production',
-          en: 'Batch script for production data and database schema migrations',
+          fr: 'Script batch de migration des données et du schéma de la base de production',
+          en: 'Batch script migrating the production data and database schema',
         },
         {
           fr: 'Application de centralisation des données du personnel (React)',
-          en: 'Personnel data centralization application (React)',
+          en: 'Application centralizing staff data (React)',
         },
       ],
       stack: ['ASP.NET', 'C#', 'SSIS', 'Azure Service Bus', 'SQL Server'],
@@ -226,7 +217,6 @@ export const CV: Cv = {
       name: { fr: 'Front-end', en: 'Front end' },
       items: ['TypeScript', 'Angular', 'Angular Material', 'Vue.js'],
     },
-    { name: { fr: 'Mobile', en: 'Mobile' }, items: ['Flutter'] },
     { name: { fr: 'Données', en: 'Data' }, items: ['SQL Server', 'T-SQL'] },
     {
       name: { fr: 'Outils et méthodes', en: 'Tools and practices' },
