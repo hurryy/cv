@@ -158,6 +158,22 @@ barre mesuré une fois au chargement (rotation ou zoom ensuite : soulignement un
       « coding game pour Deezer » chez Apollo) et les secteurs, déduits par Claude
 - [x] PDF téléchargeables : générés au build (CV-05)
 
+## [CV-11] CV suisse à la racine, version France masquée
+
+Statut : à faire — demandé par l'utilisateur le 2026-11-19 : « pour le cv on va cacher la
+version française pour l'instant et afficher le cv ch à la racine plus avec /ch ».
+
+- [ ] Le CV au format suisse est servi à `/` (prérendu compris), plus à `/ch`
+- [ ] La version France est masquée, son code conservé et réactivable par un seul réglage
+      (drapeau ou route), sans réécriture
+- [ ] `/ch` → `/` et `/fr` → `/` en redirection permanente ; côté Caddy (`Caddyfile` de
+      l'image) ou Angular, choix justifié dans le lot (un site prérendu sans serveur Node
+      plaide pour Caddy : un vrai 301, lisible par les moteurs)
+- [ ] Liens de navigation, sélecteur de format retiré ou masqué ; PDF : seuls les PDF CH
+      (FR et EN) proposés et générés
+- [ ] Sitemap, `hreflang`, `canonical` mis à jour s'ils existent
+- [ ] Langues FR et EN conservées
+
 ## [CV-06] Sortir `edge/` dans un dépôt d'infra
 
 Statut : à faire — avant le branchement d'app-shop
