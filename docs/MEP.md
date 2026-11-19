@@ -19,17 +19,17 @@ lancement manuel de 13:27 a corrigé. Le piège reste entier pour la prochaine v
 
 ## 1. Valider ce qui est sur `claude`
 
-Rien de ce qui est sur `claude` n'a été relu par toi : CV-09 (mise en page), CV-05 (PDF,
-Partager), retrait de la date, textes reformulés, CV-10 (script VPS).
+Fait le 2026-11-19 : tu as relu l'image locale et validé les données du CV (`ea2a503`), puis
+décidé l'ouverture publique sans relecture de la production sous mot de passe.
 
 Dérouler `docs/RECETTE.md` sur une image locale. Les PDF ne sont générés que dans l'image :
 
 ```powershell
 # PC, depuis C:\Development\yannhurry.fr\cv
-docker build -t cv:local . ; if ($?) { docker run --rm -p 8089:8080 cv:local }
+docker build -t cv:local . ; if ($?) { docker run --rm -p 8090:8080 cv:local }
 ```
 
-Puis `http://localhost:8089`. Un défaut devient un ticket ; on ne passe à l'étape 2 qu'avec
+Puis `http://localhost:8090`. Un défaut devient un ticket ; on ne passe à l'étape 2 qu'avec
 une recette sans défaut bloquant.
 
 Avant la PR, `claude` doit être poussé (le commit `7e0f827` et ce document sont locaux) et la
@@ -110,9 +110,11 @@ ssh deploy@51.83.79.249 "cd /srv/edge && docker compose exec -T caddy caddy relo
 
 Si `reload` répond « permission denied » : `chmod 755 /srv/edge/conf` en `deploy` (§ 5).
 
-Contrôle : `curl.exe -sI https://yannhurry.fr` rend `401` avec `strict-transport-security`,
-`x-frame-options: DENY` et `x-robots-tag: noindex, nofollow`. `Server: Caddy` peut rester sur
-ce 401 (mineur connu, CV-10).
+Ce Caddyfile ouvre le CV au public (étape 7) : ne le recopier qu'une fois le Deploy contrôlé,
+sinon l'ancienne image devient publique.
+
+Contrôle : `curl.exe -sI https://yannhurry.fr` rend `200` avec `strict-transport-security` et
+`x-frame-options: DENY`, sans `x-robots-tag`.
 
 ## 5. Choix de mise en ligne (CV-10) : à trancher par toi
 
@@ -136,50 +138,17 @@ Workflow déclenché sur `master`, avec approbation :
 Mon avis, à contester : le script, parce qu'il garde la décision existante et que le Deploy par
 tag `sha-` de l'étape 4 ferme déjà l'essentiel du risque.
 
-## 6. Nouveau mot de passe de pré-ouverture (toi)
+## 6. Ouverture publique (CV-05)
 
-Inutile si tu ouvres le site au public dans la même session (étape 7) : le mot de passe ne
-sert qu'à relire la production avant l'ouverture.
+Décidée par toi le 2026-11-19 et faite sur `claude` : le bloc `{$CV_DOMAIN}` de
+`edge/conf/Caddyfile` n'importe plus `preview`. Le mot de passe et l'en-tête
+`X-Robots-Tag: noindex, nofollow` partent ensemble ; le snippet `(preview)` reste pour
+app-shop. `PREVIEW_USER` et `PREVIEW_HASH` restent exigés par `edge/docker-compose.yml` :
+les laisser dans `/srv/edge/.env`. `docs/VPS.md` § 6 et l'étape 9 de `edge/install-vps.ps1`
+attendent désormais `200` sans `noindex`.
 
-Le hash se calcule sur le VPS, en interactif (Caddy le demande deux fois sans l'afficher). Ne
-pas utiliser `--plaintext` proposé par `edge/.env.example` : le mot de passe resterait dans
-l'historique du shell.
-
-```bash
-# VPS (deploy), après ssh -t deploy@51.83.79.249
-docker run --rm -it caddy:2-alpine caddy hash-password
-nano /srv/edge/.env
-```
-
-Remplacer la seule ligne `PREVIEW_HASH=` par le nouveau hash, chaque `$` doublé (`$$`). Le
-nom d'utilisateur est sur la ligne `PREVIEW_USER=` du même fichier. Une variable du `.env`
-demande un redémarrage, pas un reload (`docs/VPS.md` § 5) :
-
-```bash
-# VPS (deploy)
-grep -c '^PREVIEW_HASH=\$\$2' /srv/edge/.env
-cd /srv/edge && docker compose up -d
-```
-
-Attendu : `1` (le hash commence bien par `$$2`, sans afficher la valeur), puis le conteneur
-`edge-caddy-1` recréé.
-
-Contrôle depuis le PC : `curl.exe -sI -u <nom> https://yannhurry.fr` (curl demande le mot de
-passe) rend `200` ; un mauvais mot de passe rend `401`.
-
-## 7. Ouverture publique (CV-05)
-
-Où : `edge/conf/Caddyfile`, bloc `{$CV_DOMAIN}`. Quoi : retirer la ligne `import preview`.
-Le `basic_auth` et l'en-tête `X-Robots-Tag: noindex, nofollow` partent ensemble, ils ne
-vivent que dans ce snippet. Garder le snippet `(preview)` : il servira à app-shop.
-
-Le changement passe par le dépôt (commit sur `claude`, PR, `master`), puis la recopie de
-l'étape 4. Le reste à ajuster dans le même lot :
-- `docs/VPS.md` § 6 et l'étape 9 de `edge/install-vps.ps1` attendent `401` et `noindex` :
-  après l'ouverture, ils signaleraient un défaut à tort ;
-- `PREVIEW_USER` et `PREVIEW_HASH` restent exigés par `edge/docker-compose.yml` (`:?`) : les
-  laisser dans `/srv/edge/.env`, ou les rendre facultatifs dans le même lot ;
-- aucun `robots.txt` ni sitemap dans l'image : sans gravité, à décider avec CV-11.
+Le site s'ouvre au moment où ce Caddyfile est recopié sur le VPS (étape 4), donc après le
+Deploy de la nouvelle image. Aucun `robots.txt` ni sitemap dans l'image : sans gravité.
 
 Contrôle :
 
@@ -191,41 +160,33 @@ curl.exe -sI https://yannhurry.fr/
 Attendu : `200`, pas de `x-robots-tag`, `strict-transport-security` présent. `www` toujours en
 `301`, `http` en `308`.
 
-## 8. CV-11 (CV suisse à la racine)
+## 7. CV-11 (CV suisse à la racine)
 
 Développé le 2026-11-19, sur `claude` : il part dans la même PR que le reste. Le CV suisse est à
 `/` et `/en` ; `/ch` redirige en 301, `/fr` en 302 (France masquée pour l'instant, rouverte
 par `FRANCE_FORMAT_PUBLISHED` dans `src/app/cv/cv-formats.ts`). Contrôle après déploiement :
-`curl.exe -sI -u <nom> https://yannhurry.fr/ch` rend `301` vers `/`, `/fr` rend `302`.
+`curl.exe -sI https://yannhurry.fr/ch` rend `301` vers `/`, `/fr` rend `302`.
 
 ## Actions utilisateur
 
-1. Poste local : pousser `claude` (`git -C C:\Development\yannhurry.fr\cv push origin
-   claude`, ou le demander à Claude). Contrôle : `git status` sans « ahead », CI `cv` verte
+1. Poste local : vérifier que `claude` est poussé. Contrôle : `git -C
+   C:\Development\yannhurry.fr\cv status` sans « ahead », CI `cv` verte
    (`gh run list -R hurryy/cv --branch claude --limit 2`).
-2. Poste local : recette de l'étape 1 (`docs/RECETTE.md`, image `cv:local`). Contrôle : toutes
-   les cases cochées ou un ticket par défaut.
-3. Poste local : trancher CV-10 (étape 5) et la date d'ouverture (avec ou sans CV-11).
-   Contrôle : la décision est écrite dans CV-10 de `docs/BACKLOG.md`.
-4. GitHub (`gh`) : PR `claude` → `dev` puis `dev` → `master`, merge commit (`docs/VPS.md`
-   § 4.1). Contrôle : `git -C C:\Development\yannhurry.fr\cv fetch origin ; git -C
-   C:\Development\yannhurry.fr\cv log origin/master --oneline -1` montre « Merge pull request
-   … from hurryy/dev ».
-5. GitHub (`gh`) : `gh workflow run "Docker Build & Push" -R hurryy/cv --ref master`.
-   Contrôle : `gh run view <id> -R hurryy/cv --json headSha,jobs` donne `publish` en
-   `success` et `headSha` = `origin/master`. Noter `sha-` + 7 caractères.
-6. GitHub (`gh`) : `gh workflow run Deploy -R hurryy/cv --ref master -f tag=sha-xxxxxxx`, puis
+2. GitHub (`gh`) : PR `claude` → `dev` puis `dev` → `master`, merge commit (étape 2,
+   `docs/VPS.md` § 4.1). Contrôle : `git -C C:\Development\yannhurry.fr\cv fetch origin ; git
+   -C C:\Development\yannhurry.fr\cv log origin/master --oneline -1` montre « Merge pull
+   request … from hurryy/dev ».
+3. GitHub (`gh`) : `gh workflow run "Docker Build & Push" -R hurryy/cv --ref master`
+   (étape 3). Contrôle : `gh run view <id> -R hurryy/cv --json headSha,jobs` donne `publish`
+   en `success` et `headSha` = `origin/master`. Noter `sha-` + 7 caractères.
+4. GitHub (`gh`) : `gh workflow run Deploy -R hurryy/cv --ref master -f tag=sha-xxxxxxx`, puis
    Approve and deploy dans Actions. Contrôle : log `Recreated` et
    `ssh deploy@51.83.79.249 "docker inspect --format '{{.Config.Image}}' cv-cv-1"` donne le
-   tag `sha-xxxxxxx`.
-7. Poste local puis VPS : vérifier que `edge/conf/Caddyfile` ne diffère pas
-   d'`origin/master`, le recopier et `caddy reload` (étape 4).
-   Contrôle : `curl.exe -sI https://yannhurry.fr` rend `401`, `x-frame-options: DENY`,
-   `x-robots-tag: noindex, nofollow`.
-8. VPS (deploy), seulement si tu relis la production avant ouverture : nouveau hash
-   (étape 6), `docker compose up -d` dans `/srv/edge`. Contrôle : `curl.exe -sI -u <nom>
-   https://yannhurry.fr` rend `200`.
-9. Relire `https://yannhurry.fr/` et `/en` en production, les deux PDF CH compris.
-10. Ouverture : demander à Claude le lot « retirer `import preview` » (étape 7), le merger
-    jusqu'à `master`, puis refaire l'action 7. Contrôle : `curl.exe -sI
-    https://yannhurry.fr/` rend `200` sans `x-robots-tag`.
+   tag `sha-xxxxxxx`. **Ne pas passer à l'action 5 avant ce contrôle** : elle ouvre le site.
+5. Poste local puis VPS : vérifier que `edge/conf/Caddyfile` ne diffère pas
+   d'`origin/master`, le recopier et `caddy reload` (étape 4). Contrôle : `curl.exe -sI
+   https://yannhurry.fr/` rend `200` sans `x-robots-tag`, avec `x-frame-options: DENY` ;
+   `/ch` rend `301`, `/fr` `302`.
+6. Navigateur : relire `https://yannhurry.fr/` et `/en`, les deux PDF CH compris.
+7. Plus tard, poste local : trancher CV-10 (étape 5). Contrôle : la décision est écrite dans
+   CV-10 de `docs/BACKLOG.md`.

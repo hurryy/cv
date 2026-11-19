@@ -19,14 +19,15 @@ Usage, depuis la racine du dépôt cv :
       démarrage de Caddy, attente des certificats ; avec -From 7, contrôle DNS (A et AAAA)
       d'abord ;
    8. /srv/cv/.env s'il manque ;
-   9. vérifications HTTP (401, HSTS, noindex, www 301, http 308) ;
+   9. vérifications HTTP (200 sans X-Robots-Tag, HSTS, www 301, http 308) ;
   10. rappel des réglages GitHub, clé d'hôte et son empreinte.
 L'IP et le domaine sont contrôlés avant la première étape jouée, quel que soit -From.
 
 Ne fait pas : les réglages GitHub (secrets, environment, ruleset, DEPLOY_ENABLED), le DNS chez
 OVH, la publication ni le déploiement. Voir docs/VPS.md.
 
-Le mot de passe de pré-ouverture voyage dans l'entrée standard de ssh, encodé en base64 dans
+Le mot de passe de pré-ouverture (snippet `preview` du Caddyfile, que le CV, ouvert, n'importe
+pas ; edge/docker-compose.yml l'exige quand même) voyage dans l'entrée standard de ssh, encodé en base64 dans
 le script envoyé au VPS : jamais en argument (visible dans la liste des processus), jamais
 dans un fichier du PC. Seul son hash bcrypt est écrit, dans /srv/edge/.env, en 600.
 #>
@@ -707,15 +708,15 @@ function Invoke-Step9 {
     Write-Step 9 'Vérifications HTTP'
 
     $root = Get-Head "https://$Domain"
-    if ($root.Status -eq 401) {
-        Write-Ok "https://$Domain : 401 (pré-ouverture)"
-        if ($root.Headers.ContainsKey('x-robots-tag') -and $root.Headers['x-robots-tag'] -match 'noindex') {
-            Write-Ok 'X-Robots-Tag : noindex'
-        } else {
-            Write-Ko 'X-Robots-Tag noindex absent'
-        }
-    } elseif ($root.Status -eq 200) {
+    if ($root.Status -eq 200) {
         Write-Ok "https://$Domain : 200 (site ouvert au public)"
+        if ($root.Headers.ContainsKey('x-robots-tag')) {
+            Write-Ko "X-Robots-Tag présent ('$($root.Headers['x-robots-tag'])') : le CV ne serait pas indexé"
+        } else {
+            Write-Ok 'X-Robots-Tag absent (site indexable)'
+        }
+    } elseif ($root.Status -eq 401) {
+        Write-Ko "https://$Domain : 401, la pré-ouverture est encore active : retirer ``import preview`` du bloc CV du Caddyfile"
     } elseif ($root.Status -eq 502) {
         Write-Ko "https://$Domain : 502, le conteneur cv ne tourne pas encore : lancer Deploy (docs/VPS.md § 4)"
     } else {
