@@ -70,7 +70,7 @@ export const UI_TEXT: Record<Lang, UiText> = {
     editorFile: 'cv.ts',
   },
   en: {
-    experiencesTitle: 'Professional experience',
+    experiencesTitle: 'Work experience',
     educationTitle: 'Education',
     skillsTitle: 'Skills',
     languagesTitle: 'Languages',
