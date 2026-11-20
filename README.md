@@ -19,6 +19,15 @@ Les PDF (un par format publié et par langue) sont imprimés depuis les pages pr
 build de l'image (`scripts/generate-pdf.mjs`). Sous `npm start`, le lien « Télécharger le PDF »
 rend 404.
 
+## Lancement rapide (Windows)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\lancer-local.ps1           # ng serve, http://localhost:4201
+powershell -ExecutionPolicy Bypass -File scripts\lancer-local.ps1 -Docker   # image de prod, http://localhost:8090
+```
+
+`-Docker` donne le site tel qu'en production : PDF et redirections de `/ch` et `/fr` compris.
+
 ## Image
 
 ```bash

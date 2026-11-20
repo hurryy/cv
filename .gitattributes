@@ -8,3 +8,4 @@ Caddyfile text eol=lf
 docker-compose*.yml text eol=lf
 *.sh text eol=lf
 scripts/** text eol=lf
+*.cmd text eol=crlf
