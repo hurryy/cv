@@ -20,7 +20,7 @@ export const CV: Cv = {
   headline: { fr: 'Développeur .NET et Angular', en: '.NET and Angular developer' },
   profile: {
     fr: "J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris Angular en main pour suivre une fonctionnalité de la base de données jusqu'à l'écran. Aujourd'hui, j'aime porter un produit de bout en bout.",
-    en: 'I started on the back-end side, working on the business rules. I then learned Angular to be able to follow a feature from the database to the user interface. Today, I enjoy working on a product from start to finish.',
+    en: 'I started on the back end, where the business rules live. I then learned Angular to follow a feature from the database to the user interface. Today, I enjoy working on a product end to end.',
   },
   location: { fr: 'Annecy - Genève', en: 'Annecy - Geneva' },
   description: {
@@ -185,7 +185,7 @@ export const CV: Cv = {
       domains: [{ fr: 'Gestion de flotte', en: 'Fleet management' }],
       summary: {
         fr: "Maintenance corrective et évolutive d'un outil de gestion de flotte de véhicules.",
-        en: 'Maintenance and new features for a vehicle fleet management application.',
+        en: 'Bug fixes and new features on a vehicle fleet management application.',
       },
       context: {
         fr: "Société de services informatiques : stage de six mois suivi d'une année d'alternance, sur un outil de gestion de flotte de véhicules.",
