@@ -72,7 +72,7 @@ export const CV: Cv = {
           en: 'Advice to Product Owners on feature design',
         },
       ],
-      stack: ['.NET', 'C#', 'Angular', 'Angular Material', 'REST API', 'SOAP', 'Azure DevOps'],
+      stack: ['.NET', 'C#', 'Angular', 'Angular Material', 'REST', 'SOAP', 'Azure DevOps'],
     },
     {
       role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
@@ -109,7 +109,7 @@ export const CV: Cv = {
           en: 'Time management on mobile: time entry, declarations and a "My declarations" section',
         },
       ],
-      stack: ['.NET Core', 'Angular', 'SQL Server', 'Flutter'],
+      stack: ['.NET Core', 'C#', 'Angular', 'REST', 'SQL Server', 'Flutter'],
     },
     {
       role: { fr: 'Développeur .NET', en: '.NET Developer' },
@@ -138,7 +138,7 @@ export const CV: Cv = {
           en: 'Crowdfunding application: interest calculation, payment schedule, administrator interface for project management',
         },
       ],
-      stack: ['.NET Core', '.NET Framework', 'Vue.js', 'Razor', 'SQL Server'],
+      stack: ['.NET Core', '.NET Framework', 'C#', 'REST', 'Vue.js', 'Razor', 'SQL Server'],
     },
     {
       role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
@@ -172,7 +172,7 @@ export const CV: Cv = {
           en: 'Live supervision of one or more candidates (WebSockets)',
         },
       ],
-      stack: ['.NET Core', 'Angular', 'SQL Server', 'WebSockets'],
+      stack: ['.NET Core', 'C#', 'Angular', 'REST', 'SQL Server', 'WebSockets'],
     },
     {
       role: {
@@ -211,7 +211,7 @@ export const CV: Cv = {
   skills: [
     {
       name: { fr: 'Back-end', en: 'Back-end' },
-      items: ['C#', '.NET', 'ASP.NET', 'REST API', 'SOAP'],
+      items: ['C#', '.NET', 'ASP.NET', 'REST', 'SOAP'],
     },
     {
       name: { fr: 'Front-end', en: 'Front-end' },

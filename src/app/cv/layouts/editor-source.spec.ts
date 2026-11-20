@@ -15,7 +15,7 @@ describe('editorSource', () => {
     expect(source).toContain(`      role: '${CV.experiences[0].role.fr}',`);
     expect(source).toContain(`      period: ['2024-04', null], // ${UI_TEXT.fr.present}`);
     expect(source).toContain("      period: ['2020-01', '2020-11'],");
-    expect(source).toContain("    'Back-end': ['C#', '.NET', 'ASP.NET', 'REST API', 'SOAP'],");
+    expect(source).toContain("    'Back-end': ['C#', '.NET', 'ASP.NET', 'REST', 'SOAP'],");
     expect(source).toContain(
       "company: 'SQLI · Services Industriels de Genève', location: 'Vernier, Suisse',",
     );
