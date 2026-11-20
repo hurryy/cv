@@ -17,7 +17,7 @@ import { Cv } from './cv.model';
  */
 export const CV: Cv = {
   name: 'Yann HURRY',
-  headline: { fr: 'Développeur .NET et Angular', en: '.NET and Angular developer' },
+  headline: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
   profile: {
     fr: "J'ai commencé côté back-end, là où vivent les règles métier. J'ai ensuite pris Angular en main pour suivre une fonctionnalité de la base de données jusqu'à l'écran. Aujourd'hui, j'aime porter un produit de bout en bout.",
     en: 'I started on the back end, where the business rules live. I then learned Angular to follow a feature from the database to the user interface. Today, I enjoy working on a product end to end.',
@@ -37,7 +37,7 @@ export const CV: Cv = {
   links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/in/yann-hurry', icon: 'linkedin' }],
   experiences: [
     {
-      role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular developer' },
+      role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
       company: 'SQLI · Services Industriels de Genève',
       location: { fr: 'Vernier, Suisse', en: 'Vernier, Switzerland' },
       period: { start: '2024-04', end: null },
@@ -47,11 +47,11 @@ export const CV: Cv = {
       ],
       summary: {
         fr: "Développement et maintenance de l'Espace Client de SIG : API REST en .NET, interfaces en Angular et Material, intégration des API REST et SOAP internes de SIG.",
-        en: "Development and maintenance of SIG's customer portal: REST APIs in .NET, user interfaces in Angular and Material, integration of SIG's internal REST and SOAP APIs.",
+        en: "Development and maintenance of SIG's customer portal: REST APIs in .NET, Angular and Material user interfaces, integration of SIG's internal REST and SOAP APIs.",
       },
       context: {
         fr: "Mission pour SQLI aux Services Industriels de Genève, dans une équipe Scrum. Je développe et maintiens l'Espace Client, le portail des clients de SIG.",
-        en: "Assignment for SQLI at Services Industriels de Genève (SIG), within a Scrum team. I develop and maintain the Espace Client, SIG's customer portal.",
+        en: "SQLI assignment at Services Industriels de Genève (SIG), within a Scrum team. I develop and maintain the Espace Client, SIG's customer portal.",
       },
       achievements: [
         {
@@ -75,7 +75,7 @@ export const CV: Cv = {
       stack: ['.NET', 'C#', 'Angular', 'Angular Material', 'REST API', 'SOAP', 'Azure DevOps'],
     },
     {
-      role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular developer' },
+      role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
       company: 'N2JSoft',
       location: { fr: 'Annecy, France', en: 'Annecy, France' },
       period: { start: '2022-03', end: '2024-03' },
@@ -112,7 +112,7 @@ export const CV: Cv = {
       stack: ['.NET Core', 'Angular', 'SQL Server', 'Flutter'],
     },
     {
-      role: { fr: 'Développeur .NET', en: '.NET developer' },
+      role: { fr: 'Développeur .NET', en: '.NET Developer' },
       company: 'OnCloud',
       location: { fr: 'Annecy, France', en: 'Annecy, France' },
       period: { start: '2020-11', end: '2022-02' },
@@ -141,7 +141,7 @@ export const CV: Cv = {
       stack: ['.NET Core', '.NET Framework', 'Vue.js', 'Razor', 'SQL Server'],
     },
     {
-      role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular developer' },
+      role: { fr: 'Développeur .NET et Angular', en: '.NET and Angular Developer' },
       company: 'Apollo',
       location: { fr: 'Grenoble, France', en: 'Grenoble, France' },
       period: { start: '2020-01', end: '2020-11' },
@@ -177,7 +177,7 @@ export const CV: Cv = {
     {
       role: {
         fr: 'Stage puis alternance, développeur .NET',
-        en: '.NET developer, internship then apprenticeship',
+        en: '.NET Developer, internship then apprenticeship',
       },
       company: 'Cognizant',
       location: { fr: 'Grenoble, France', en: 'Grenoble, France' },
