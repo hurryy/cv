@@ -55,8 +55,8 @@ export const CV: Cv = {
       },
       achievements: [
         {
-          fr: 'Conception et maintenance des API REST en .NET Core',
-          en: 'Design and maintenance of the REST APIs in .NET Core',
+          fr: 'Conception et maintenance des API REST en .NET',
+          en: 'Design and maintenance of the REST APIs in .NET',
         },
         {
           fr: "Développement des interfaces de l'Espace Client en Angular et Material",
